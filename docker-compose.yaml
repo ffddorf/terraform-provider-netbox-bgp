@@ -1,0 +1,47 @@
+---
+version: "3.7"
+services:
+  postgres:
+    image: postgres:14-alpine
+    environment:
+      - POSTGRES_USER=netbox
+      - POSTGRES_PASSWORD=netbox
+      - POSTGRES_DB=netbox
+  redis:
+    image: redis:6-alpine
+  netbox:
+    build:
+      context: tools/integration
+      args:
+        NETBOX_VERSION: ${NETBOX_VERSION:-3.7.8}
+        NETBOX_BGP_VERSION: ${NETBOX_BGP_VERSION:-0.12.1}
+    depends_on:
+      - postgres
+      - redis
+    ports:
+      - 8001:8080
+    environment:
+      - CORS_ORIGIN_ALLOW_ALL=True
+      - DB_NAME=netbox
+      - DB_USER=netbox
+      - DB_PASSWORD=netbox
+      - DB_HOST=postgres
+      - REDIS_HOST=redis
+      - REDIS_DATABASE=0
+      - REDIS_SSL=false
+      - REDIS_CACHE_HOST=redis
+      - REDIS_CACHE_DATABASE=1
+      - REDIS_CACHE_SSL=false
+      - SECRET_KEY=0123456789abcdefghij0123456789abcdefghij0123456789
+      - SKIP_STARTUP_SCRIPTS=false
+      - SKIP_SUPERUSER=false
+      - SUPERUSER_NAME=admin
+      - SUPERUSER_EMAIL=admin@example.com
+      - SUPERUSER_PASSWORD=admin
+      - SUPERUSER_API_TOKEN=${NETBOX_API_TOKEN:-0123456789abcdef0123456789abcdef01234567}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/api/status/"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+      start_period: 5s
