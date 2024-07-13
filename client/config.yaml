@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/deepmap/oapi-codegen/HEAD/configuration-schema.json
+package: client
+generate:
+  client: true
+  models: true
+output-options:
+  include-tags:
+    - plugins
+output: client.gen.go
