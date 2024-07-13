@@ -1,3 +1,3 @@
-provider "scaffolding" {
+provider "netboxbgp" {
   # example configuration here
 }
