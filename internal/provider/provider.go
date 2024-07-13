@@ -168,9 +168,7 @@ func (p *NetboxBGPProvider) Resources(ctx context.Context) []func() resource.Res
 }
 
 func (p *NetboxBGPProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
-	return []func() datasource.DataSource{
-		NewExampleDataSource,
-	}
+	return []func() datasource.DataSource{}
 }
 
 func New(version string) func() provider.Provider {
