@@ -73,7 +73,8 @@ jobs:
           - netbox: "4.0.7"
             netbox_bgp: "0.13.2"
     env:
-      DOCKER_COMPOSE: "docker compose --progress=plain"
+      DOCKER_COMPOSE: docker compose --progress=plain
+      BUILDKIT_PROGRESS: plain
     steps:
       - uses: actions/checkout@v4.1.7
       - uses: actions/setup-go@v5.0.1
