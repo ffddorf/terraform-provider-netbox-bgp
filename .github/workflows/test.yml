@@ -64,6 +64,14 @@ jobs:
         terraform:
           - "1.8.*"
           - "1.9.*"
+        netbox:
+          - "3.7.8"
+          - "4.0.7"
+        include:
+          - netbox: "3.7.8"
+            netbox_bgp: "0.12.1"
+          - netbox: "4.0.7"
+            netbox_bgp: "0.13.2"
     steps:
       - uses: actions/checkout@v4.1.7
       - uses: actions/setup-go@v5.0.1
@@ -74,8 +82,13 @@ jobs:
         with:
           terraform_version: ${{ matrix.terraform }}
           terraform_wrapper: false
-      - run: go mod download
-      - env:
-          TF_ACC: "1"
-        run: go test -v -cover ./internal/provider/
+      - name: Prep prerequisites
+        run: |
+          go mod download &
+          make docker-up &
+          wait
+      - run: make testacc
+        env:
+          NETBOX_VERSION: ${{ matrix.netbox }}
+          NETBOX_BGP_VERSION: ${{ matrix.netbox_bgp }}
         timeout-minutes: 10
