@@ -1,4 +1,4 @@
-DOCKER_COMPOSE=docker compose
+DOCKER_COMPOSE ?= docker compose
 
 export NETBOX_SERVER_URL=http://localhost:8001
 export NETBOX_API_TOKEN=0123456789abcdef0123456789abcdef01234567
