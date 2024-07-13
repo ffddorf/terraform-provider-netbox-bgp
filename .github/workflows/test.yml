@@ -54,7 +54,7 @@ jobs:
 
   # Run acceptance tests in a matrix with Terraform CLI versions
   test:
-    name: Terraform Provider Acceptance Tests
+    name: Acceptance Test
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -72,6 +72,8 @@ jobs:
             netbox_bgp: "0.12.1"
           - netbox: "4.0.7"
             netbox_bgp: "0.13.2"
+    env:
+      BUILDKIT_PROGRESS: plain
     steps:
       - uses: actions/checkout@v4.1.7
       - uses: actions/setup-go@v5.0.1
@@ -82,11 +84,11 @@ jobs:
         with:
           terraform_version: ${{ matrix.terraform }}
           terraform_wrapper: false
-      - name: Prep prerequisites
-        run: |
-          go mod download &
-          make docker-up &
-          wait
+      - run: go mod download
+      - run: make docker-up
+        id: docker
+      - run: docker compose logs netbox
+        if: failure() && steps.docker.outcome == 'failure'
       - run: make testacc
         env:
           NETBOX_VERSION: ${{ matrix.netbox }}
