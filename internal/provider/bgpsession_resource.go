@@ -63,43 +63,21 @@ type SessionResourceModel struct {
 func (m *SessionResourceModel) ToAPIModel(ctx context.Context, diags diag.Diagnostics) client.WritableBGPSessionRequest {
 	p := client.WritableBGPSessionRequest{}
 
-	if !m.Name.IsNull() {
-		p.Name = m.Name.ValueStringPointer()
-	}
-	if !m.Description.IsNull() {
-		p.Description = m.Description.ValueStringPointer()
-	}
-	if !m.Comments.IsNull() {
-		p.Comments = m.Comments.ValueStringPointer()
-	}
+	p.Name = m.Name.ValueStringPointer()
+	p.Description = m.Description.ValueStringPointer()
+	p.Comments = m.Comments.ValueStringPointer()
 	if !m.Status.IsNull() {
 		status := client.WritableBGPSessionRequestStatus(m.Status.ValueString())
 		p.Status = &status
 	}
-	if !m.SiteID.IsNull() {
-		p.Site = toIntPointer(m.SiteID.ValueInt64Pointer())
-	}
-	if !m.TenantID.IsNull() {
-		p.Tenant = toIntPointer(m.TenantID.ValueInt64Pointer())
-	}
-	if !m.DeviceID.IsNull() {
-		p.Device = toIntPointer(m.DeviceID.ValueInt64Pointer())
-	}
-	if !m.LocalAddressID.IsNull() {
-		p.LocalAddress = int(m.LocalAddressID.ValueInt64())
-	}
-	if !m.RemoteAddressID.IsNull() {
-		p.RemoteAddress = int(m.RemoteAddressID.ValueInt64())
-	}
-	if !m.LocalASID.IsNull() {
-		p.LocalAs = int(m.LocalASID.ValueInt64())
-	}
-	if !m.RemoteASID.IsNull() {
-		p.RemoteAs = int(m.RemoteASID.ValueInt64())
-	}
-	if !m.PeerGroupID.IsNull() {
-		p.PeerGroup = toIntPointer(m.PeerGroupID.ValueInt64Pointer())
-	}
+	p.Site = fromInt64Value(m.SiteID)
+	p.Tenant = fromInt64Value(m.TenantID)
+	p.Device = fromInt64Value(m.DeviceID)
+	p.LocalAddress = *fromInt64Value(m.LocalAddressID)
+	p.RemoteAddress = *fromInt64Value(m.RemoteAddressID)
+	p.LocalAs = *fromInt64Value(m.LocalASID)
+	p.RemoteAs = *fromInt64Value(m.RemoteASID)
+	p.PeerGroup = fromInt64Value(m.PeerGroupID)
 	if !m.ImportPolicyIDs.IsNull() {
 		policies, ds := toIntListPointer(ctx, m.ImportPolicyIDs)
 		for _, d := range ds {
@@ -114,12 +92,8 @@ func (m *SessionResourceModel) ToAPIModel(ctx context.Context, diags diag.Diagno
 		}
 		p.ExportPolicies = &policies
 	}
-	if !m.PrefixListInID.IsNull() {
-		p.PrefixListIn = toIntPointer(m.PrefixListInID.ValueInt64Pointer())
-	}
-	if !m.PrefixListOutID.IsNull() {
-		p.PrefixListOut = toIntPointer(m.PrefixListOutID.ValueInt64Pointer())
-	}
+	p.PrefixListIn = fromInt64Value(m.PrefixListInID)
+	p.PrefixListOut = fromInt64Value(m.PrefixListOutID)
 
 	p.Tags = TagsForAPIModel(ctx, m.Tags, diags)
 
@@ -129,17 +103,11 @@ func (m *SessionResourceModel) ToAPIModel(ctx context.Context, diags diag.Diagno
 }
 
 func (m *SessionResourceModel) FillFromAPIModel(ctx context.Context, resp *client.BGPSession, diags diag.Diagnostics) {
-	if resp.Id != nil {
-		m.ID = types.Int64Value(int64(*resp.Id))
-	}
-	if resp.Comments != nil && *resp.Comments != "" {
-		m.Comments = types.StringPointerValue(resp.Comments)
-	}
-	if resp.Description != nil && *resp.Description != "" {
-		m.Description = types.StringPointerValue(resp.Description)
-	}
+	m.ID = maybeInt64Value(resp.Id)
+	m.Comments = maybeStringValue(resp.Comments)
+	m.Description = maybeStringValue(resp.Description)
 	if resp.Device != nil {
-		m.DeviceID = types.Int64Value(int64(*resp.Device.Id))
+		m.DeviceID = maybeInt64Value(resp.Device.Id)
 	}
 	if resp.ExportPolicies != nil && len(*resp.ExportPolicies) > 0 {
 		var ds diag.Diagnostics
@@ -155,30 +123,26 @@ func (m *SessionResourceModel) FillFromAPIModel(ctx context.Context, resp *clien
 			diags.Append(diag.WithPath(path.Root("import_policy_ids"), d))
 		}
 	}
-	m.LocalAddressID = types.Int64Value(int64(*resp.LocalAddress.Id))
-	m.LocalASID = types.Int64Value(int64(*resp.LocalAs.Id))
-	if resp.Name != nil {
-		m.Name = types.StringPointerValue(resp.Name)
-	}
+	m.LocalAddressID = maybeInt64Value(resp.LocalAddress.Id)
+	m.LocalASID = maybeInt64Value(resp.LocalAs.Id)
+	m.Name = maybeStringValue(resp.Name)
 	if resp.PeerGroup != nil {
-		m.PeerGroupID = types.Int64Value(int64(*resp.PeerGroup.Id))
+		m.PeerGroupID = maybeInt64Value(resp.PeerGroup.Id)
 	}
 	if resp.PrefixListIn != nil {
-		m.PrefixListInID = types.Int64Value(int64(*resp.PrefixListIn.Id))
+		m.PrefixListInID = maybeInt64Value(resp.PrefixListIn.Id)
 	}
 	if resp.PrefixListOut != nil {
-		m.PrefixListOutID = types.Int64Value(int64(*resp.PrefixListOut.Id))
+		m.PrefixListOutID = maybeInt64Value(resp.PrefixListOut.Id)
 	}
-	m.RemoteAddressID = types.Int64Value(int64(*resp.RemoteAddress.Id))
-	m.RemoteASID = types.Int64Value(int64(*resp.RemoteAs.Id))
+	m.RemoteAddressID = maybeInt64Value(resp.RemoteAddress.Id)
+	m.RemoteASID = maybeInt64Value(resp.RemoteAs.Id)
 	if resp.Site != nil {
-		m.SiteID = types.Int64Value(int64(*resp.Site.Id))
+		m.SiteID = maybeInt64Value(resp.Site.Id)
 	}
-	if resp.Status != nil {
-		m.Status = types.StringPointerValue((*string)(resp.Status.Value))
-	}
+	m.Status = maybeStringValue((*string)(resp.Status.Value))
 	if resp.Tenant != nil {
-		m.TenantID = types.Int64Value(int64(*resp.Tenant.Id))
+		m.TenantID = maybeInt64Value(resp.Tenant.Id)
 	}
 
 	m.Tags = TagsFromAPI(ctx, resp.Tags, diags)
