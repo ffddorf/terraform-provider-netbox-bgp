@@ -6,6 +6,7 @@ package provider
 import (
 	"context"
 	"crypto/tls"
+	_ "embed"
 	"net/http"
 
 	"github.com/ffddorf/terraform-provider-netbox-bgp/client"
@@ -19,6 +20,11 @@ import (
 
 // Ensure NetboxBGPProvider satisfies various provider interfaces.
 var _ provider.Provider = &NetboxBGPProvider{}
+
+var (
+	//go:embed provider.md
+	providerDocs string
+)
 
 // NetboxBGPProvider defines the provider implementation.
 type NetboxBGPProvider struct {
@@ -51,6 +57,7 @@ func (p *NetboxBGPProvider) Metadata(ctx context.Context, req provider.MetadataR
 
 func (p *NetboxBGPProvider) Schema(ctx context.Context, req provider.SchemaRequest, resp *provider.SchemaResponse) {
 	resp.Schema = schema.Schema{
+		MarkdownDescription: providerDocs,
 		Attributes: map[string]schema.Attribute{
 			"server_url": schema.StringAttribute{
 				MarkdownDescription: "Location of Netbox server including scheme (http or https) and optional port. Can be set via the `NETBOX_SERVER_URL` environment variable.",
