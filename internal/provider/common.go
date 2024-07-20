@@ -245,9 +245,6 @@ func (*NestedASN) SchemaAttributes() map[string]schema.Attribute {
 		"url": schema.StringAttribute{
 			Optional: true,
 		},
-		"name": schema.StringAttribute{
-			Required: true,
-		},
 		"asn": schema.Int64Attribute{
 			Required: true,
 		},
