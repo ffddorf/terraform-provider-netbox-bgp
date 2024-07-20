@@ -6,8 +6,6 @@ import (
 )
 
 var (
-	// \w = word characters (== [0-9A-Za-z_])
-	// \s = whitespace (== [\t\n\f\r ])
 	matchSpecial                   = regexp.MustCompile(`[^\w\s-]`)
 	matchMultiWhitespacesAndDashes = regexp.MustCompile(`[\s-]+`)
 )
