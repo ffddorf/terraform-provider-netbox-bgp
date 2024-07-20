@@ -33,8 +33,9 @@ Session resource
 - `import_policy_ids` (List of Number)
 - `peer_group_id` (Number)
 - `prefix_list_in_id` (Number)
-- `prefix_list_out` (Number)
+- `prefix_list_out_id` (Number)
 - `site_id` (Number)
+- `tags` (List of String)
 - `tenant_id` (Number)
 
 ### Read-Only
