@@ -2,6 +2,7 @@ package provider
 
 import (
 	"fmt"
+	"hash/fnv"
 	"testing"
 
 	"github.com/google/uuid"
@@ -11,11 +12,26 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 )
 
+var testExternalProviders = map[string]resource.ExternalProvider{
+	"netbox": {
+		VersionConstraint: "~> 3.8.7",
+		Source:            "registry.terraform.io/e-breuninger/netbox",
+	},
+}
+
 func testName(t *testing.T) string {
 	return t.Name() + "_" + uuid.NewString()
 }
 
+func testNum(t *testing.T) uint64 {
+	h := fnv.New64()
+	fmt.Fprint(h, testName(t))
+	return h.Sum64()
+}
+
 func baseResources(t *testing.T) string {
+	num := testNum(t)
+	shortNum := num % 250
 	return fmt.Sprintf(`
 resource "netbox_tag" "test" {
   name = "%[1]s"
@@ -54,14 +70,14 @@ resource "netbox_device_interface" "test" {
 }
 
 resource "netbox_ip_address" "local" {
-  ip_address   = "203.0.113.10/24"
+  ip_address   = "203.0.113.%[2]d/24"
   status       = "active"
   interface_id = netbox_device_interface.test.id
   object_type  = "dcim.interface"
 }
 
 resource "netbox_ip_address" "remote" {
-  ip_address   = "203.0.113.11/24"
+  ip_address   = "203.0.113.%[3]d/24"
   status       = "active"
 }
 
@@ -70,21 +86,16 @@ resource "netbox_rir" "test" {
 }
 
 resource "netbox_asn" "test" {
-  asn    = 1337
+  asn    = %[4]d
 	rir_id = netbox_rir.test.id
-}`, testName(t))
+}`, testName(t), shortNum, shortNum+1, shortNum+1337)
 }
 
 func TestAccSessionResource(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
-		ExternalProviders: map[string]resource.ExternalProvider{
-			"netbox": {
-				VersionConstraint: "~> 3.8.7",
-				Source:            "registry.terraform.io/e-breuninger/netbox",
-			},
-		},
+		ExternalProviders:        testExternalProviders,
 		Steps: []resource.TestStep{
 			{
 				Config: fmt.Sprintf(`%s

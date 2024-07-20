@@ -12,8 +12,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-func toIntPointer(from int64) *int {
-	val := int(from)
+func toIntPointer(from *int64) *int {
+	if from == nil {
+		return nil
+	}
+	val := int(*from)
 	return &val
 }
 
@@ -29,6 +32,30 @@ func toIntListPointer(ctx context.Context, from types.List) ([]int, diag.Diagnos
 		out = append(out, int(val))
 	}
 	return out, diags
+}
+
+func maybeStringValue(in *string) types.String {
+	if in == nil {
+		return types.StringNull()
+	}
+	if *in == "" {
+		return types.StringNull()
+	}
+	return types.StringPointerValue(in)
+}
+
+func maybeInt64Value(in *int) types.Int64 {
+	if in == nil {
+		return types.Int64Null()
+	}
+	return types.Int64Value(int64(*in))
+}
+
+func fromInt64Value(in types.Int64) *int {
+	if in.IsNull() {
+		return nil
+	}
+	return toIntPointer(in.ValueInt64Pointer())
 }
 
 func httpError(res *http.Response, body []byte) string {
