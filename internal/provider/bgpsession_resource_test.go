@@ -6,6 +6,9 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
+	"github.com/hashicorp/terraform-plugin-testing/statecheck"
+	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
 )
 
 func testName(t *testing.T) string {
@@ -108,6 +111,13 @@ func TestAccSessionResource(t *testing.T) {
 			},
 			{
 				Config: fmt.Sprintf(`%s
+					resource "netbox_tag" "test_a" {
+						name = "Integration Test"
+					}
+					resource "netbox_tag" "test_b" {
+						name = "temporary"
+					}
+
 					resource "netboxbgp_session" "test" {
 						name              = "My session changed"
 						status            = "active"
@@ -117,8 +127,19 @@ func TestAccSessionResource(t *testing.T) {
 						local_as_id       = netbox_asn.test.id
 						remote_as_id      = netbox_asn.test.id
 						site_id           = netbox_site.test.id
+						tags              = ["Integration Test", "temporary"]
 					}
 				`, baseResources(t)),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(
+						"netboxbgp_session.test",
+						tfjsonpath.New("tags"),
+						knownvalue.ListExact([]knownvalue.Check{
+							knownvalue.StringExact("Integration Test"),
+							knownvalue.StringExact("temporary"),
+						}),
+					),
+				},
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("netboxbgp_session.test", "name", "My session changed"),
 					resource.TestCheckResourceAttrPair("netboxbgp_session.test", "site_id", "netbox_site.test", "id"),

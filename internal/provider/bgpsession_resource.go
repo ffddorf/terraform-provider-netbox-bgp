@@ -55,7 +55,8 @@ type SessionResourceModel struct {
 	PrefixListInID  types.Int64 `tfsdk:"prefix_list_in_id"`
 	PrefixListOutID types.Int64 `tfsdk:"prefix_list_out_id"`
 
-	// todo: tags
+	Tags types.List `tfsdk:"tags"`
+
 	// todo: custom fields
 }
 
@@ -120,7 +121,9 @@ func (m *SessionResourceModel) ToAPIModel(ctx context.Context, diags diag.Diagno
 		p.PrefixListOut = toIntPointer(m.PrefixListOutID.ValueInt64())
 	}
 
-	// todo: tags and custom fields
+	p.Tags = TagsForAPIModel(ctx, m.Tags, diags)
+
+	// todo: custom fields
 
 	return p
 }
@@ -178,7 +181,9 @@ func (m *SessionResourceModel) FillFromAPIModel(ctx context.Context, resp *clien
 		m.TenantID = types.Int64Value(int64(*resp.Tenant.Id))
 	}
 
-	// todo: tags and custom fields
+	m.Tags = TagsFromAPI(ctx, resp.Tags, diags)
+
+	// todo: custom fields
 }
 
 func (r *SessionResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -255,6 +260,7 @@ func (r *SessionResource) Schema(ctx context.Context, req resource.SchemaRequest
 			"prefix_list_out_id": schema.Int64Attribute{
 				Optional: true,
 			},
+			TagFieldName: TagSchema,
 		},
 	}
 }
