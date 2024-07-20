@@ -77,13 +77,13 @@ func (m *SessionResourceModel) ToAPIModel(ctx context.Context, diags diag.Diagno
 		p.Status = &status
 	}
 	if !m.SiteID.IsNull() {
-		p.Site = toIntPointer(m.SiteID.ValueInt64())
+		p.Site = toIntPointer(m.SiteID.ValueInt64Pointer())
 	}
 	if !m.TenantID.IsNull() {
-		p.Tenant = toIntPointer(m.TenantID.ValueInt64())
+		p.Tenant = toIntPointer(m.TenantID.ValueInt64Pointer())
 	}
 	if !m.DeviceID.IsNull() {
-		p.Device = toIntPointer(m.DeviceID.ValueInt64())
+		p.Device = toIntPointer(m.DeviceID.ValueInt64Pointer())
 	}
 	if !m.LocalAddressID.IsNull() {
 		p.LocalAddress = int(m.LocalAddressID.ValueInt64())
@@ -98,7 +98,7 @@ func (m *SessionResourceModel) ToAPIModel(ctx context.Context, diags diag.Diagno
 		p.RemoteAs = int(m.RemoteASID.ValueInt64())
 	}
 	if !m.PeerGroupID.IsNull() {
-		p.PeerGroup = toIntPointer(m.PeerGroupID.ValueInt64())
+		p.PeerGroup = toIntPointer(m.PeerGroupID.ValueInt64Pointer())
 	}
 	if !m.ImportPolicyIDs.IsNull() {
 		policies, ds := toIntListPointer(ctx, m.ImportPolicyIDs)
@@ -115,10 +115,10 @@ func (m *SessionResourceModel) ToAPIModel(ctx context.Context, diags diag.Diagno
 		p.ExportPolicies = &policies
 	}
 	if !m.PrefixListInID.IsNull() {
-		p.PrefixListIn = toIntPointer(m.PrefixListInID.ValueInt64())
+		p.PrefixListIn = toIntPointer(m.PrefixListInID.ValueInt64Pointer())
 	}
 	if !m.PrefixListOutID.IsNull() {
-		p.PrefixListOut = toIntPointer(m.PrefixListOutID.ValueInt64())
+		p.PrefixListOut = toIntPointer(m.PrefixListOutID.ValueInt64Pointer())
 	}
 
 	p.Tags = TagsForAPIModel(ctx, m.Tags, diags)

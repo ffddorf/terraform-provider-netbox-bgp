@@ -12,8 +12,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-func toIntPointer(from int64) *int {
-	val := int(from)
+func toIntPointer(from *int64) *int {
+	if from == nil {
+		return nil
+	}
+	val := int(*from)
 	return &val
 }
 
