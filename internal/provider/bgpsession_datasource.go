@@ -30,36 +30,30 @@ type SessionDataSourceModel struct {
 	Comments    types.String `tfsdk:"comments"`
 	Status      types.String `tfsdk:"status"`
 
-	Site   NestedSite   `tfsdk:"site"`
-	Tenant NestedTenant `tfsdk:"tenant"`
-	Device NestedDevice `tfsdk:"device"`
+	Site   *NestedSite   `tfsdk:"site"`
+	Tenant *NestedTenant `tfsdk:"tenant"`
+	Device *NestedDevice `tfsdk:"device"`
 
-	LocalAddress  NestedIPAddress    `tfsdk:"local_address"`
-	RemoteAddress NestedIPAddress    `tfsdk:"remote_address"`
-	LocalAS       NestedASN          `tfsdk:"local_as"`
-	RemoteAS      NestedASN          `tfsdk:"remote_as"`
-	PeerGroup     NestedBGPPeerGroup `tfsdk:"peer_group"`
+	LocalAddress  *NestedIPAddress    `tfsdk:"local_address"`
+	RemoteAddress *NestedIPAddress    `tfsdk:"remote_address"`
+	LocalAS       *NestedASN          `tfsdk:"local_as"`
+	RemoteAS      *NestedASN          `tfsdk:"remote_as"`
+	PeerGroup     *NestedBGPPeerGroup `tfsdk:"peer_group"`
 
 	ImportPolicyIDs types.List `tfsdk:"import_policy_ids"`
 	ExportPolicyIDs types.List `tfsdk:"export_policy_ids"`
 
-	PrefixListIn  NestedPrefixList `tfsdk:"prefix_list_in"`
-	PrefixListOut NestedPrefixList `tfsdk:"prefix_list_out"`
+	PrefixListIn  *NestedPrefixList `tfsdk:"prefix_list_in"`
+	PrefixListOut *NestedPrefixList `tfsdk:"prefix_list_out"`
 
 	Tags types.List `tfsdk:"tags"`
 }
 
 func (m *SessionDataSourceModel) FillFromAPIModel(ctx context.Context, resp *client.BGPSession, diags diag.Diagnostics) {
-	if resp.Id != nil {
-		m.ID = types.Int64Value(int64(*resp.Id))
-	}
-	if resp.Comments != nil && *resp.Comments != "" {
-		m.Comments = types.StringPointerValue(resp.Comments)
-	}
-	if resp.Description != nil && *resp.Description != "" {
-		m.Description = types.StringPointerValue(resp.Description)
-	}
-	m.Device.FillFromAPI(resp.Device)
+	m.ID = maybeInt64Value(resp.Id)
+	m.Comments = maybeStringValue(resp.Comments)
+	m.Description = maybeStringValue(resp.Description)
+	m.Device = NestedDeviceFromAPI(resp.Device)
 	if resp.ExportPolicies != nil && len(*resp.ExportPolicies) > 0 {
 		var ds diag.Diagnostics
 		m.ExportPolicyIDs, ds = types.ListValueFrom(ctx, types.Int64Type, resp.ExportPolicies)
@@ -74,21 +68,17 @@ func (m *SessionDataSourceModel) FillFromAPIModel(ctx context.Context, resp *cli
 			diags.Append(diag.WithPath(path.Root("import_policy_ids"), d))
 		}
 	}
-	m.LocalAddress.FillFromAPI(&resp.LocalAddress)
-	m.LocalAS.FillFromAPI(&resp.LocalAs)
-	if resp.Name != nil {
-		m.Name = types.StringPointerValue(resp.Name)
-	}
-	m.PeerGroup.FillFromAPI(resp.PeerGroup)
-	m.PrefixListIn.FillFromAPI(resp.PrefixListIn)
-	m.PrefixListOut.FillFromAPI(resp.PrefixListOut)
-	m.RemoteAddress.FillFromAPI(&resp.RemoteAddress)
-	m.RemoteAS.FillFromAPI(&resp.RemoteAs)
-	m.Site.FillFromAPI(resp.Site)
-	if resp.Status != nil {
-		m.Status = types.StringPointerValue((*string)(resp.Status.Value))
-	}
-	m.Tenant.FillFromAPI(resp.Tenant)
+	m.LocalAddress = NestedIPAddressFromAPI(&resp.LocalAddress)
+	m.LocalAS = NestedASNFromAPI(&resp.LocalAs)
+	m.Name = maybeStringValue(resp.Name)
+	m.PeerGroup = NestedBGPPeerGroupFromAPI(resp.PeerGroup)
+	m.PrefixListIn = NestedPrefixListFromAPI(resp.PrefixListIn)
+	m.PrefixListOut = NestedPrefixListFromAPI(resp.PrefixListOut)
+	m.RemoteAddress = NestedIPAddressFromAPI(&resp.RemoteAddress)
+	m.RemoteAS = NestedASNFromAPI(&resp.RemoteAs)
+	m.Site = NestedSiteFromAPI(resp.Site)
+	m.Status = maybeStringValue((*string)(resp.Status.Value))
+	m.Tenant = NestedTenantFromAPI(resp.Tenant)
 
 	m.Tags = TagsFromAPI(ctx, resp.Tags, diags)
 

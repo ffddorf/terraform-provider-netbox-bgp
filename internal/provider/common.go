@@ -126,78 +126,92 @@ func (tfo NestedTenant) ToAPIModel() client.NestedTenant {
 	}
 }
 
-func (tfo *NestedSite) FillFromAPI(resp *client.NestedSite) {
+func NestedSiteFromAPI(resp *client.NestedSite) *NestedSite {
 	if resp == nil {
-		return
+		return nil
 	}
+	tfo := &NestedSite{}
 	tfo.ID = types.Int64Value(int64(*resp.Id))
 	tfo.URL = maybeStringValue(resp.Url)
 	tfo.Display = maybeStringValue(resp.Display)
 	tfo.Name = types.StringValue(resp.Name)
 	tfo.Slug = types.StringValue(resp.Slug)
+	return tfo
 }
 
-func (tfo *NestedASN) FillFromAPI(resp *client.NestedASN) {
+func NestedASNFromAPI(resp *client.NestedASN) *NestedASN {
 	if resp == nil {
-		return
+		return nil
 	}
+	tfo := &NestedASN{}
 	tfo.ID = types.Int64Value(int64(*resp.Id))
 	tfo.URL = maybeStringValue(resp.Url)
 	tfo.Display = maybeStringValue(resp.Display)
 	tfo.ASN = types.Int64Value(resp.Asn)
+	return tfo
 }
 
-func (tfo *NestedIPAddress) FillFromAPI(resp *client.NestedIPAddress) {
+func NestedIPAddressFromAPI(resp *client.NestedIPAddress) *NestedIPAddress {
 	if resp == nil {
-		return
+		return nil
 	}
+	tfo := &NestedIPAddress{}
 	tfo.ID = types.Int64Value(int64(*resp.Id))
 	tfo.URL = maybeStringValue(resp.Url)
 	tfo.Display = maybeStringValue(resp.Display)
 	tfo.Family = maybeInt64Value(resp.Family)
 	tfo.Address = types.StringValue(resp.Address)
+	return tfo
 }
 
-func (tfo *NestedDevice) FillFromAPI(resp *client.NestedDevice) {
+func NestedDeviceFromAPI(resp *client.NestedDevice) *NestedDevice {
 	if resp == nil {
-		return
+		return nil
 	}
+	tfo := &NestedDevice{}
 	tfo.ID = types.Int64Value(int64(*resp.Id))
 	tfo.URL = maybeStringValue(resp.Url)
 	tfo.Display = maybeStringValue(resp.Display)
 	tfo.Name = maybeStringValue(resp.Name)
+	return tfo
 }
 
-func (tfo *NestedBGPPeerGroup) FillFromAPI(resp *client.NestedBGPPeerGroup) {
+func NestedBGPPeerGroupFromAPI(resp *client.NestedBGPPeerGroup) *NestedBGPPeerGroup {
 	if resp == nil {
-		return
+		return nil
 	}
+	tfo := &NestedBGPPeerGroup{}
 	tfo.ID = types.Int64Value(int64(*resp.Id))
 	tfo.URL = maybeStringValue(resp.Url)
 	tfo.Display = maybeStringValue(resp.Display)
 	tfo.Name = types.StringValue(resp.Name)
 	tfo.Description = maybeStringValue(resp.Description)
+	return tfo
 }
 
-func (tfo *NestedPrefixList) FillFromAPI(resp *client.NestedPrefixList) {
+func NestedPrefixListFromAPI(resp *client.NestedPrefixList) *NestedPrefixList {
 	if resp == nil {
-		return
+		return nil
 	}
+	tfo := &NestedPrefixList{}
 	tfo.ID = types.Int64Value(int64(*resp.Id))
 	tfo.URL = maybeStringValue(resp.Url)
 	tfo.Display = maybeStringValue(resp.Display)
 	tfo.Name = types.StringValue(resp.Name)
+	return tfo
 }
 
-func (tfo *NestedTenant) FillFromAPI(resp *client.NestedTenant) {
+func NestedTenantFromAPI(resp *client.NestedTenant) *NestedTenant {
 	if resp == nil {
-		return
+		return nil
 	}
+	tfo := &NestedTenant{}
 	tfo.ID = types.Int64Value(int64(*resp.Id))
 	tfo.URL = maybeStringValue(resp.Url)
 	tfo.Display = maybeStringValue(resp.Display)
 	tfo.Name = types.StringValue(resp.Name)
 	tfo.Slug = types.StringValue(resp.Slug)
+	return tfo
 }
 
 func (*NestedSite) SchemaAttributes() map[string]schema.Attribute {
