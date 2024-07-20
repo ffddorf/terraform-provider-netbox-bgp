@@ -48,9 +48,9 @@ jobs:
           terraform_version: "1.9.2"
           terraform_wrapper: false
       - run: go generate ./...
-      - name: git diff
+      - name: Check for uncommitted changes
         run: |
-          git diff --compact-summary --exit-code || \
+          test -z "$(git status --porcelain)" || \
             (echo; echo "Unexpected difference in directories after code generation. Run 'go generate ./...' command and commit."; exit 1)
 
   # Run acceptance tests in a matrix with Terraform CLI versions
