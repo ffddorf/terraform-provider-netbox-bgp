@@ -34,6 +34,20 @@ func toIntListPointer(ctx context.Context, from types.List) ([]int, diag.Diagnos
 	return out, diags
 }
 
+func maybeStringValue(in *string) types.String {
+	if in == nil {
+		return types.StringNull()
+	}
+	return types.StringPointerValue(in)
+}
+
+func maybeInt64Value(in *int) types.Int64 {
+	if in == nil {
+		return types.Int64Null()
+	}
+	return types.Int64Value(int64(*in))
+}
+
 func httpError(res *http.Response, body []byte) string {
 	return fmt.Sprintf("Bad response: Status %d with content type \"%s\"\n%s", res.StatusCode, res.Header.Get("Content-Type"), string(body))
 }
