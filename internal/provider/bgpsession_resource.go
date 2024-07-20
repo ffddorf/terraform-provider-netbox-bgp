@@ -53,7 +53,7 @@ type SessionResourceModel struct {
 	ExportPolicyIDs types.List `tfsdk:"export_policy_ids"`
 
 	PrefixListInID  types.Int64 `tfsdk:"prefix_list_in_id"`
-	PrefixListOutID types.Int64 `tfsdk:"prefix_list_out"`
+	PrefixListOutID types.Int64 `tfsdk:"prefix_list_out_id"`
 
 	// todo: tags
 	// todo: custom fields
@@ -252,7 +252,7 @@ func (r *SessionResource) Schema(ctx context.Context, req resource.SchemaRequest
 			"prefix_list_in_id": schema.Int64Attribute{
 				Optional: true,
 			},
-			"prefix_list_out": schema.Int64Attribute{
+			"prefix_list_out_id": schema.Int64Attribute{
 				Optional: true,
 			},
 		},
