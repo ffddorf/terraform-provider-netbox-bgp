@@ -71,3 +71,12 @@ func importByInt64ID(ctx context.Context, req resource.ImportStateRequest, resp 
 
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("id"), id)...)
 }
+
+func appendPointerSlice[T any](s *[]T, vals ...T) *[]T {
+	if s == nil {
+		val := make([]T, 0, len(vals))
+		s = &val
+	}
+	newS := append(*s, vals...)
+	return &newS
+}
