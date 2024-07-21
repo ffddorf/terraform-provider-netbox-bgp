@@ -119,10 +119,9 @@ func (d *SessionsDataSource) Read(ctx context.Context, req datasource.ReadReques
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("failed to create session list request: %s", err))
 			return
 		}
-		nextHTTPReq = nextHTTPReq.WithContext(ctx)
 
 		var httpRes *http.Response
-		httpRes, err = d.client.Client.Do(nextHTTPReq)
+		httpRes, err = doPlainReq(ctx, nextHTTPReq, d.client)
 		if err != nil {
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("failed to retrieve sessions: %s", err))
 			return
@@ -147,11 +146,18 @@ func (d *SessionsDataSource) Read(ctx context.Context, req datasource.ReadReques
 				data.Sessions = append(data.Sessions, m)
 			}
 		}
-		if res.JSON200.Next != nil && *res.JSON200.Next != "" {
-			nextHTTPReq, err = http.NewRequest(http.MethodGet, *res.JSON200.Next, nil)
-		} else {
-			nextHTTPReq = nil
+
+		// if there was a limit configured, only return elements up to the limit
+		if !data.Limit.IsNull() && len(data.Sessions) >= int(data.Limit.ValueInt64()) {
+			break
 		}
+
+		if res.JSON200.Next == nil || *res.JSON200.Next == "" {
+			break
+		}
+
+		// handle pagination, query next results
+		nextHTTPReq, err = http.NewRequest(http.MethodGet, *res.JSON200.Next, nil)
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)

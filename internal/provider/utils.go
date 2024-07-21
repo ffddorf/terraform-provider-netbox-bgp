@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/ffddorf/terraform-provider-netbox-bgp/client"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -79,4 +80,15 @@ func appendPointerSlice[T any](s *[]T, vals ...T) *[]T {
 	}
 	newS := append(*s, vals...)
 	return &newS
+}
+
+func doPlainReq(ctx context.Context, req *http.Request, c *client.Client) (*http.Response, error) {
+	req = req.WithContext(ctx)
+	for _, e := range c.RequestEditors {
+		if err := e(ctx, req); err != nil {
+			return nil, err
+		}
+	}
+
+	return c.Client.Do(req)
 }
