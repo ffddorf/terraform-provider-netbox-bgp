@@ -504,5 +504,5 @@ func setBgpsessionListParamsFromFilter(filter Filter, params *client.PluginsBgpB
 			fmt.Sprintf("Did not recognize field name: %s", name),
 		)
 	}
-	panic("unreachable")
+	return nil
 }

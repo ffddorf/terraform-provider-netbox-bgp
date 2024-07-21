@@ -113,7 +113,7 @@ func set{{ .ShortName }}FromFilter(filter Filter, params *client.{{ .FullName }}
 	}
 	value := filter.Value
 	{{ .Logic }}
-	panic("unreachable")
+	return nil
 }
 `))
 
