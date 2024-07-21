@@ -8,7 +8,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -40,8 +39,8 @@ type SessionDataSourceModel struct {
 	RemoteAS      *NestedASN          `tfsdk:"remote_as"`
 	PeerGroup     *NestedBGPPeerGroup `tfsdk:"peer_group"`
 
-	ImportPolicyIDs types.List `tfsdk:"import_policy_ids"`
-	ExportPolicyIDs types.List `tfsdk:"export_policy_ids"`
+	ImportPolicyIDs []types.Int64 `tfsdk:"import_policy_ids"`
+	ExportPolicyIDs []types.Int64 `tfsdk:"export_policy_ids"`
 
 	PrefixListIn  *NestedPrefixList `tfsdk:"prefix_list_in"`
 	PrefixListOut *NestedPrefixList `tfsdk:"prefix_list_out"`
@@ -54,18 +53,14 @@ func (m *SessionDataSourceModel) FillFromAPIModel(ctx context.Context, resp *cli
 	m.Comments = maybeStringValue(resp.Comments)
 	m.Description = maybeStringValue(resp.Description)
 	m.Device = NestedDeviceFromAPI(resp.Device)
-	if resp.ExportPolicies != nil && len(*resp.ExportPolicies) > 0 {
-		var ds diag.Diagnostics
-		m.ExportPolicyIDs, ds = types.ListValueFrom(ctx, types.Int64Type, resp.ExportPolicies)
-		for _, d := range ds {
-			diags.Append(diag.WithPath(path.Root("export_policy_ids"), d))
+	if resp.ExportPolicies != nil {
+		for _, id := range *resp.ExportPolicies {
+			m.ExportPolicyIDs = append(m.ExportPolicyIDs, types.Int64Value(int64(id)))
 		}
 	}
 	if resp.ImportPolicies != nil && len(*resp.ImportPolicies) > 0 {
-		var ds diag.Diagnostics
-		m.ImportPolicyIDs, ds = types.ListValueFrom(ctx, types.Int64Type, resp.ImportPolicies)
-		for _, d := range ds {
-			diags.Append(diag.WithPath(path.Root("import_policy_ids"), d))
+		for _, id := range *resp.ImportPolicies {
+			m.ImportPolicyIDs = append(m.ImportPolicyIDs, types.Int64Value(int64(id)))
 		}
 	}
 	m.LocalAddress = NestedIPAddressFromAPI(&resp.LocalAddress)
