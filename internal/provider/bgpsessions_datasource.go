@@ -47,7 +47,10 @@ func (d *SessionsDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 	resp.Schema = schema.Schema{
 		MarkdownDescription: "Data source to query for multiple BGP sessions by arbitrary parameters",
 		Attributes: map[string]schema.Attribute{
-			"filters": FiltersSchema(BgpsessionListParamsFields, BgpsessionListParamsOperators),
+			"filters": schema.ListNestedAttribute{
+				NestedObject: FiltersSchema(BgpsessionListParamsFields, BgpsessionListParamsOperators),
+				Optional:     true,
+			},
 			"limit": schema.Int64Attribute{
 				Optional: true,
 			},
