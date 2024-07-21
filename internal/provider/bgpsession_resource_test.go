@@ -29,6 +29,12 @@ func testNum(t *testing.T) uint64 {
 	return h.Sum64()
 }
 
+func testIP(t *testing.T, offset uint64) string {
+	num := testNum(t)
+	shortNum := num % 250
+	return fmt.Sprintf("203.0.113.%d", shortNum+offset)
+}
+
 func baseResources(t *testing.T) string {
 	num := testNum(t)
 	shortNum := num % 250
@@ -70,14 +76,14 @@ resource "netbox_device_interface" "test" {
 }
 
 resource "netbox_ip_address" "local" {
-  ip_address   = "203.0.113.%[2]d/24"
+  ip_address   = "%[2]s/24"
   status       = "active"
   interface_id = netbox_device_interface.test.id
   object_type  = "dcim.interface"
 }
 
 resource "netbox_ip_address" "remote" {
-  ip_address   = "203.0.113.%[3]d/24"
+  ip_address   = "%[3]s/24"
   status       = "active"
 }
 
@@ -88,7 +94,7 @@ resource "netbox_rir" "test" {
 resource "netbox_asn" "test" {
   asn    = %[4]d
 	rir_id = netbox_rir.test.id
-}`, testName(t), shortNum, shortNum+1, shortNum+1337)
+}`, testName(t), testIP(t, 0), testIP(t, 1), shortNum+1337)
 }
 
 func TestAccSessionResource(t *testing.T) {

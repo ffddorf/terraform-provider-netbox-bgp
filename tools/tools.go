@@ -11,4 +11,7 @@ import (
 
 	// API client generation
 	_ "github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen"
+
+	// For generated code
+	_ "golang.org/x/tools/cmd/goimports"
 )

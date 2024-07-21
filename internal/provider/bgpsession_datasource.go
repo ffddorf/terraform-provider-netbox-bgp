@@ -8,7 +8,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
-	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -40,8 +39,8 @@ type SessionDataSourceModel struct {
 	RemoteAS      *NestedASN          `tfsdk:"remote_as"`
 	PeerGroup     *NestedBGPPeerGroup `tfsdk:"peer_group"`
 
-	ImportPolicyIDs types.List `tfsdk:"import_policy_ids"`
-	ExportPolicyIDs types.List `tfsdk:"export_policy_ids"`
+	ImportPolicyIDs []types.Int64 `tfsdk:"import_policy_ids"`
+	ExportPolicyIDs []types.Int64 `tfsdk:"export_policy_ids"`
 
 	PrefixListIn  *NestedPrefixList `tfsdk:"prefix_list_in"`
 	PrefixListOut *NestedPrefixList `tfsdk:"prefix_list_out"`
@@ -54,18 +53,14 @@ func (m *SessionDataSourceModel) FillFromAPIModel(ctx context.Context, resp *cli
 	m.Comments = maybeStringValue(resp.Comments)
 	m.Description = maybeStringValue(resp.Description)
 	m.Device = NestedDeviceFromAPI(resp.Device)
-	if resp.ExportPolicies != nil && len(*resp.ExportPolicies) > 0 {
-		var ds diag.Diagnostics
-		m.ExportPolicyIDs, ds = types.ListValueFrom(ctx, types.Int64Type, resp.ExportPolicies)
-		for _, d := range ds {
-			diags.Append(diag.WithPath(path.Root("export_policy_ids"), d))
+	if resp.ExportPolicies != nil {
+		for _, id := range *resp.ExportPolicies {
+			m.ExportPolicyIDs = append(m.ExportPolicyIDs, types.Int64Value(int64(id)))
 		}
 	}
 	if resp.ImportPolicies != nil && len(*resp.ImportPolicies) > 0 {
-		var ds diag.Diagnostics
-		m.ImportPolicyIDs, ds = types.ListValueFrom(ctx, types.Int64Type, resp.ImportPolicies)
-		for _, d := range ds {
-			diags.Append(diag.WithPath(path.Root("import_policy_ids"), d))
+		for _, id := range *resp.ImportPolicies {
+			m.ImportPolicyIDs = append(m.ImportPolicyIDs, types.Int64Value(int64(id)))
 		}
 	}
 	m.LocalAddress = NestedIPAddressFromAPI(&resp.LocalAddress)
@@ -89,78 +84,79 @@ func (d *SessionDataSource) Metadata(ctx context.Context, req datasource.Metadat
 	resp.TypeName = req.ProviderTypeName + "_session"
 }
 
+var sessionDataSchema = map[string]schema.Attribute{
+	"id": schema.Int64Attribute{
+		MarkdownDescription: "ID of the resource in Netbox to use for lookup",
+		Required:            true,
+	},
+	"name": schema.StringAttribute{
+		Computed: true,
+	},
+	"description": schema.StringAttribute{
+		Computed: true,
+	},
+	"comments": schema.StringAttribute{
+		Computed: true,
+	},
+	"status": schema.StringAttribute{
+		Computed:            true,
+		MarkdownDescription: `One of: "active", "failed", "offline", "planned"`,
+	},
+	"site": schema.SingleNestedAttribute{
+		Computed:   true,
+		Attributes: (*NestedSite)(nil).SchemaAttributes(),
+	},
+	"tenant": schema.SingleNestedAttribute{
+		Computed:   true,
+		Attributes: (*NestedTenant)(nil).SchemaAttributes(),
+	},
+	"device": schema.SingleNestedAttribute{
+		Computed:   true,
+		Attributes: (*NestedDevice)(nil).SchemaAttributes(),
+	},
+	"local_address": schema.SingleNestedAttribute{
+		Computed:   true,
+		Attributes: (*NestedIPAddress)(nil).SchemaAttributes(),
+	},
+	"remote_address": schema.SingleNestedAttribute{
+		Computed:   true,
+		Attributes: (*NestedIPAddress)(nil).SchemaAttributes(),
+	},
+	"local_as": schema.SingleNestedAttribute{
+		Computed:   true,
+		Attributes: (*NestedASN)(nil).SchemaAttributes(),
+	},
+	"remote_as": schema.SingleNestedAttribute{
+		Computed:   true,
+		Attributes: (*NestedASN)(nil).SchemaAttributes(),
+	},
+	"peer_group": schema.SingleNestedAttribute{
+		Computed:   true,
+		Attributes: (*NestedBGPPeerGroup)(nil).SchemaAttributes(),
+	},
+	"import_policy_ids": schema.ListAttribute{
+		ElementType: types.Int64Type,
+		Computed:    true,
+	},
+	"export_policy_ids": schema.ListAttribute{
+		ElementType: types.Int64Type,
+		Computed:    true,
+	},
+	"prefix_list_in": schema.SingleNestedAttribute{
+		Computed:   true,
+		Attributes: (*NestedPrefixList)(nil).SchemaAttributes(),
+	},
+	"prefix_list_out": schema.SingleNestedAttribute{
+		Computed:   true,
+		Attributes: (*NestedPrefixList)(nil).SchemaAttributes(),
+	},
+	TagFieldName: TagSchema,
+}
+
 func (d *SessionDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		MarkdownDescription: "BGP Session data source",
-
-		Attributes: map[string]schema.Attribute{
-			"id": schema.Int64Attribute{
-				MarkdownDescription: "ID of the resource in Netbox to use for lookup",
-				Required:            true,
-			},
-			"name": schema.StringAttribute{
-				Computed: true,
-			},
-			"description": schema.StringAttribute{
-				Computed: true,
-			},
-			"comments": schema.StringAttribute{
-				Computed: true,
-			},
-			"status": schema.StringAttribute{
-				Computed:            true,
-				MarkdownDescription: `One of: "active", "failed", "offline", "planned"`,
-			},
-			"site": schema.SingleNestedAttribute{
-				Computed:   true,
-				Attributes: (*NestedSite)(nil).SchemaAttributes(),
-			},
-			"tenant": schema.SingleNestedAttribute{
-				Computed:   true,
-				Attributes: (*NestedTenant)(nil).SchemaAttributes(),
-			},
-			"device": schema.SingleNestedAttribute{
-				Computed:   true,
-				Attributes: (*NestedDevice)(nil).SchemaAttributes(),
-			},
-			"local_address": schema.SingleNestedAttribute{
-				Computed:   true,
-				Attributes: (*NestedIPAddress)(nil).SchemaAttributes(),
-			},
-			"remote_address": schema.SingleNestedAttribute{
-				Computed:   true,
-				Attributes: (*NestedIPAddress)(nil).SchemaAttributes(),
-			},
-			"local_as": schema.SingleNestedAttribute{
-				Computed:   true,
-				Attributes: (*NestedASN)(nil).SchemaAttributes(),
-			},
-			"remote_as": schema.SingleNestedAttribute{
-				Computed:   true,
-				Attributes: (*NestedASN)(nil).SchemaAttributes(),
-			},
-			"peer_group": schema.SingleNestedAttribute{
-				Computed:   true,
-				Attributes: (*NestedBGPPeerGroup)(nil).SchemaAttributes(),
-			},
-			"import_policy_ids": schema.ListAttribute{
-				ElementType: types.Int64Type,
-				Computed:    true,
-			},
-			"export_policy_ids": schema.ListAttribute{
-				ElementType: types.Int64Type,
-				Computed:    true,
-			},
-			"prefix_list_in": schema.SingleNestedAttribute{
-				Computed:   true,
-				Attributes: (*NestedPrefixList)(nil).SchemaAttributes(),
-			},
-			"prefix_list_out": schema.SingleNestedAttribute{
-				Computed:   true,
-				Attributes: (*NestedPrefixList)(nil).SchemaAttributes(),
-			},
-			TagFieldName: TagSchema,
-		},
+		Attributes:          sessionDataSchema,
 	}
 }
 
