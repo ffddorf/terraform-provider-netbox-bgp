@@ -9,18 +9,19 @@ services:
       - POSTGRES_DB=netbox
   redis:
     image: redis:6-alpine
-  netbox:
+  netbox: &netbox-base
     build:
       context: tools/integration
       args:
-        NETBOX_VERSION: ${NETBOX_VERSION:-3.7.8}
-        NETBOX_BGP_VERSION: ${NETBOX_BGP_VERSION:-0.12.1}
+        NETBOX_VERSION: ${NETBOX_VERSION:-4.0.9}
+        NETBOX_BGP_VERSION: ${NETBOX_BGP_VERSION:-0.13.2}
     depends_on:
       - postgres
       - redis
     ports:
       - 8001:8080
     environment:
+      #- DEBUG=True
       - CORS_ORIGIN_ALLOW_ALL=True
       - DB_NAME=netbox
       - DB_USER=netbox
@@ -39,9 +40,22 @@ services:
       - SUPERUSER_EMAIL=admin@example.com
       - SUPERUSER_PASSWORD=admin
       - SUPERUSER_API_TOKEN=${NETBOX_API_TOKEN:-0123456789abcdef0123456789abcdef01234567}
+    volumes:
+      - netbox-media:/media
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/api/status/"]
       interval: 10s
       timeout: 10s
       retries: 20
       start_period: 5s
+
+  netbox-worker:
+    <<: *netbox-base
+    ports: []
+    command:
+      - /opt/netbox/venv/bin/python
+      - /opt/netbox/netbox/manage.py
+      - rqworker
+
+volumes:
+  netbox-media:
