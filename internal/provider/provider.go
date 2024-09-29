@@ -179,6 +179,7 @@ func (p *NetboxBGPProvider) DataSources(ctx context.Context) []func() datasource
 	return []func() datasource.DataSource{
 		NewSessionDataSource,
 		NewSessionsDataSource,
+		NewPeerGroupDataSource,
 	}
 }
 
