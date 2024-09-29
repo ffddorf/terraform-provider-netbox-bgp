@@ -51,6 +51,7 @@ services:
 
   netbox-worker:
     <<: *netbox-base
+    healthcheck: {}
     ports: []
     command:
       - /opt/netbox/venv/bin/python
