@@ -7,6 +7,7 @@ import (
 	"context"
 	"crypto/tls"
 	_ "embed"
+	"fmt"
 	"net/http"
 
 	"github.com/ffddorf/terraform-provider-netbox-bgp/client"
@@ -187,4 +188,40 @@ func New(version string) func() provider.Provider {
 			version: version,
 		}
 	}
+}
+
+func configureResourceClient(req resource.ConfigureRequest, resp *resource.ConfigureResponse) *client.Client {
+	// Prevent panic if the provider has not been configured.
+	if req.ProviderData == nil {
+		return nil
+	}
+
+	data, ok := req.ProviderData.(*configuredProvider)
+	if !ok {
+		resp.Diagnostics.AddError(
+			"Unexpected Resource Configure Type",
+			fmt.Sprintf("Expected *configuredProvider, got: %T. Please report this issue to the provider developers.", req.ProviderData),
+		)
+		return nil
+	}
+
+	return data.Client
+}
+
+func configureDataSourceClient(req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) *client.Client {
+	// Prevent panic if the provider has not been configured.
+	if req.ProviderData == nil {
+		return nil
+	}
+
+	data, ok := req.ProviderData.(*configuredProvider)
+	if !ok {
+		resp.Diagnostics.AddError(
+			"Unexpected Resource Configure Type",
+			fmt.Sprintf("Expected *configuredProvider, got: %T. Please report this issue to the provider developers.", req.ProviderData),
+		)
+		return nil
+	}
+
+	return data.Client
 }

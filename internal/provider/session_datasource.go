@@ -161,21 +161,7 @@ func (d *SessionDataSource) Schema(ctx context.Context, req datasource.SchemaReq
 }
 
 func (d *SessionDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
-	// Prevent panic if the provider has not been configured.
-	if req.ProviderData == nil {
-		return
-	}
-
-	data, ok := req.ProviderData.(*configuredProvider)
-	if !ok {
-		resp.Diagnostics.AddError(
-			"Unexpected Resource Configure Type",
-			fmt.Sprintf("Expected *configuredProvider, got: %T. Please report this issue to the provider developers.", req.ProviderData),
-		)
-		return
-	}
-
-	d.client = data.Client
+	d.client = configureDataSourceClient(req, resp)
 }
 
 func (d *SessionDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
