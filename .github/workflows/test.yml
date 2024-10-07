@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v4.1.7
+      - uses: actions/checkout@v4.2.1
       - uses: actions/setup-go@v5.0.2
         with:
           go-version-file: "go.mod"
@@ -38,7 +38,7 @@ jobs:
   generate:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4.1.7
+      - uses: actions/checkout@v4.2.1
       - uses: actions/setup-go@v5.0.2
         with:
           go-version-file: "go.mod"
@@ -77,7 +77,7 @@ jobs:
       DOCKER_COMPOSE: docker compose --progress=plain
       BUILDKIT_PROGRESS: plain
     steps:
-      - uses: actions/checkout@v4.1.7
+      - uses: actions/checkout@v4.2.1
       - uses: actions/setup-go@v5.0.2
         with:
           go-version-file: "go.mod"
