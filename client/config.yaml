@@ -6,4 +6,5 @@ generate:
 output-options:
   include-tags:
     - plugins
+    - extras
 output: client.gen.go
