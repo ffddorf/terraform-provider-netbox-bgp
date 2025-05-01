@@ -66,12 +66,9 @@ jobs:
           - "1.8.*"
           - "1.9.*"
         netbox:
-          - "3.7.8"
-          - "4.0.7"
+          - "4.0.9"
         include:
-          - netbox: "3.7.8"
-            netbox_bgp: "0.12.1"
-          - netbox: "4.0.7"
+          - netbox: "4.0.9"
             netbox_bgp: "0.13.2"
     env:
       DOCKER_COMPOSE: docker compose --progress=plain
