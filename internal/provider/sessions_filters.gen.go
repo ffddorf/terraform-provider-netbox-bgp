@@ -71,7 +71,7 @@ func setBgpsessionListParamsFromFilter(filter Filter, params *client.PluginsBgpB
 		if err != nil {
 			return diag.NewErrorDiagnostic(
 				"Value Parse Error",
-				fmt.Sprintf("failed to parse as github.com/google/uuid.UUID value: %s", value.ValueString()),
+				fmt.Sprintf("failed to parse as github.com/oapi-codegen/runtime/types.UUID value: %s", value.ValueString()),
 			)
 		}
 		switch op {
@@ -296,7 +296,7 @@ func setBgpsessionListParamsFromFilter(filter Filter, params *client.PluginsBgpB
 		if err != nil {
 			return diag.NewErrorDiagnostic(
 				"Value Parse Error",
-				fmt.Sprintf("failed to parse as github.com/google/uuid.UUID value: %s", value.ValueString()),
+				fmt.Sprintf("failed to parse as github.com/oapi-codegen/runtime/types.UUID value: %s", value.ValueString()),
 			)
 		}
 		switch op {
@@ -489,7 +489,7 @@ func setBgpsessionListParamsFromFilter(filter Filter, params *client.PluginsBgpB
 		if err != nil {
 			return diag.NewErrorDiagnostic(
 				"Value Parse Error",
-				fmt.Sprintf("failed to parse as github.com/google/uuid.UUID value: %s", value.ValueString()),
+				fmt.Sprintf("failed to parse as github.com/oapi-codegen/runtime/types.UUID value: %s", value.ValueString()),
 			)
 		}
 		switch op {

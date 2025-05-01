@@ -14,7 +14,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-//go:generate sh -c "go run github.com/ffddorf/terraform-provider-netbox-bgp/cmd/gen-filters PluginsBgpBgpsessionListParams > bgpsessions_filters.gen.go && go run golang.org/x/tools/cmd/goimports -w bgpsessions_filters.gen.go"
+//go:generate sh -c "go run ../../cmd/gen-filters ../../client PluginsBgpBgpsessionListParams > sessions_filters.gen.go && go run golang.org/x/tools/cmd/goimports -w sessions_filters.gen.go"
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ datasource.DataSource = &SessionsDataSource{}

@@ -72,7 +72,7 @@ func addStringParser(w io.Writer, t types.Type) {
 		return
 	case "int":
 		fmt.Fprint(w, `v, err := strconv.Atoi(value.ValueString())`)
-	case "github.com/google/uuid.UUID":
+	case "github.com/google/uuid.UUID", "github.com/oapi-codegen/runtime/types.UUID":
 		fmt.Fprint(w, `v, err := uuid.Parse(value.ValueString())`)
 	default:
 		panic(fmt.Errorf("unhandled type: %s", typeName))
@@ -121,18 +121,27 @@ func set{{ .ShortName }}FromFilter(filter Filter, params *client.{{ .FullName }}
 var specialFields = []string{"limit", "offset", "ordering"}
 
 func main() {
-	paramsName := os.Args[1]
+	packagePath := os.Args[1]
+	paramsName := os.Args[2]
 
 	cfg := &packages.Config{
 		Mode: packages.NeedTypes,
 	}
-	pkgs, err := packages.Load(cfg, "github.com/ffddorf/terraform-provider-netbox-bgp/client")
+	pkgs, err := packages.Load(cfg, packagePath)
 	if err != nil {
 		panic(err)
 	}
-	pkg := pkgs[0]
-	scope := pkg.Types.Scope()
 
+	pkg := pkgs[0]
+	if len(pkg.Errors) > 0 {
+		fmt.Fprintf(os.Stderr, "Errors encountered while loading package:\n")
+		for _, err := range pkg.Errors {
+			fmt.Fprintf(os.Stderr, "%+v\n", err)
+		}
+		os.Exit(1)
+	}
+
+	scope := pkg.Types.Scope()
 	paramsObj := scope.Lookup(paramsName)
 	if paramsObj == nil {
 		panic(fmt.Errorf("type not found: %s", paramsName))
