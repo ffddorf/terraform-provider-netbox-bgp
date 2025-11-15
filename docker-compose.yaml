@@ -1,5 +1,4 @@
 ---
-version: "3.7"
 services:
   postgres:
     image: postgres:14-alpine
@@ -11,10 +10,10 @@ services:
     image: redis:6-alpine
   netbox: &netbox-base
     build:
-      context: tools/integration
+      context: integration
       args:
-        NETBOX_VERSION: ${NETBOX_VERSION:-4.0.9}
-        NETBOX_BGP_VERSION: ${NETBOX_BGP_VERSION:-0.13.2}
+        NETBOX_VERSION: ${NETBOX_VERSION:-4.4.6}
+        NETBOX_BGP_VERSION: ${NETBOX_BGP_VERSION:-0.17.0}
     depends_on:
       - postgres
       - redis
@@ -43,7 +42,7 @@ services:
     volumes:
       - netbox-media:/media
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/api/status/"]
+      test: ["CMD", "curl", "-f", "http://localhost:8080/login/"]
       interval: 10s
       timeout: 10s
       retries: 20
