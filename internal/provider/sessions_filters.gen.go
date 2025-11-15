@@ -12,8 +12,8 @@ import (
 )
 
 var (
-	BgpsessionListParamsFields    = []string{"by_local_address", "by_remote_address", "created", "created_by_request", "description", "device", "device_id", "export_policies", "id", "import_policies", "last_updated", "local_address", "local_address_id", "local_as", "local_as_id", "modified_by_request", "name", "peer_group", "q", "remote_address", "remote_address_id", "remote_as", "remote_as_id", "site", "site_id", "status", "tag", "tenant", "updated_by_request"}
-	BgpsessionListParamsOperators = []string{"empty", "eq", "gt", "gte", "ic", "ie", "iew", "isw", "lt", "lte", "n", "nic", "nie", "niew", "nisw"}
+	BgpsessionListParamsFields    = []string{"by_local_address", "by_remote_address", "created", "created_by_request", "description", "device", "device_id", "export_policies", "id", "import_policies", "last_updated", "local_address", "local_address_id", "local_as", "local_as_id", "modified_by_request", "name", "peer_group", "q", "remote_address", "remote_address_id", "remote_as", "remote_as_id", "site", "site_id", "status", "tag", "tag_id", "tenant", "tenant_group", "tenant_group_id", "tenant_id", "updated_by_request", "virtualmachine", "virtualmachine_id"}
+	BgpsessionListParamsOperators = []string{"empty", "eq", "gt", "gte", "ic", "ie", "iew", "iregex", "isw", "lt", "lte", "n", "nic", "nie", "niew", "nisw", "regex"}
 )
 
 func setBgpsessionListParamsFromFilter(filter Filter, params *client.PluginsBgpBgpsessionListParams) diag.Diagnostic {
@@ -28,7 +28,7 @@ func setBgpsessionListParamsFromFilter(filter Filter, params *client.PluginsBgpB
 		v := value.ValueString()
 		switch op {
 		case "eq":
-			params.ByLocalAddress = &v
+			params.ByLocalAddress = ptr(v)
 		default:
 			return unexpectedOperator(op, name)
 		}
@@ -36,7 +36,7 @@ func setBgpsessionListParamsFromFilter(filter Filter, params *client.PluginsBgpB
 		v := value.ValueString()
 		switch op {
 		case "eq":
-			params.ByRemoteAddress = &v
+			params.ByRemoteAddress = ptr(v)
 		default:
 			return unexpectedOperator(op, name)
 		}
@@ -50,19 +50,19 @@ func setBgpsessionListParamsFromFilter(filter Filter, params *client.PluginsBgpB
 		}
 		switch op {
 		case "eq":
-			params.Created = appendPointerSlice(params.Created, v)
+			params.Created = appendPointerSlice(params.Created, time.Time(v))
 		case "empty":
-			params.CreatedEmpty = appendPointerSlice(params.CreatedEmpty, v)
+			params.CreatedEmpty = appendPointerSlice(params.CreatedEmpty, time.Time(v))
 		case "gt":
-			params.CreatedGt = appendPointerSlice(params.CreatedGt, v)
+			params.CreatedGt = appendPointerSlice(params.CreatedGt, time.Time(v))
 		case "gte":
-			params.CreatedGte = appendPointerSlice(params.CreatedGte, v)
+			params.CreatedGte = appendPointerSlice(params.CreatedGte, time.Time(v))
 		case "lt":
-			params.CreatedLt = appendPointerSlice(params.CreatedLt, v)
+			params.CreatedLt = appendPointerSlice(params.CreatedLt, time.Time(v))
 		case "lte":
-			params.CreatedLte = appendPointerSlice(params.CreatedLte, v)
+			params.CreatedLte = appendPointerSlice(params.CreatedLte, time.Time(v))
 		case "n":
-			params.CreatedN = appendPointerSlice(params.CreatedN, v)
+			params.CreatedN = appendPointerSlice(params.CreatedN, time.Time(v))
 		default:
 			return unexpectedOperator(op, name)
 		}
@@ -76,7 +76,7 @@ func setBgpsessionListParamsFromFilter(filter Filter, params *client.PluginsBgpB
 		}
 		switch op {
 		case "eq":
-			params.CreatedByRequest = &v
+			params.CreatedByRequest = ptr(v)
 		default:
 			return unexpectedOperator(op, name)
 		}
@@ -93,13 +93,15 @@ func setBgpsessionListParamsFromFilter(filter Filter, params *client.PluginsBgpB
 					fmt.Sprintf("failed to parse as bool value: %s", value.ValueString()),
 				)
 			}
-			params.DescriptionEmpty = &v
+			params.DescriptionEmpty = ptr(v)
 		case "ic":
 			params.DescriptionIc = appendPointerSlice(params.DescriptionIc, v)
 		case "ie":
 			params.DescriptionIe = appendPointerSlice(params.DescriptionIe, v)
 		case "iew":
 			params.DescriptionIew = appendPointerSlice(params.DescriptionIew, v)
+		case "iregex":
+			params.DescriptionIregex = appendPointerSlice(params.DescriptionIregex, v)
 		case "isw":
 			params.DescriptionIsw = appendPointerSlice(params.DescriptionIsw, v)
 		case "n":
@@ -112,6 +114,8 @@ func setBgpsessionListParamsFromFilter(filter Filter, params *client.PluginsBgpB
 			params.DescriptionNiew = appendPointerSlice(params.DescriptionNiew, v)
 		case "nisw":
 			params.DescriptionNisw = appendPointerSlice(params.DescriptionNisw, v)
+		case "regex":
+			params.DescriptionRegex = appendPointerSlice(params.DescriptionRegex, v)
 		default:
 			return unexpectedOperator(op, name)
 		}
@@ -126,13 +130,7 @@ func setBgpsessionListParamsFromFilter(filter Filter, params *client.PluginsBgpB
 			return unexpectedOperator(op, name)
 		}
 	case "device_id":
-		v, err := strconv.Atoi(value.ValueString())
-		if err != nil {
-			return diag.NewErrorDiagnostic(
-				"Value Parse Error",
-				fmt.Sprintf("failed to parse as int value: %s", value.ValueString()),
-			)
-		}
+		v := value.ValueString()
 		switch op {
 		case "eq":
 			params.DeviceId = appendPointerSlice(params.DeviceId, v)
@@ -177,7 +175,7 @@ func setBgpsessionListParamsFromFilter(filter Filter, params *client.PluginsBgpB
 					fmt.Sprintf("failed to parse as bool value: %s", value.ValueString()),
 				)
 			}
-			params.IdEmpty = &v
+			params.IdEmpty = ptr(v)
 		case "gt":
 			params.IdGt = appendPointerSlice(params.IdGt, v)
 		case "gte":
@@ -217,19 +215,19 @@ func setBgpsessionListParamsFromFilter(filter Filter, params *client.PluginsBgpB
 		}
 		switch op {
 		case "eq":
-			params.LastUpdated = appendPointerSlice(params.LastUpdated, v)
+			params.LastUpdated = appendPointerSlice(params.LastUpdated, time.Time(v))
 		case "empty":
-			params.LastUpdatedEmpty = appendPointerSlice(params.LastUpdatedEmpty, v)
+			params.LastUpdatedEmpty = appendPointerSlice(params.LastUpdatedEmpty, time.Time(v))
 		case "gt":
-			params.LastUpdatedGt = appendPointerSlice(params.LastUpdatedGt, v)
+			params.LastUpdatedGt = appendPointerSlice(params.LastUpdatedGt, time.Time(v))
 		case "gte":
-			params.LastUpdatedGte = appendPointerSlice(params.LastUpdatedGte, v)
+			params.LastUpdatedGte = appendPointerSlice(params.LastUpdatedGte, time.Time(v))
 		case "lt":
-			params.LastUpdatedLt = appendPointerSlice(params.LastUpdatedLt, v)
+			params.LastUpdatedLt = appendPointerSlice(params.LastUpdatedLt, time.Time(v))
 		case "lte":
-			params.LastUpdatedLte = appendPointerSlice(params.LastUpdatedLte, v)
+			params.LastUpdatedLte = appendPointerSlice(params.LastUpdatedLte, time.Time(v))
 		case "n":
-			params.LastUpdatedN = appendPointerSlice(params.LastUpdatedN, v)
+			params.LastUpdatedN = appendPointerSlice(params.LastUpdatedN, time.Time(v))
 		default:
 			return unexpectedOperator(op, name)
 		}
@@ -244,13 +242,7 @@ func setBgpsessionListParamsFromFilter(filter Filter, params *client.PluginsBgpB
 			return unexpectedOperator(op, name)
 		}
 	case "local_address_id":
-		v, err := strconv.Atoi(value.ValueString())
-		if err != nil {
-			return diag.NewErrorDiagnostic(
-				"Value Parse Error",
-				fmt.Sprintf("failed to parse as int value: %s", value.ValueString()),
-			)
-		}
+		v := value.ValueString()
 		switch op {
 		case "eq":
 			params.LocalAddressId = appendPointerSlice(params.LocalAddressId, v)
@@ -260,13 +252,7 @@ func setBgpsessionListParamsFromFilter(filter Filter, params *client.PluginsBgpB
 			return unexpectedOperator(op, name)
 		}
 	case "local_as":
-		v, err := strconv.ParseInt(value.ValueString(), 10, 64)
-		if err != nil {
-			return diag.NewErrorDiagnostic(
-				"Value Parse Error",
-				fmt.Sprintf("failed to parse as int64 value: %s", value.ValueString()),
-			)
-		}
+		v := value.ValueString()
 		switch op {
 		case "eq":
 			params.LocalAs = appendPointerSlice(params.LocalAs, v)
@@ -276,13 +262,7 @@ func setBgpsessionListParamsFromFilter(filter Filter, params *client.PluginsBgpB
 			return unexpectedOperator(op, name)
 		}
 	case "local_as_id":
-		v, err := strconv.Atoi(value.ValueString())
-		if err != nil {
-			return diag.NewErrorDiagnostic(
-				"Value Parse Error",
-				fmt.Sprintf("failed to parse as int value: %s", value.ValueString()),
-			)
-		}
+		v := value.ValueString()
 		switch op {
 		case "eq":
 			params.LocalAsId = appendPointerSlice(params.LocalAsId, v)
@@ -301,7 +281,7 @@ func setBgpsessionListParamsFromFilter(filter Filter, params *client.PluginsBgpB
 		}
 		switch op {
 		case "eq":
-			params.ModifiedByRequest = &v
+			params.ModifiedByRequest = ptr(v)
 		default:
 			return unexpectedOperator(op, name)
 		}
@@ -318,13 +298,15 @@ func setBgpsessionListParamsFromFilter(filter Filter, params *client.PluginsBgpB
 					fmt.Sprintf("failed to parse as bool value: %s", value.ValueString()),
 				)
 			}
-			params.NameEmpty = &v
+			params.NameEmpty = ptr(v)
 		case "ic":
 			params.NameIc = appendPointerSlice(params.NameIc, v)
 		case "ie":
 			params.NameIe = appendPointerSlice(params.NameIe, v)
 		case "iew":
 			params.NameIew = appendPointerSlice(params.NameIew, v)
+		case "iregex":
+			params.NameIregex = appendPointerSlice(params.NameIregex, v)
 		case "isw":
 			params.NameIsw = appendPointerSlice(params.NameIsw, v)
 		case "n":
@@ -337,6 +319,8 @@ func setBgpsessionListParamsFromFilter(filter Filter, params *client.PluginsBgpB
 			params.NameNiew = appendPointerSlice(params.NameNiew, v)
 		case "nisw":
 			params.NameNisw = appendPointerSlice(params.NameNisw, v)
+		case "regex":
+			params.NameRegex = appendPointerSlice(params.NameRegex, v)
 		default:
 			return unexpectedOperator(op, name)
 		}
@@ -360,7 +344,7 @@ func setBgpsessionListParamsFromFilter(filter Filter, params *client.PluginsBgpB
 		v := value.ValueString()
 		switch op {
 		case "eq":
-			params.Q = &v
+			params.Q = ptr(v)
 		default:
 			return unexpectedOperator(op, name)
 		}
@@ -375,13 +359,7 @@ func setBgpsessionListParamsFromFilter(filter Filter, params *client.PluginsBgpB
 			return unexpectedOperator(op, name)
 		}
 	case "remote_address_id":
-		v, err := strconv.Atoi(value.ValueString())
-		if err != nil {
-			return diag.NewErrorDiagnostic(
-				"Value Parse Error",
-				fmt.Sprintf("failed to parse as int value: %s", value.ValueString()),
-			)
-		}
+		v := value.ValueString()
 		switch op {
 		case "eq":
 			params.RemoteAddressId = appendPointerSlice(params.RemoteAddressId, v)
@@ -391,13 +369,7 @@ func setBgpsessionListParamsFromFilter(filter Filter, params *client.PluginsBgpB
 			return unexpectedOperator(op, name)
 		}
 	case "remote_as":
-		v, err := strconv.ParseInt(value.ValueString(), 10, 64)
-		if err != nil {
-			return diag.NewErrorDiagnostic(
-				"Value Parse Error",
-				fmt.Sprintf("failed to parse as int64 value: %s", value.ValueString()),
-			)
-		}
+		v := value.ValueString()
 		switch op {
 		case "eq":
 			params.RemoteAs = appendPointerSlice(params.RemoteAs, v)
@@ -407,13 +379,7 @@ func setBgpsessionListParamsFromFilter(filter Filter, params *client.PluginsBgpB
 			return unexpectedOperator(op, name)
 		}
 	case "remote_as_id":
-		v, err := strconv.Atoi(value.ValueString())
-		if err != nil {
-			return diag.NewErrorDiagnostic(
-				"Value Parse Error",
-				fmt.Sprintf("failed to parse as int value: %s", value.ValueString()),
-			)
-		}
+		v := value.ValueString()
 		switch op {
 		case "eq":
 			params.RemoteAsId = appendPointerSlice(params.RemoteAsId, v)
@@ -433,13 +399,7 @@ func setBgpsessionListParamsFromFilter(filter Filter, params *client.PluginsBgpB
 			return unexpectedOperator(op, name)
 		}
 	case "site_id":
-		v, err := strconv.Atoi(value.ValueString())
-		if err != nil {
-			return diag.NewErrorDiagnostic(
-				"Value Parse Error",
-				fmt.Sprintf("failed to parse as int value: %s", value.ValueString()),
-			)
-		}
+		v := value.ValueString()
 		switch op {
 		case "eq":
 			params.SiteId = appendPointerSlice(params.SiteId, v)
@@ -450,11 +410,10 @@ func setBgpsessionListParamsFromFilter(filter Filter, params *client.PluginsBgpB
 		}
 	case "status":
 		v := value.ValueString()
+
 		switch op {
 		case "eq":
-			params.Status = &v
-		case "n":
-			params.StatusN = &v
+			params.Status = ptr(client.PluginsBgpBgpsessionListParamsStatus(v))
 		default:
 			return unexpectedOperator(op, name)
 		}
@@ -468,7 +427,47 @@ func setBgpsessionListParamsFromFilter(filter Filter, params *client.PluginsBgpB
 		default:
 			return unexpectedOperator(op, name)
 		}
+	case "tag_id":
+		v := value.ValueString()
+		switch op {
+		case "eq":
+			params.TagId = appendPointerSlice(params.TagId, v)
+		case "n":
+			params.TagIdN = appendPointerSlice(params.TagIdN, v)
+		default:
+			return unexpectedOperator(op, name)
+		}
 	case "tenant":
+		v := value.ValueString()
+		switch op {
+		case "eq":
+			params.Tenant = appendPointerSlice(params.Tenant, v)
+		case "n":
+			params.TenantN = appendPointerSlice(params.TenantN, v)
+		default:
+			return unexpectedOperator(op, name)
+		}
+	case "tenant_group":
+		v := value.ValueString()
+		switch op {
+		case "eq":
+			params.TenantGroup = appendPointerSlice(params.TenantGroup, v)
+		case "n":
+			params.TenantGroupN = appendPointerSlice(params.TenantGroupN, v)
+		default:
+			return unexpectedOperator(op, name)
+		}
+	case "tenant_group_id":
+		v := value.ValueString()
+		switch op {
+		case "eq":
+			params.TenantGroupId = appendPointerSlice(params.TenantGroupId, v)
+		case "n":
+			params.TenantGroupIdN = appendPointerSlice(params.TenantGroupIdN, v)
+		default:
+			return unexpectedOperator(op, name)
+		}
+	case "tenant_id":
 		v, err := strconv.Atoi(value.ValueString())
 		if err != nil {
 			return diag.NewErrorDiagnostic(
@@ -478,9 +477,9 @@ func setBgpsessionListParamsFromFilter(filter Filter, params *client.PluginsBgpB
 		}
 		switch op {
 		case "eq":
-			params.Tenant = &v
+			params.TenantId = appendPointerSlice(params.TenantId, v)
 		case "n":
-			params.TenantN = &v
+			params.TenantIdN = appendPointerSlice(params.TenantIdN, v)
 		default:
 			return unexpectedOperator(op, name)
 		}
@@ -494,7 +493,27 @@ func setBgpsessionListParamsFromFilter(filter Filter, params *client.PluginsBgpB
 		}
 		switch op {
 		case "eq":
-			params.UpdatedByRequest = &v
+			params.UpdatedByRequest = ptr(v)
+		default:
+			return unexpectedOperator(op, name)
+		}
+	case "virtualmachine":
+		v := value.ValueString()
+		switch op {
+		case "eq":
+			params.Virtualmachine = appendPointerSlice(params.Virtualmachine, v)
+		case "n":
+			params.VirtualmachineN = appendPointerSlice(params.VirtualmachineN, v)
+		default:
+			return unexpectedOperator(op, name)
+		}
+	case "virtualmachine_id":
+		v := value.ValueString()
+		switch op {
+		case "eq":
+			params.VirtualmachineId = appendPointerSlice(params.VirtualmachineId, v)
+		case "n":
+			params.VirtualmachineIdN = appendPointerSlice(params.VirtualmachineIdN, v)
 		default:
 			return unexpectedOperator(op, name)
 		}

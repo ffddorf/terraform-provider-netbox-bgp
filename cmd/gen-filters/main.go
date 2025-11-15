@@ -75,6 +75,10 @@ func addStringParser(w io.Writer, t types.Type) {
 	case "github.com/google/uuid.UUID", "github.com/oapi-codegen/runtime/types.UUID":
 		fmt.Fprint(w, `v, err := uuid.Parse(value.ValueString())`)
 	default:
+		if t.Underlying() != t {
+			addStringParser(w, t.Underlying())
+			return
+		}
 		panic(fmt.Errorf("unhandled type: %s", typeName))
 	}
 	fmt.Fprintf(w, `
@@ -231,18 +235,26 @@ func main() {
 			}
 
 			fmt.Fprintf(&output, `params.%s = `, op.goFieldName)
+			valName := "v"
+			if opType.Underlying() != opType {
+				if opTypeNamed, ok := opType.(*types.Named); ok {
+					valName = opTypeNamed.Obj().Pkg().Name() + "." + opTypeNamed.Obj().Name() + "(v)"
+				}
+			}
 			if isSlice {
 				if isPointer {
 					output.WriteString("appendPointerSlice(")
 				} else {
 					output.WriteString("append(")
 				}
-				fmt.Fprintf(&output, "params.%s, v)", op.goFieldName)
+				fmt.Fprintf(&output, "params.%s, %s)", op.goFieldName, valName)
 			} else {
 				if isPointer {
-					output.WriteString("&v")
+					output.WriteString("ptr(")
+					output.WriteString(valName)
+					output.WriteByte(')')
 				} else {
-					output.WriteString("v")
+					output.WriteString(valName)
 				}
 			}
 
