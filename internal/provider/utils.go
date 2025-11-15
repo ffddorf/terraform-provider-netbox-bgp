@@ -13,6 +13,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
+func ptr[V any](val V) *V {
+	return &val
+}
+
 func toIntPointer(from *int64) *int {
 	if from == nil {
 		return nil
@@ -50,6 +54,24 @@ func maybeInt64Value(in *int) types.Int64 {
 		return types.Int64Null()
 	}
 	return types.Int64Value(int64(*in))
+}
+
+type ForeignIDSetter interface {
+	FromForeignID(client.ForeignID) error
+}
+
+type ForeignIDSetterComparable interface {
+	ForeignIDSetter
+	comparable
+}
+
+func setForeignID[T any, S interface {
+	*T
+	ForeignIDSetterComparable
+}](target S, val types.Int64) {
+	var def T
+	target = &def
+	_ = target.FromForeignID(client.ForeignID(val.ValueInt64()))
 }
 
 func fromInt64Value(in types.Int64) *int {

@@ -70,14 +70,14 @@ func (m *SessionResourceModel) ToAPIModel(ctx context.Context, diags diag.Diagno
 		status := client.WritableBGPSessionRequestStatus(m.Status.ValueString())
 		p.Status = &status
 	}
-	p.Site = fromInt64Value(m.SiteID)
-	p.Tenant = fromInt64Value(m.TenantID)
-	p.Device = fromInt64Value(m.DeviceID)
-	p.LocalAddress = *fromInt64Value(m.LocalAddressID)
-	p.RemoteAddress = *fromInt64Value(m.RemoteAddressID)
-	p.LocalAs = *fromInt64Value(m.LocalASID)
-	p.RemoteAs = *fromInt64Value(m.RemoteASID)
-	p.PeerGroup = fromInt64Value(m.PeerGroupID)
+	setForeignID(p.Site, m.SiteID)
+	setForeignID(p.Tenant, m.TenantID)
+	setForeignID(p.Device, m.DeviceID)
+	setForeignID(&p.LocalAddress, m.LocalAddressID)
+	setForeignID(&p.RemoteAddress, m.RemoteAddressID)
+	setForeignID(&p.LocalAs, m.LocalASID)
+	setForeignID(&p.RemoteAs, m.RemoteASID)
+	setForeignID(p.PeerGroup, m.PeerGroupID)
 	if !m.ImportPolicyIDs.IsNull() {
 		policies, ds := toIntListPointer(ctx, m.ImportPolicyIDs)
 		for _, d := range ds {
@@ -92,8 +92,8 @@ func (m *SessionResourceModel) ToAPIModel(ctx context.Context, diags diag.Diagno
 		}
 		p.ExportPolicies = &policies
 	}
-	p.PrefixListIn = fromInt64Value(m.PrefixListInID)
-	p.PrefixListOut = fromInt64Value(m.PrefixListOutID)
+	setForeignID(p.PrefixListIn, m.PrefixListInID)
+	setForeignID(p.PrefixListOut, m.PrefixListOutID)
 
 	p.Tags = TagsForAPIModel(ctx, m.Tags, diags)
 

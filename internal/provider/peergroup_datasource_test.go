@@ -17,9 +17,10 @@ func TestAccPeerGroupDataSource(t *testing.T) {
 
 	c := testClient(t)
 	comments := "This will be great!"
+	description := "For testing"
 	r, err := c.PluginsBgpBgppeergroupCreate(ctx, client.BGPPeerGroupRequest{
 		Name:        "Example Peer Group",
-		Description: "For testing",
+		Description: &description,
 		Comments:    &comments,
 	})
 	require.NoError(t, err)

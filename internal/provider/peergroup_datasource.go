@@ -32,17 +32,17 @@ type PeerGroupDataSourceModel struct {
 func (pgm *PeerGroupDataSourceModel) FillFromAPIModel(resp *client.BGPPeerGroup) {
 	pgm.ID = maybeInt64Value(resp.Id)
 	pgm.Name = maybeStringValue(&resp.Name)
-	pgm.Description = maybeStringValue(&resp.Description)
+	pgm.Description = maybeStringValue(resp.Description)
 	pgm.Comments = maybeStringValue(resp.Comments)
 
 	if resp.ExportPolicies != nil {
-		for _, id := range *resp.ExportPolicies {
-			pgm.ExportPolicyIDs = append(pgm.ExportPolicyIDs, types.Int64Value(int64(id)))
+		for _, policy := range *resp.ExportPolicies {
+			pgm.ExportPolicyIDs = append(pgm.ExportPolicyIDs, maybeInt64Value(policy.Id))
 		}
 	}
 	if resp.ImportPolicies != nil && len(*resp.ImportPolicies) > 0 {
-		for _, id := range *resp.ImportPolicies {
-			pgm.ImportPolicyIDs = append(pgm.ImportPolicyIDs, types.Int64Value(int64(id)))
+		for _, policy := range *resp.ImportPolicies {
+			pgm.ImportPolicyIDs = append(pgm.ImportPolicyIDs, maybeInt64Value(policy.Id))
 		}
 	}
 }

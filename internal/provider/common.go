@@ -59,8 +59,8 @@ type NestedTenant struct {
 	URL     types.String `tfsdk:"url"`
 }
 
-func (tfo NestedSite) ToAPIModel() client.NestedSite {
-	return client.NestedSite{
+func (tfo NestedSite) ToAPIModel() client.BriefSite {
+	return client.BriefSite{
 		Id:      toIntPointer(tfo.ID.ValueInt64Pointer()),
 		Url:     tfo.URL.ValueStringPointer(),
 		Display: tfo.Display.ValueStringPointer(),
@@ -69,8 +69,8 @@ func (tfo NestedSite) ToAPIModel() client.NestedSite {
 	}
 }
 
-func (tfo NestedASN) ToAPIModel() client.NestedASN {
-	return client.NestedASN{
+func (tfo NestedASN) ToAPIModel() client.BriefASN {
+	return client.BriefASN{
 		Id:      toIntPointer(tfo.ID.ValueInt64Pointer()),
 		Url:     tfo.URL.ValueStringPointer(),
 		Display: tfo.Display.ValueStringPointer(),
@@ -78,18 +78,31 @@ func (tfo NestedASN) ToAPIModel() client.NestedASN {
 	}
 }
 
-func (tfo NestedIPAddress) ToAPIModel() client.NestedIPAddress {
-	return client.NestedIPAddress{
+func (tfo NestedIPAddress) ToAPIModel() client.BriefIPAddress {
+	var fam client.BriefIPAddressFamilyValue
+	switch tfo.Family.ValueInt64() {
+	case 4:
+		fam = client.BriefIPAddressFamilyValueN4
+	case 6:
+		fam = client.BriefIPAddressFamilyValueN6
+	}
+	ipa := client.BriefIPAddress{
 		Id:      toIntPointer(tfo.ID.ValueInt64Pointer()),
 		Url:     tfo.URL.ValueStringPointer(),
 		Display: tfo.Display.ValueStringPointer(),
-		Family:  toIntPointer(tfo.Family.ValueInt64Pointer()),
+		Family: &struct {
+			Label *client.BriefIPAddressFamilyLabel "json:\"label,omitempty\""
+			Value *client.BriefIPAddressFamilyValue "json:\"value,omitempty\""
+		}{
+			Value: &fam,
+		},
 		Address: tfo.Address.ValueString(),
 	}
+	return ipa
 }
 
-func (tfo NestedDevice) ToAPIModel() client.NestedDevice {
-	return client.NestedDevice{
+func (tfo NestedDevice) ToAPIModel() client.BriefDevice {
+	return client.BriefDevice{
 		Id:      toIntPointer(tfo.ID.ValueInt64Pointer()),
 		Url:     tfo.URL.ValueStringPointer(),
 		Display: tfo.Display.ValueStringPointer(),
@@ -97,8 +110,8 @@ func (tfo NestedDevice) ToAPIModel() client.NestedDevice {
 	}
 }
 
-func (tfo NestedBGPPeerGroup) ToAPIModel() client.NestedBGPPeerGroup {
-	return client.NestedBGPPeerGroup{
+func (tfo NestedBGPPeerGroup) ToAPIModel() client.BriefBGPPeerGroup {
+	return client.BriefBGPPeerGroup{
 		Id:          toIntPointer(tfo.ID.ValueInt64Pointer()),
 		Url:         tfo.URL.ValueStringPointer(),
 		Display:     tfo.Display.ValueStringPointer(),
@@ -107,8 +120,8 @@ func (tfo NestedBGPPeerGroup) ToAPIModel() client.NestedBGPPeerGroup {
 	}
 }
 
-func (tfo NestedPrefixList) ToAPIModel() client.NestedPrefixList {
-	return client.NestedPrefixList{
+func (tfo NestedPrefixList) ToAPIModel() client.BriefPrefixList {
+	return client.BriefPrefixList{
 		Id:      toIntPointer(tfo.ID.ValueInt64Pointer()),
 		Url:     tfo.URL.ValueStringPointer(),
 		Display: tfo.Display.ValueStringPointer(),
@@ -116,8 +129,8 @@ func (tfo NestedPrefixList) ToAPIModel() client.NestedPrefixList {
 	}
 }
 
-func (tfo NestedTenant) ToAPIModel() client.NestedTenant {
-	return client.NestedTenant{
+func (tfo NestedTenant) ToAPIModel() client.BriefTenant {
+	return client.BriefTenant{
 		Id:      toIntPointer(tfo.ID.ValueInt64Pointer()),
 		Url:     tfo.URL.ValueStringPointer(),
 		Display: tfo.Display.ValueStringPointer(),
@@ -126,7 +139,7 @@ func (tfo NestedTenant) ToAPIModel() client.NestedTenant {
 	}
 }
 
-func NestedSiteFromAPI(resp *client.NestedSite) *NestedSite {
+func NestedSiteFromAPI(resp *client.BriefSite) *NestedSite {
 	if resp == nil {
 		return nil
 	}
@@ -139,7 +152,7 @@ func NestedSiteFromAPI(resp *client.NestedSite) *NestedSite {
 	return tfo
 }
 
-func NestedASNFromAPI(resp *client.NestedASN) *NestedASN {
+func NestedASNFromAPI(resp *client.BriefASN) *NestedASN {
 	if resp == nil {
 		return nil
 	}
@@ -151,7 +164,7 @@ func NestedASNFromAPI(resp *client.NestedASN) *NestedASN {
 	return tfo
 }
 
-func NestedIPAddressFromAPI(resp *client.NestedIPAddress) *NestedIPAddress {
+func NestedIPAddressFromAPI(resp *client.BriefIPAddress) *NestedIPAddress {
 	if resp == nil {
 		return nil
 	}
@@ -159,12 +172,12 @@ func NestedIPAddressFromAPI(resp *client.NestedIPAddress) *NestedIPAddress {
 	tfo.ID = types.Int64Value(int64(*resp.Id))
 	tfo.URL = maybeStringValue(resp.Url)
 	tfo.Display = maybeStringValue(resp.Display)
-	tfo.Family = maybeInt64Value(resp.Family)
+	tfo.Family = maybeInt64Value((*int)(resp.Family.Value))
 	tfo.Address = types.StringValue(resp.Address)
 	return tfo
 }
 
-func NestedDeviceFromAPI(resp *client.NestedDevice) *NestedDevice {
+func NestedDeviceFromAPI(resp *client.BriefDevice) *NestedDevice {
 	if resp == nil {
 		return nil
 	}
@@ -176,7 +189,7 @@ func NestedDeviceFromAPI(resp *client.NestedDevice) *NestedDevice {
 	return tfo
 }
 
-func NestedBGPPeerGroupFromAPI(resp *client.NestedBGPPeerGroup) *NestedBGPPeerGroup {
+func NestedBGPPeerGroupFromAPI(resp *client.BriefBGPPeerGroup) *NestedBGPPeerGroup {
 	if resp == nil {
 		return nil
 	}
@@ -189,7 +202,7 @@ func NestedBGPPeerGroupFromAPI(resp *client.NestedBGPPeerGroup) *NestedBGPPeerGr
 	return tfo
 }
 
-func NestedPrefixListFromAPI(resp *client.NestedPrefixList) *NestedPrefixList {
+func NestedPrefixListFromAPI(resp *client.BriefPrefixList) *NestedPrefixList {
 	if resp == nil {
 		return nil
 	}
@@ -201,7 +214,7 @@ func NestedPrefixListFromAPI(resp *client.NestedPrefixList) *NestedPrefixList {
 	return tfo
 }
 
-func NestedTenantFromAPI(resp *client.NestedTenant) *NestedTenant {
+func NestedTenantFromAPI(resp *client.BriefTenant) *NestedTenant {
 	if resp == nil {
 		return nil
 	}

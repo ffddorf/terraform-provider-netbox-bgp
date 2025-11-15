@@ -137,7 +137,7 @@ func (d *SessionsDataSource) Read(ctx context.Context, req datasource.ReadReques
 			return
 		}
 		if res.JSON200.Results != nil {
-			for _, sess := range *res.JSON200.Results {
+			for _, sess := range res.JSON200.Results {
 				m := SessionDataSourceModel{}
 				m.FillFromAPIModel(ctx, &sess, resp.Diagnostics)
 				if resp.Diagnostics.HasError() {

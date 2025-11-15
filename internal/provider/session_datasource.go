@@ -54,13 +54,13 @@ func (m *SessionDataSourceModel) FillFromAPIModel(ctx context.Context, resp *cli
 	m.Description = maybeStringValue(resp.Description)
 	m.Device = NestedDeviceFromAPI(resp.Device)
 	if resp.ExportPolicies != nil {
-		for _, id := range *resp.ExportPolicies {
-			m.ExportPolicyIDs = append(m.ExportPolicyIDs, types.Int64Value(int64(id)))
+		for _, policy := range *resp.ExportPolicies {
+			m.ExportPolicyIDs = append(m.ExportPolicyIDs, maybeInt64Value(policy.Id))
 		}
 	}
 	if resp.ImportPolicies != nil && len(*resp.ImportPolicies) > 0 {
-		for _, id := range *resp.ImportPolicies {
-			m.ImportPolicyIDs = append(m.ImportPolicyIDs, types.Int64Value(int64(id)))
+		for _, policy := range *resp.ImportPolicies {
+			m.ImportPolicyIDs = append(m.ImportPolicyIDs, maybeInt64Value(policy.Id))
 		}
 	}
 	m.LocalAddress = NestedIPAddressFromAPI(&resp.LocalAddress)
