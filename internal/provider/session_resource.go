@@ -111,6 +111,8 @@ func (r *SessionResource) Read(ctx context.Context, req resource.ReadRequest, re
 func (r *SessionResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var data resource_session.SessionModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+	var id int64
+	resp.Diagnostics.Append(req.State.GetAttribute(ctx, path.Root("id"), &id)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -119,7 +121,7 @@ func (r *SessionResource) Update(ctx context.Context, req resource.UpdateRequest
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	httpRes, err := r.client.PluginsBgpSessionUpdate(ctx, int(data.Id.ValueInt64()), params)
+	httpRes, err := r.client.PluginsBgpSessionUpdate(ctx, int(id), params)
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("failed to update session: %s", err))
 		return
