@@ -19,7 +19,7 @@ import (
 	"github.com/sethvargo/go-envconfig"
 )
 
-//go:generate go run github.com/hashicorp/terraform-plugin-codegen-framework/cmd/tfplugingen-framework generate resources --input ../../client/resource_spec.json  --output ../
+//go:generate go tool tfplugingen-framework generate resources --input ../../client/resource_spec.json  --output ../
 
 // Ensure NetboxBGPProvider satisfies various provider interfaces.
 var _ provider.Provider = &NetboxBGPProvider{}
