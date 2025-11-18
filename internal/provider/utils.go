@@ -9,29 +9,10 @@ import (
 	"github.com/ffddorf/terraform-provider-netbox-bgp/client"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 func ptr[V any](val V) *V {
 	return &val
-}
-
-type ForeignIDSetter interface {
-	FromForeignID(client.ForeignID) error
-}
-
-type ForeignIDSetterComparable interface {
-	ForeignIDSetter
-	comparable
-}
-
-func setForeignID[T any, S interface {
-	*T
-	ForeignIDSetterComparable
-}](target S, val types.Int64) {
-	var def T
-	target = &def
-	_ = target.FromForeignID(client.ForeignID(val.ValueInt64()))
 }
 
 func httpError(res *http.Response, body []byte) string {

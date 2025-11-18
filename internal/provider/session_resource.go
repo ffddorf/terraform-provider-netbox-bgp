@@ -7,11 +7,8 @@ import (
 
 	"github.com/ffddorf/terraform-provider-netbox-bgp/client"
 	"github.com/ffddorf/terraform-provider-netbox-bgp/internal/resource_session"
-	"github.com/ffddorf/terraform-provider-netbox-bgp/internal/utils"
-	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
@@ -26,125 +23,6 @@ func NewSessionResource() resource.Resource {
 // SessionResource defines the resource implementation.
 type SessionResource struct {
 	client *client.Client
-}
-
-// SessionResourceModel describes the resource data model.
-type SessionResourceModel struct {
-	ID          types.Int64  `tfsdk:"id"`
-	Name        types.String `tfsdk:"name"`
-	Description types.String `tfsdk:"description"`
-	Comments    types.String `tfsdk:"comments"`
-	Status      types.String `tfsdk:"status"`
-
-	SiteID   types.Int64 `tfsdk:"site_id"`
-	TenantID types.Int64 `tfsdk:"tenant_id"`
-	DeviceID types.Int64 `tfsdk:"device_id"`
-
-	LocalAddressID  types.Int64 `tfsdk:"local_address_id"`
-	RemoteAddressID types.Int64 `tfsdk:"remote_address_id"`
-	LocalASID       types.Int64 `tfsdk:"local_as_id"`
-	RemoteASID      types.Int64 `tfsdk:"remote_as_id"`
-	PeerGroupID     types.Int64 `tfsdk:"peer_group_id"`
-
-	ImportPolicyIDs types.List `tfsdk:"import_policy_ids"`
-	ExportPolicyIDs types.List `tfsdk:"export_policy_ids"`
-
-	PrefixListInID  types.Int64 `tfsdk:"prefix_list_in_id"`
-	PrefixListOutID types.Int64 `tfsdk:"prefix_list_out_id"`
-
-	Tags types.List `tfsdk:"tags"`
-
-	// todo: custom fields
-}
-
-func (m *SessionResourceModel) ToAPIModel(ctx context.Context, diags diag.Diagnostics) client.WritableBGPSessionRequest {
-	p := client.WritableBGPSessionRequest{}
-
-	p.Name = m.Name.ValueStringPointer()
-	p.Description = m.Description.ValueStringPointer()
-	p.Comments = m.Comments.ValueStringPointer()
-	if !m.Status.IsNull() {
-		status := client.WritableBGPSessionRequestStatus(m.Status.ValueString())
-		p.Status = &status
-	}
-	setForeignID(p.Site, m.SiteID)
-	setForeignID(p.Tenant, m.TenantID)
-	setForeignID(p.Device, m.DeviceID)
-	setForeignID(&p.LocalAddress, m.LocalAddressID)
-	setForeignID(&p.RemoteAddress, m.RemoteAddressID)
-	setForeignID(&p.LocalAs, m.LocalASID)
-	setForeignID(&p.RemoteAs, m.RemoteASID)
-	setForeignID(p.PeerGroup, m.PeerGroupID)
-	if !m.ImportPolicyIDs.IsNull() {
-		policies, ds := utils.ToIntListPointer(ctx, m.ImportPolicyIDs)
-		for _, d := range ds {
-			diags.Append(diag.WithPath(path.Root("import_policy_ids"), d))
-		}
-		p.ImportPolicies = &policies
-	}
-	if !m.ExportPolicyIDs.IsNull() {
-		policies, ds := utils.ToIntListPointer(ctx, m.ExportPolicyIDs)
-		for _, d := range ds {
-			diags.Append(diag.WithPath(path.Root("export_policy_ids"), d))
-		}
-		p.ExportPolicies = &policies
-	}
-	setForeignID(p.PrefixListIn, m.PrefixListInID)
-	setForeignID(p.PrefixListOut, m.PrefixListOutID)
-
-	p.Tags = utils.TagsForAPIModel(ctx, m.Tags, diags)
-
-	// todo: custom fields
-
-	return p
-}
-
-func (m *SessionResourceModel) FillFromAPIModel(ctx context.Context, resp *client.BGPSession, diags diag.Diagnostics) {
-	m.ID = utils.MaybeInt64Value(resp.Id)
-	m.Comments = utils.MaybeStringValue(resp.Comments)
-	m.Description = utils.MaybeStringValue(resp.Description)
-	if resp.Device != nil {
-		m.DeviceID = utils.MaybeInt64Value(resp.Device.Id)
-	}
-	if resp.ExportPolicies != nil && len(*resp.ExportPolicies) > 0 {
-		var ds diag.Diagnostics
-		m.ExportPolicyIDs, ds = types.ListValueFrom(ctx, types.Int64Type, resp.ExportPolicies)
-		for _, d := range ds {
-			diags.Append(diag.WithPath(path.Root("export_policy_ids"), d))
-		}
-	}
-	if resp.ImportPolicies != nil && len(*resp.ImportPolicies) > 0 {
-		var ds diag.Diagnostics
-		m.ImportPolicyIDs, ds = types.ListValueFrom(ctx, types.Int64Type, resp.ImportPolicies)
-		for _, d := range ds {
-			diags.Append(diag.WithPath(path.Root("import_policy_ids"), d))
-		}
-	}
-	m.LocalAddressID = utils.MaybeInt64Value(resp.LocalAddress.Id)
-	m.LocalASID = utils.MaybeInt64Value(resp.LocalAs.Id)
-	m.Name = utils.MaybeStringValue(resp.Name)
-	if resp.PeerGroup != nil {
-		m.PeerGroupID = utils.MaybeInt64Value(resp.PeerGroup.Id)
-	}
-	if resp.PrefixListIn != nil {
-		m.PrefixListInID = utils.MaybeInt64Value(resp.PrefixListIn.Id)
-	}
-	if resp.PrefixListOut != nil {
-		m.PrefixListOutID = utils.MaybeInt64Value(resp.PrefixListOut.Id)
-	}
-	m.RemoteAddressID = utils.MaybeInt64Value(resp.RemoteAddress.Id)
-	m.RemoteASID = utils.MaybeInt64Value(resp.RemoteAs.Id)
-	if resp.Site != nil {
-		m.SiteID = utils.MaybeInt64Value(resp.Site.Id)
-	}
-	m.Status = utils.MaybeStringValue((*string)(resp.Status.Value))
-	if resp.Tenant != nil {
-		m.TenantID = utils.MaybeInt64Value(resp.Tenant.Id)
-	}
-
-	m.Tags = utils.TagsFromAPI(ctx, resp.Tags, diags)
-
-	// todo: custom fields
 }
 
 func (r *SessionResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
