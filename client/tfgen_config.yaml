@@ -16,5 +16,4 @@ resources:
       method: DELETE
     schema:
       ignores:
-        - tags
         - custom_fields

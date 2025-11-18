@@ -112,6 +112,11 @@ func SessionResourceSchema(ctx context.Context) schema.Schema {
 					),
 				},
 			},
+			"tags": schema.ListAttribute{
+				ElementType: types.StringType,
+				Optional:    true,
+				Computed:    true,
+			},
 			"tenant": schema.Int64Attribute{
 				Optional:            true,
 				Computed:            true,
@@ -145,6 +150,7 @@ type SessionModel struct {
 	RemoteAs       types.Int64  `tfsdk:"remote_as"`
 	Site           types.Int64  `tfsdk:"site"`
 	Status         types.String `tfsdk:"status"`
+	Tags           types.List   `tfsdk:"tags"`
 	Tenant         types.Int64  `tfsdk:"tenant"`
 	Virtualmachine types.Int64  `tfsdk:"virtualmachine"`
 }

@@ -150,6 +150,15 @@
 						}
 					},
 					{
+						"name": "tags",
+						"list": {
+							"computed_optional_required": "computed_optional",
+							"element_type": {
+								"string": {}
+							}
+						}
+					},
+					{
 						"name": "tenant",
 						"int64": {
 							"computed_optional_required": "computed_optional",

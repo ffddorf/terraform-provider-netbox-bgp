@@ -31,7 +31,6 @@ func (r *SessionResource) Metadata(ctx context.Context, req resource.MetadataReq
 
 func (r *SessionResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = resource_session.SessionResourceSchema(ctx)
-	AddTags(resp.Schema)
 }
 
 func (r *SessionResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
@@ -46,7 +45,6 @@ func (r *SessionResource) Create(ctx context.Context, req resource.CreateRequest
 	}
 
 	params := data.ToAPIModel(ctx, resp.Diagnostics)
-	params.Tags = r.client.TagsForAPI(ctx, req.Plan, resp.Diagnostics)
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -67,7 +65,6 @@ func (r *SessionResource) Create(ctx context.Context, req resource.CreateRequest
 	}
 
 	data.FillFromAPIModel(ctx, res.JSON201, resp.Diagnostics)
-	resp.Diagnostics.Append(r.client.TagsFromAPI(ctx, resp.State, res.JSON201.Tags)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -104,7 +101,6 @@ func (r *SessionResource) Read(ctx context.Context, req resource.ReadRequest, re
 	}
 
 	data.FillFromAPIModel(ctx, res.JSON200, resp.Diagnostics)
-	resp.Diagnostics.Append(r.client.TagsFromAPI(ctx, resp.State, res.JSON200.Tags)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -120,7 +116,6 @@ func (r *SessionResource) Update(ctx context.Context, req resource.UpdateRequest
 	}
 
 	params := data.ToAPIModel(ctx, resp.Diagnostics)
-	params.Tags = r.client.TagsForAPI(ctx, req.Plan, resp.Diagnostics)
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -140,7 +135,6 @@ func (r *SessionResource) Update(ctx context.Context, req resource.UpdateRequest
 	}
 
 	data.FillFromAPIModel(ctx, res.JSON200, resp.Diagnostics)
-	resp.Diagnostics.Append(r.client.TagsFromAPI(ctx, resp.State, res.JSON200.Tags)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
