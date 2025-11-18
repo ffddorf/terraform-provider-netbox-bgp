@@ -162,3 +162,25 @@ resources:
             description: Provide a JSON-serialized object.
           set_actions:
             description: Provide a JSON-serialized object.
+
+data_sources:
+  session:
+    read:
+      path: /api/plugins/bgp/bgpsession/{id}/
+      method: GET
+    schema:
+      ignores:
+        - custom_fields
+        - export_policies.custom_fields
+        - import_policies.custom_fields
+  sessions:
+    read:
+      path: /api/plugins/bgp/bgpsession/
+      method: GET
+    schema:
+      ignores:
+        - next
+        - previous
+        - results.custom_fields
+        - results.export_policies.custom_fields
+        - results.import_policies.custom_fields

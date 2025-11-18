@@ -27,3 +27,9 @@ actions:
   - target: "$.components.schemas.RoutingPolicyRuleRequest.properties.set_actions"
     update:
       type: string
+
+  - target: "$.components.schemas.BriefIPAddress.properties.family.properties"
+    remove: true
+  - target: "$.components.schemas.BriefIPAddress.properties.family"
+    update:
+      type: integer
