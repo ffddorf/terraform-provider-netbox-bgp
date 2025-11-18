@@ -20,22 +20,22 @@ func (m *SessionModel) ToAPIModel(ctx context.Context, diags diag.Diagnostics) c
 		status := client.WritableBGPSessionRequestStatus(m.Status.ValueString())
 		p.Status = &status
 	}
-	utils.SetForeignID(p.Site, m.Site)
-	utils.SetForeignID(p.Tenant, m.Tenant)
-	utils.SetForeignID(p.Device, m.Device)
-	utils.SetForeignID(&p.LocalAddress, m.LocalAddress)
-	utils.SetForeignID(&p.RemoteAddress, m.RemoteAddress)
-	utils.SetForeignID(&p.LocalAs, m.LocalAs)
-	utils.SetForeignID(&p.RemoteAs, m.RemoteAs)
-	utils.SetForeignID(p.PeerGroup, m.PeerGroup)
-	if !m.ImportPolicies.IsNull() {
+	p.Site = utils.SetForeignID(p.Site, m.Site)
+	p.Tenant = utils.SetForeignID(p.Tenant, m.Tenant)
+	p.Device = utils.SetForeignID(p.Device, m.Device)
+	p.LocalAddress = *utils.SetForeignID(&p.LocalAddress, m.LocalAddress)
+	p.RemoteAddress = *utils.SetForeignID(&p.RemoteAddress, m.RemoteAddress)
+	p.LocalAs = *utils.SetForeignID(&p.LocalAs, m.LocalAs)
+	p.RemoteAs = *utils.SetForeignID(&p.RemoteAs, m.RemoteAs)
+	p.PeerGroup = utils.SetForeignID(p.PeerGroup, m.PeerGroup)
+	{
 		policies, ds := utils.ToIntListPointer(ctx, m.ImportPolicies)
 		for _, d := range ds {
 			diags.Append(diag.WithPath(path.Root("import_policy_ids"), d))
 		}
 		p.ImportPolicies = &policies
 	}
-	if !m.ExportPolicies.IsNull() {
+	{
 		policies, ds := utils.ToIntListPointer(ctx, m.ExportPolicies)
 		for _, d := range ds {
 			diags.Append(diag.WithPath(path.Root("export_policy_ids"), d))

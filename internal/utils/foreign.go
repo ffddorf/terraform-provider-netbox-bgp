@@ -9,16 +9,19 @@ type ForeignIDSetter interface {
 	FromForeignID(client.ForeignID) error
 }
 
-type ForeignIDSetterComparable interface {
+type ForeignRef[T any] interface {
+	*T
 	ForeignIDSetter
-	comparable
 }
 
-func SetForeignID[T any, S interface {
-	*T
-	ForeignIDSetterComparable
-}](target S, val types.Int64) {
+func SetForeignID[T any, S ForeignRef[T]](_ S, val types.Int64) S {
+	var target S
+	if val.IsNull() || val.IsUnknown() {
+		return target
+	}
+
 	var def T
 	target = &def
 	_ = target.FromForeignID(client.ForeignID(val.ValueInt64()))
+	return target
 }

@@ -16,6 +16,10 @@ func ToIntPointer(from *int64) *int {
 }
 
 func ToIntListPointer(ctx context.Context, from types.List) ([]int, diag.Diagnostics) {
+	if from.IsNull() || from.IsUnknown() {
+		return []int{}, nil
+	}
+
 	var values []int64
 	diags := from.ElementsAs(ctx, &values, false)
 	if diags.HasError() {
