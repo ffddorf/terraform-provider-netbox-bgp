@@ -2,7 +2,6 @@ package provider
 
 import (
 	"fmt"
-	"sync"
 
 	"github.com/ffddorf/terraform-provider-netbox-bgp/client"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -10,9 +9,6 @@ import (
 
 type ProviderClient struct {
 	*client.ClientWithResponses
-
-	tagCacheMu sync.Mutex
-	tagCache   map[string]client.NestedTagRequest
 }
 
 func APIErrorDiagnostic(summary, detail string, err error, statusCode int, body []byte) diag.ErrorDiagnostic {
