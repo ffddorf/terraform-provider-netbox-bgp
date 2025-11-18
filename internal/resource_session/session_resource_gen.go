@@ -4,16 +4,9 @@ package resource_session
 
 import (
 	"context"
-	"fmt"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
-	"github.com/hashicorp/terraform-plugin-framework/attr"
-	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
-	"github.com/hashicorp/terraform-plugin-go/tftypes"
-	"regexp"
-	"strings"
 
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 )
@@ -25,9 +18,6 @@ func SessionResourceSchema(ctx context.Context) schema.Schema {
 				Optional: true,
 				Computed: true,
 			},
-			"created": schema.StringAttribute{
-				Computed: true,
-			},
 			"description": schema.StringAttribute{
 				Optional: true,
 				Computed: true,
@@ -36,10 +26,10 @@ func SessionResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"device": schema.Int64Attribute{
-				Required: true,
-			},
-			"display": schema.StringAttribute{
-				Computed: true,
+				Optional:            true,
+				Computed:            true,
+				Description:         "Reference to foreign ID",
+				MarkdownDescription: "Reference to foreign ID",
 			},
 			"export_policies": schema.ListAttribute{
 				ElementType: types.Int64Type,
@@ -47,6 +37,7 @@ func SessionResourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"id": schema.Int64Attribute{
+				Optional:            true,
 				Computed:            true,
 				Description:         "A unique integer value identifying this bgp session.",
 				MarkdownDescription: "A unique integer value identifying this bgp session.",
@@ -56,14 +47,15 @@ func SessionResourceSchema(ctx context.Context) schema.Schema {
 				Optional:    true,
 				Computed:    true,
 			},
-			"last_updated": schema.StringAttribute{
-				Computed: true,
-			},
 			"local_address": schema.Int64Attribute{
-				Required: true,
+				Required:            true,
+				Description:         "Reference to foreign ID",
+				MarkdownDescription: "Reference to foreign ID",
 			},
 			"local_as": schema.Int64Attribute{
-				Required: true,
+				Required:            true,
+				Description:         "Reference to foreign ID",
+				MarkdownDescription: "Reference to foreign ID",
 			},
 			"name": schema.StringAttribute{
 				Optional: true,
@@ -73,26 +65,38 @@ func SessionResourceSchema(ctx context.Context) schema.Schema {
 				},
 			},
 			"peer_group": schema.Int64Attribute{
-				Optional: true,
-				Computed: true,
+				Optional:            true,
+				Computed:            true,
+				Description:         "Reference to foreign ID",
+				MarkdownDescription: "Reference to foreign ID",
 			},
 			"prefix_list_in": schema.Int64Attribute{
-				Optional: true,
-				Computed: true,
+				Optional:            true,
+				Computed:            true,
+				Description:         "Reference to foreign ID",
+				MarkdownDescription: "Reference to foreign ID",
 			},
 			"prefix_list_out": schema.Int64Attribute{
-				Optional: true,
-				Computed: true,
+				Optional:            true,
+				Computed:            true,
+				Description:         "Reference to foreign ID",
+				MarkdownDescription: "Reference to foreign ID",
 			},
 			"remote_address": schema.Int64Attribute{
-				Required: true,
+				Required:            true,
+				Description:         "Reference to foreign ID",
+				MarkdownDescription: "Reference to foreign ID",
 			},
 			"remote_as": schema.Int64Attribute{
-				Required: true,
+				Required:            true,
+				Description:         "Reference to foreign ID",
+				MarkdownDescription: "Reference to foreign ID",
 			},
 			"site": schema.Int64Attribute{
-				Optional: true,
-				Computed: true,
+				Optional:            true,
+				Computed:            true,
+				Description:         "Reference to foreign ID",
+				MarkdownDescription: "Reference to foreign ID",
 			},
 			"status": schema.StringAttribute{
 				Optional:            true,
@@ -108,52 +112,17 @@ func SessionResourceSchema(ctx context.Context) schema.Schema {
 					),
 				},
 			},
-			"tags": schema.ListNestedAttribute{
-				NestedObject: schema.NestedAttributeObject{
-					Attributes: map[string]schema.Attribute{
-						"color": schema.StringAttribute{
-							Optional: true,
-							Computed: true,
-							Validators: []validator.String{
-								stringvalidator.LengthBetween(1, 6),
-								stringvalidator.RegexMatches(regexp.MustCompile("^[0-9a-f]{6}$"), ""),
-							},
-						},
-						"display": schema.StringAttribute{
-							Computed: true,
-						},
-						"id": schema.Int64Attribute{
-							Computed: true,
-						},
-						"name": schema.StringAttribute{
-							Required: true,
-							Validators: []validator.String{
-								stringvalidator.LengthBetween(1, 100),
-							},
-						},
-						"slug": schema.StringAttribute{
-							Required: true,
-							Validators: []validator.String{
-								stringvalidator.LengthBetween(1, 100),
-								stringvalidator.RegexMatches(regexp.MustCompile("^[-\\w]+$"), ""),
-							},
-						},
-						"url": schema.StringAttribute{
-							Computed: true,
-						},
-					},
-					CustomType: TagsType{
-						ObjectType: types.ObjectType{
-							AttrTypes: TagsValue{}.AttributeTypes(ctx),
-						},
-					},
-				},
-				Optional: true,
-				Computed: true,
-			},
 			"tenant": schema.Int64Attribute{
-				Optional: true,
-				Computed: true,
+				Optional:            true,
+				Computed:            true,
+				Description:         "Reference to foreign ID",
+				MarkdownDescription: "Reference to foreign ID",
+			},
+			"virtualmachine": schema.Int64Attribute{
+				Optional:            true,
+				Computed:            true,
+				Description:         "Reference to foreign ID",
+				MarkdownDescription: "Reference to foreign ID",
 			},
 		},
 	}
@@ -161,14 +130,11 @@ func SessionResourceSchema(ctx context.Context) schema.Schema {
 
 type SessionModel struct {
 	Comments       types.String `tfsdk:"comments"`
-	Created        types.String `tfsdk:"created"`
 	Description    types.String `tfsdk:"description"`
 	Device         types.Int64  `tfsdk:"device"`
-	Display        types.String `tfsdk:"display"`
 	ExportPolicies types.List   `tfsdk:"export_policies"`
 	Id             types.Int64  `tfsdk:"id"`
 	ImportPolicies types.List   `tfsdk:"import_policies"`
-	LastUpdated    types.String `tfsdk:"last_updated"`
 	LocalAddress   types.Int64  `tfsdk:"local_address"`
 	LocalAs        types.Int64  `tfsdk:"local_as"`
 	Name           types.String `tfsdk:"name"`
@@ -179,605 +145,6 @@ type SessionModel struct {
 	RemoteAs       types.Int64  `tfsdk:"remote_as"`
 	Site           types.Int64  `tfsdk:"site"`
 	Status         types.String `tfsdk:"status"`
-	Tags           types.List   `tfsdk:"tags"`
 	Tenant         types.Int64  `tfsdk:"tenant"`
-}
-
-var _ basetypes.ObjectTypable = TagsType{}
-
-type TagsType struct {
-	basetypes.ObjectType
-}
-
-func (t TagsType) Equal(o attr.Type) bool {
-	other, ok := o.(TagsType)
-
-	if !ok {
-		return false
-	}
-
-	return t.ObjectType.Equal(other.ObjectType)
-}
-
-func (t TagsType) String() string {
-	return "TagsType"
-}
-
-func (t TagsType) ValueFromObject(ctx context.Context, in basetypes.ObjectValue) (basetypes.ObjectValuable, diag.Diagnostics) {
-	var diags diag.Diagnostics
-
-	attributes := in.Attributes()
-
-	colorAttribute, ok := attributes["color"]
-
-	if !ok {
-		diags.AddError(
-			"Attribute Missing",
-			`color is missing from object`)
-
-		return nil, diags
-	}
-
-	colorVal, ok := colorAttribute.(basetypes.StringValue)
-
-	if !ok {
-		diags.AddError(
-			"Attribute Wrong Type",
-			fmt.Sprintf(`color expected to be basetypes.StringValue, was: %T`, colorAttribute))
-	}
-
-	displayAttribute, ok := attributes["display"]
-
-	if !ok {
-		diags.AddError(
-			"Attribute Missing",
-			`display is missing from object`)
-
-		return nil, diags
-	}
-
-	displayVal, ok := displayAttribute.(basetypes.StringValue)
-
-	if !ok {
-		diags.AddError(
-			"Attribute Wrong Type",
-			fmt.Sprintf(`display expected to be basetypes.StringValue, was: %T`, displayAttribute))
-	}
-
-	idAttribute, ok := attributes["id"]
-
-	if !ok {
-		diags.AddError(
-			"Attribute Missing",
-			`id is missing from object`)
-
-		return nil, diags
-	}
-
-	idVal, ok := idAttribute.(basetypes.Int64Value)
-
-	if !ok {
-		diags.AddError(
-			"Attribute Wrong Type",
-			fmt.Sprintf(`id expected to be basetypes.Int64Value, was: %T`, idAttribute))
-	}
-
-	nameAttribute, ok := attributes["name"]
-
-	if !ok {
-		diags.AddError(
-			"Attribute Missing",
-			`name is missing from object`)
-
-		return nil, diags
-	}
-
-	nameVal, ok := nameAttribute.(basetypes.StringValue)
-
-	if !ok {
-		diags.AddError(
-			"Attribute Wrong Type",
-			fmt.Sprintf(`name expected to be basetypes.StringValue, was: %T`, nameAttribute))
-	}
-
-	slugAttribute, ok := attributes["slug"]
-
-	if !ok {
-		diags.AddError(
-			"Attribute Missing",
-			`slug is missing from object`)
-
-		return nil, diags
-	}
-
-	slugVal, ok := slugAttribute.(basetypes.StringValue)
-
-	if !ok {
-		diags.AddError(
-			"Attribute Wrong Type",
-			fmt.Sprintf(`slug expected to be basetypes.StringValue, was: %T`, slugAttribute))
-	}
-
-	urlAttribute, ok := attributes["url"]
-
-	if !ok {
-		diags.AddError(
-			"Attribute Missing",
-			`url is missing from object`)
-
-		return nil, diags
-	}
-
-	urlVal, ok := urlAttribute.(basetypes.StringValue)
-
-	if !ok {
-		diags.AddError(
-			"Attribute Wrong Type",
-			fmt.Sprintf(`url expected to be basetypes.StringValue, was: %T`, urlAttribute))
-	}
-
-	if diags.HasError() {
-		return nil, diags
-	}
-
-	return TagsValue{
-		Color:   colorVal,
-		Display: displayVal,
-		Id:      idVal,
-		Name:    nameVal,
-		Slug:    slugVal,
-		Url:     urlVal,
-		state:   attr.ValueStateKnown,
-	}, diags
-}
-
-func NewTagsValueNull() TagsValue {
-	return TagsValue{
-		state: attr.ValueStateNull,
-	}
-}
-
-func NewTagsValueUnknown() TagsValue {
-	return TagsValue{
-		state: attr.ValueStateUnknown,
-	}
-}
-
-func NewTagsValue(attributeTypes map[string]attr.Type, attributes map[string]attr.Value) (TagsValue, diag.Diagnostics) {
-	var diags diag.Diagnostics
-
-	// Reference: https://github.com/hashicorp/terraform-plugin-framework/issues/521
-	ctx := context.Background()
-
-	for name, attributeType := range attributeTypes {
-		attribute, ok := attributes[name]
-
-		if !ok {
-			diags.AddError(
-				"Missing TagsValue Attribute Value",
-				"While creating a TagsValue value, a missing attribute value was detected. "+
-					"A TagsValue must contain values for all attributes, even if null or unknown. "+
-					"This is always an issue with the provider and should be reported to the provider developers.\n\n"+
-					fmt.Sprintf("TagsValue Attribute Name (%s) Expected Type: %s", name, attributeType.String()),
-			)
-
-			continue
-		}
-
-		if !attributeType.Equal(attribute.Type(ctx)) {
-			diags.AddError(
-				"Invalid TagsValue Attribute Type",
-				"While creating a TagsValue value, an invalid attribute value was detected. "+
-					"A TagsValue must use a matching attribute type for the value. "+
-					"This is always an issue with the provider and should be reported to the provider developers.\n\n"+
-					fmt.Sprintf("TagsValue Attribute Name (%s) Expected Type: %s\n", name, attributeType.String())+
-					fmt.Sprintf("TagsValue Attribute Name (%s) Given Type: %s", name, attribute.Type(ctx)),
-			)
-		}
-	}
-
-	for name := range attributes {
-		_, ok := attributeTypes[name]
-
-		if !ok {
-			diags.AddError(
-				"Extra TagsValue Attribute Value",
-				"While creating a TagsValue value, an extra attribute value was detected. "+
-					"A TagsValue must not contain values beyond the expected attribute types. "+
-					"This is always an issue with the provider and should be reported to the provider developers.\n\n"+
-					fmt.Sprintf("Extra TagsValue Attribute Name: %s", name),
-			)
-		}
-	}
-
-	if diags.HasError() {
-		return NewTagsValueUnknown(), diags
-	}
-
-	colorAttribute, ok := attributes["color"]
-
-	if !ok {
-		diags.AddError(
-			"Attribute Missing",
-			`color is missing from object`)
-
-		return NewTagsValueUnknown(), diags
-	}
-
-	colorVal, ok := colorAttribute.(basetypes.StringValue)
-
-	if !ok {
-		diags.AddError(
-			"Attribute Wrong Type",
-			fmt.Sprintf(`color expected to be basetypes.StringValue, was: %T`, colorAttribute))
-	}
-
-	displayAttribute, ok := attributes["display"]
-
-	if !ok {
-		diags.AddError(
-			"Attribute Missing",
-			`display is missing from object`)
-
-		return NewTagsValueUnknown(), diags
-	}
-
-	displayVal, ok := displayAttribute.(basetypes.StringValue)
-
-	if !ok {
-		diags.AddError(
-			"Attribute Wrong Type",
-			fmt.Sprintf(`display expected to be basetypes.StringValue, was: %T`, displayAttribute))
-	}
-
-	idAttribute, ok := attributes["id"]
-
-	if !ok {
-		diags.AddError(
-			"Attribute Missing",
-			`id is missing from object`)
-
-		return NewTagsValueUnknown(), diags
-	}
-
-	idVal, ok := idAttribute.(basetypes.Int64Value)
-
-	if !ok {
-		diags.AddError(
-			"Attribute Wrong Type",
-			fmt.Sprintf(`id expected to be basetypes.Int64Value, was: %T`, idAttribute))
-	}
-
-	nameAttribute, ok := attributes["name"]
-
-	if !ok {
-		diags.AddError(
-			"Attribute Missing",
-			`name is missing from object`)
-
-		return NewTagsValueUnknown(), diags
-	}
-
-	nameVal, ok := nameAttribute.(basetypes.StringValue)
-
-	if !ok {
-		diags.AddError(
-			"Attribute Wrong Type",
-			fmt.Sprintf(`name expected to be basetypes.StringValue, was: %T`, nameAttribute))
-	}
-
-	slugAttribute, ok := attributes["slug"]
-
-	if !ok {
-		diags.AddError(
-			"Attribute Missing",
-			`slug is missing from object`)
-
-		return NewTagsValueUnknown(), diags
-	}
-
-	slugVal, ok := slugAttribute.(basetypes.StringValue)
-
-	if !ok {
-		diags.AddError(
-			"Attribute Wrong Type",
-			fmt.Sprintf(`slug expected to be basetypes.StringValue, was: %T`, slugAttribute))
-	}
-
-	urlAttribute, ok := attributes["url"]
-
-	if !ok {
-		diags.AddError(
-			"Attribute Missing",
-			`url is missing from object`)
-
-		return NewTagsValueUnknown(), diags
-	}
-
-	urlVal, ok := urlAttribute.(basetypes.StringValue)
-
-	if !ok {
-		diags.AddError(
-			"Attribute Wrong Type",
-			fmt.Sprintf(`url expected to be basetypes.StringValue, was: %T`, urlAttribute))
-	}
-
-	if diags.HasError() {
-		return NewTagsValueUnknown(), diags
-	}
-
-	return TagsValue{
-		Color:   colorVal,
-		Display: displayVal,
-		Id:      idVal,
-		Name:    nameVal,
-		Slug:    slugVal,
-		Url:     urlVal,
-		state:   attr.ValueStateKnown,
-	}, diags
-}
-
-func NewTagsValueMust(attributeTypes map[string]attr.Type, attributes map[string]attr.Value) TagsValue {
-	object, diags := NewTagsValue(attributeTypes, attributes)
-
-	if diags.HasError() {
-		// This could potentially be added to the diag package.
-		diagsStrings := make([]string, 0, len(diags))
-
-		for _, diagnostic := range diags {
-			diagsStrings = append(diagsStrings, fmt.Sprintf(
-				"%s | %s | %s",
-				diagnostic.Severity(),
-				diagnostic.Summary(),
-				diagnostic.Detail()))
-		}
-
-		panic("NewTagsValueMust received error(s): " + strings.Join(diagsStrings, "\n"))
-	}
-
-	return object
-}
-
-func (t TagsType) ValueFromTerraform(ctx context.Context, in tftypes.Value) (attr.Value, error) {
-	if in.Type() == nil {
-		return NewTagsValueNull(), nil
-	}
-
-	if !in.Type().Equal(t.TerraformType(ctx)) {
-		return nil, fmt.Errorf("expected %s, got %s", t.TerraformType(ctx), in.Type())
-	}
-
-	if !in.IsKnown() {
-		return NewTagsValueUnknown(), nil
-	}
-
-	if in.IsNull() {
-		return NewTagsValueNull(), nil
-	}
-
-	attributes := map[string]attr.Value{}
-
-	val := map[string]tftypes.Value{}
-
-	err := in.As(&val)
-
-	if err != nil {
-		return nil, err
-	}
-
-	for k, v := range val {
-		a, err := t.AttrTypes[k].ValueFromTerraform(ctx, v)
-
-		if err != nil {
-			return nil, err
-		}
-
-		attributes[k] = a
-	}
-
-	return NewTagsValueMust(TagsValue{}.AttributeTypes(ctx), attributes), nil
-}
-
-func (t TagsType) ValueType(ctx context.Context) attr.Value {
-	return TagsValue{}
-}
-
-var _ basetypes.ObjectValuable = TagsValue{}
-
-type TagsValue struct {
-	Color   basetypes.StringValue `tfsdk:"color"`
-	Display basetypes.StringValue `tfsdk:"display"`
-	Id      basetypes.Int64Value  `tfsdk:"id"`
-	Name    basetypes.StringValue `tfsdk:"name"`
-	Slug    basetypes.StringValue `tfsdk:"slug"`
-	Url     basetypes.StringValue `tfsdk:"url"`
-	state   attr.ValueState
-}
-
-func (v TagsValue) ToTerraformValue(ctx context.Context) (tftypes.Value, error) {
-	attrTypes := make(map[string]tftypes.Type, 6)
-
-	var val tftypes.Value
-	var err error
-
-	attrTypes["color"] = basetypes.StringType{}.TerraformType(ctx)
-	attrTypes["display"] = basetypes.StringType{}.TerraformType(ctx)
-	attrTypes["id"] = basetypes.Int64Type{}.TerraformType(ctx)
-	attrTypes["name"] = basetypes.StringType{}.TerraformType(ctx)
-	attrTypes["slug"] = basetypes.StringType{}.TerraformType(ctx)
-	attrTypes["url"] = basetypes.StringType{}.TerraformType(ctx)
-
-	objectType := tftypes.Object{AttributeTypes: attrTypes}
-
-	switch v.state {
-	case attr.ValueStateKnown:
-		vals := make(map[string]tftypes.Value, 6)
-
-		val, err = v.Color.ToTerraformValue(ctx)
-
-		if err != nil {
-			return tftypes.NewValue(objectType, tftypes.UnknownValue), err
-		}
-
-		vals["color"] = val
-
-		val, err = v.Display.ToTerraformValue(ctx)
-
-		if err != nil {
-			return tftypes.NewValue(objectType, tftypes.UnknownValue), err
-		}
-
-		vals["display"] = val
-
-		val, err = v.Id.ToTerraformValue(ctx)
-
-		if err != nil {
-			return tftypes.NewValue(objectType, tftypes.UnknownValue), err
-		}
-
-		vals["id"] = val
-
-		val, err = v.Name.ToTerraformValue(ctx)
-
-		if err != nil {
-			return tftypes.NewValue(objectType, tftypes.UnknownValue), err
-		}
-
-		vals["name"] = val
-
-		val, err = v.Slug.ToTerraformValue(ctx)
-
-		if err != nil {
-			return tftypes.NewValue(objectType, tftypes.UnknownValue), err
-		}
-
-		vals["slug"] = val
-
-		val, err = v.Url.ToTerraformValue(ctx)
-
-		if err != nil {
-			return tftypes.NewValue(objectType, tftypes.UnknownValue), err
-		}
-
-		vals["url"] = val
-
-		if err := tftypes.ValidateValue(objectType, vals); err != nil {
-			return tftypes.NewValue(objectType, tftypes.UnknownValue), err
-		}
-
-		return tftypes.NewValue(objectType, vals), nil
-	case attr.ValueStateNull:
-		return tftypes.NewValue(objectType, nil), nil
-	case attr.ValueStateUnknown:
-		return tftypes.NewValue(objectType, tftypes.UnknownValue), nil
-	default:
-		panic(fmt.Sprintf("unhandled Object state in ToTerraformValue: %s", v.state))
-	}
-}
-
-func (v TagsValue) IsNull() bool {
-	return v.state == attr.ValueStateNull
-}
-
-func (v TagsValue) IsUnknown() bool {
-	return v.state == attr.ValueStateUnknown
-}
-
-func (v TagsValue) String() string {
-	return "TagsValue"
-}
-
-func (v TagsValue) ToObjectValue(ctx context.Context) (basetypes.ObjectValue, diag.Diagnostics) {
-	var diags diag.Diagnostics
-
-	attributeTypes := map[string]attr.Type{
-		"color":   basetypes.StringType{},
-		"display": basetypes.StringType{},
-		"id":      basetypes.Int64Type{},
-		"name":    basetypes.StringType{},
-		"slug":    basetypes.StringType{},
-		"url":     basetypes.StringType{},
-	}
-
-	if v.IsNull() {
-		return types.ObjectNull(attributeTypes), diags
-	}
-
-	if v.IsUnknown() {
-		return types.ObjectUnknown(attributeTypes), diags
-	}
-
-	objVal, diags := types.ObjectValue(
-		attributeTypes,
-		map[string]attr.Value{
-			"color":   v.Color,
-			"display": v.Display,
-			"id":      v.Id,
-			"name":    v.Name,
-			"slug":    v.Slug,
-			"url":     v.Url,
-		})
-
-	return objVal, diags
-}
-
-func (v TagsValue) Equal(o attr.Value) bool {
-	other, ok := o.(TagsValue)
-
-	if !ok {
-		return false
-	}
-
-	if v.state != other.state {
-		return false
-	}
-
-	if v.state != attr.ValueStateKnown {
-		return true
-	}
-
-	if !v.Color.Equal(other.Color) {
-		return false
-	}
-
-	if !v.Display.Equal(other.Display) {
-		return false
-	}
-
-	if !v.Id.Equal(other.Id) {
-		return false
-	}
-
-	if !v.Name.Equal(other.Name) {
-		return false
-	}
-
-	if !v.Slug.Equal(other.Slug) {
-		return false
-	}
-
-	if !v.Url.Equal(other.Url) {
-		return false
-	}
-
-	return true
-}
-
-func (v TagsValue) Type(ctx context.Context) attr.Type {
-	return TagsType{
-		basetypes.ObjectType{
-			AttrTypes: v.AttributeTypes(ctx),
-		},
-	}
-}
-
-func (v TagsValue) AttributeTypes(ctx context.Context) map[string]attr.Type {
-	return map[string]attr.Type{
-		"color":   basetypes.StringType{},
-		"display": basetypes.StringType{},
-		"id":      basetypes.Int64Type{},
-		"name":    basetypes.StringType{},
-		"slug":    basetypes.StringType{},
-		"url":     basetypes.StringType{},
-	}
+	Virtualmachine types.Int64  `tfsdk:"virtualmachine"`
 }
