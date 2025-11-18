@@ -3,12 +3,12 @@
 page_title: "netboxbgp_session Resource - netboxbgp"
 subcategory: ""
 description: |-
-  Session resource
+  
 ---
 
 # netboxbgp_session (Resource)
 
-Session resource
+
 
 
 
@@ -17,27 +17,51 @@ Session resource
 
 ### Required
 
-- `device_id` (Number)
-- `local_address_id` (Number)
-- `local_as_id` (Number)
-- `name` (String)
-- `remote_address_id` (Number)
-- `remote_as_id` (Number)
-- `status` (String) One of: "active", "failed", "offline", "planned"
+- `device` (Number)
+- `local_address` (Number)
+- `local_as` (Number)
+- `remote_address` (Number)
+- `remote_as` (Number)
 
 ### Optional
 
 - `comments` (String)
 - `description` (String)
-- `export_policy_ids` (List of Number)
-- `import_policy_ids` (List of Number)
-- `peer_group_id` (Number)
-- `prefix_list_in_id` (Number)
-- `prefix_list_out_id` (Number)
-- `site_id` (Number)
-- `tags` (List of String)
-- `tenant_id` (Number)
+- `export_policies` (List of Number)
+- `import_policies` (List of Number)
+- `name` (String)
+- `peer_group` (Number)
+- `prefix_list_in` (Number)
+- `prefix_list_out` (Number)
+- `site` (Number)
+- `status` (String) * `offline` - Offline
+* `active` - Active
+* `planned` - Planned
+* `failed` - Failed
+- `tags` (Attributes List) (see [below for nested schema](#nestedatt--tags))
+- `tenant` (Number)
 
 ### Read-Only
 
-- `id` (Number) ID of the resource in Netbox
+- `created` (String)
+- `display` (String)
+- `id` (Number) A unique integer value identifying this bgp session.
+- `last_updated` (String)
+
+<a id="nestedatt--tags"></a>
+### Nested Schema for `tags`
+
+Required:
+
+- `name` (String)
+- `slug` (String)
+
+Optional:
+
+- `color` (String)
+
+Read-Only:
+
+- `display` (String)
+- `id` (Number)
+- `url` (String)
