@@ -1,0 +1,187 @@
+{
+	"provider": {
+		"name": "netboxbgp"
+	},
+	"resources": [
+		{
+			"name": "session",
+			"schema": {
+				"attributes": [
+					{
+						"name": "comments",
+						"string": {
+							"computed_optional_required": "computed_optional"
+						}
+					},
+					{
+						"name": "description",
+						"string": {
+							"computed_optional_required": "computed_optional",
+							"validators": [
+								{
+									"custom": {
+										"imports": [
+											{
+												"path": "github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
+											}
+										],
+										"schema_definition": "stringvalidator.LengthAtMost(200)"
+									}
+								}
+							]
+						}
+					},
+					{
+						"name": "device",
+						"int64": {
+							"computed_optional_required": "computed_optional",
+							"description": "Reference to foreign ID"
+						}
+					},
+					{
+						"name": "export_policies",
+						"list": {
+							"computed_optional_required": "computed_optional",
+							"element_type": {
+								"int64": {}
+							}
+						}
+					},
+					{
+						"name": "import_policies",
+						"list": {
+							"computed_optional_required": "computed_optional",
+							"element_type": {
+								"int64": {}
+							}
+						}
+					},
+					{
+						"name": "local_address",
+						"int64": {
+							"computed_optional_required": "required",
+							"description": "Reference to foreign ID"
+						}
+					},
+					{
+						"name": "local_as",
+						"int64": {
+							"computed_optional_required": "required",
+							"description": "Reference to foreign ID"
+						}
+					},
+					{
+						"name": "name",
+						"string": {
+							"computed_optional_required": "computed_optional",
+							"validators": [
+								{
+									"custom": {
+										"imports": [
+											{
+												"path": "github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
+											}
+										],
+										"schema_definition": "stringvalidator.LengthAtMost(256)"
+									}
+								}
+							]
+						}
+					},
+					{
+						"name": "peer_group",
+						"int64": {
+							"computed_optional_required": "computed_optional",
+							"description": "Reference to foreign ID"
+						}
+					},
+					{
+						"name": "prefix_list_in",
+						"int64": {
+							"computed_optional_required": "computed_optional",
+							"description": "Reference to foreign ID"
+						}
+					},
+					{
+						"name": "prefix_list_out",
+						"int64": {
+							"computed_optional_required": "computed_optional",
+							"description": "Reference to foreign ID"
+						}
+					},
+					{
+						"name": "remote_address",
+						"int64": {
+							"computed_optional_required": "required",
+							"description": "Reference to foreign ID"
+						}
+					},
+					{
+						"name": "remote_as",
+						"int64": {
+							"computed_optional_required": "required",
+							"description": "Reference to foreign ID"
+						}
+					},
+					{
+						"name": "site",
+						"int64": {
+							"computed_optional_required": "computed_optional",
+							"description": "Reference to foreign ID"
+						}
+					},
+					{
+						"name": "status",
+						"string": {
+							"computed_optional_required": "computed_optional",
+							"description": "* `offline` - Offline\n* `active` - Active\n* `planned` - Planned\n* `failed` - Failed",
+							"validators": [
+								{
+									"custom": {
+										"imports": [
+											{
+												"path": "github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
+											}
+										],
+										"schema_definition": "stringvalidator.OneOf(\n\"offline\",\n\"active\",\n\"planned\",\n\"failed\",\n)"
+									}
+								}
+							]
+						}
+					},
+					{
+						"name": "tags",
+						"list": {
+							"computed_optional_required": "computed_optional",
+							"element_type": {
+								"string": {}
+							}
+						}
+					},
+					{
+						"name": "tenant",
+						"int64": {
+							"computed_optional_required": "computed_optional",
+							"description": "Reference to foreign ID"
+						}
+					},
+					{
+						"name": "virtualmachine",
+						"int64": {
+							"computed_optional_required": "computed_optional",
+							"description": "Reference to foreign ID"
+						}
+					},
+					{
+						"name": "id",
+						"int64": {
+							"computed_optional_required": "computed_optional",
+							"description": "A unique integer value identifying this bgp session."
+						}
+					}
+				]
+			}
+		}
+	],
+	"version": "0.1"
+}

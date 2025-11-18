@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/ffddorf/terraform-provider-netbox-bgp/client"
+	"github.com/ffddorf/terraform-provider-netbox-bgp/internal/utils"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -19,7 +20,7 @@ func NewSessionDataSource() datasource.DataSource {
 }
 
 type SessionDataSource struct {
-	client *client.Client
+	client *ProviderClient
 }
 
 type SessionDataSourceModel struct {
@@ -49,33 +50,33 @@ type SessionDataSourceModel struct {
 }
 
 func (m *SessionDataSourceModel) FillFromAPIModel(ctx context.Context, resp *client.BGPSession, diags diag.Diagnostics) {
-	m.ID = maybeInt64Value(resp.Id)
-	m.Comments = maybeStringValue(resp.Comments)
-	m.Description = maybeStringValue(resp.Description)
+	m.ID = utils.MaybeInt64Value(resp.Id)
+	m.Comments = utils.MaybeStringValue(resp.Comments)
+	m.Description = utils.MaybeStringValue(resp.Description)
 	m.Device = NestedDeviceFromAPI(resp.Device)
 	if resp.ExportPolicies != nil {
 		for _, policy := range *resp.ExportPolicies {
-			m.ExportPolicyIDs = append(m.ExportPolicyIDs, maybeInt64Value(policy.Id))
+			m.ExportPolicyIDs = append(m.ExportPolicyIDs, utils.MaybeInt64Value(policy.Id))
 		}
 	}
 	if resp.ImportPolicies != nil && len(*resp.ImportPolicies) > 0 {
 		for _, policy := range *resp.ImportPolicies {
-			m.ImportPolicyIDs = append(m.ImportPolicyIDs, maybeInt64Value(policy.Id))
+			m.ImportPolicyIDs = append(m.ImportPolicyIDs, utils.MaybeInt64Value(policy.Id))
 		}
 	}
 	m.LocalAddress = NestedIPAddressFromAPI(&resp.LocalAddress)
 	m.LocalAS = NestedASNFromAPI(&resp.LocalAs)
-	m.Name = maybeStringValue(resp.Name)
+	m.Name = utils.MaybeStringValue(resp.Name)
 	m.PeerGroup = NestedBGPPeerGroupFromAPI(resp.PeerGroup)
 	m.PrefixListIn = NestedPrefixListFromAPI(resp.PrefixListIn)
 	m.PrefixListOut = NestedPrefixListFromAPI(resp.PrefixListOut)
 	m.RemoteAddress = NestedIPAddressFromAPI(&resp.RemoteAddress)
 	m.RemoteAS = NestedASNFromAPI(&resp.RemoteAs)
 	m.Site = NestedSiteFromAPI(resp.Site)
-	m.Status = maybeStringValue((*string)(resp.Status.Value))
+	m.Status = utils.MaybeStringValue((*string)(resp.Status.Value))
 	m.Tenant = NestedTenantFromAPI(resp.Tenant)
 
-	m.Tags = TagsFromAPI(ctx, resp.Tags, diags)
+	m.Tags = utils.TagsFromAPI(ctx, resp.Tags, diags)
 
 	// todo: custom fields
 }
@@ -150,7 +151,7 @@ var sessionDataSchema = map[string]schema.Attribute{
 		Computed:   true,
 		Attributes: (*NestedPrefixList)(nil).SchemaAttributes(),
 	},
-	TagFieldName: TagSchema,
+	utils.TagFieldName: utils.TagSchema,
 }
 
 func (d *SessionDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {

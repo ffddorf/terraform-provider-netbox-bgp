@@ -19,6 +19,8 @@ import (
 	"github.com/sethvargo/go-envconfig"
 )
 
+//go:generate go tool tfplugingen-framework generate resources --input ../../client/resource_spec.json  --output ../
+
 // Ensure NetboxBGPProvider satisfies various provider interfaces.
 var _ provider.Provider = &NetboxBGPProvider{}
 
@@ -93,7 +95,7 @@ func apiKeyAuth(token string) client.RequestEditorFn {
 }
 
 type configuredProvider struct {
-	Client *client.Client
+	Client *ProviderClient
 }
 
 func (p *NetboxBGPProvider) Configure(ctx context.Context, req provider.ConfigureRequest, resp *provider.ConfigureResponse) {
@@ -156,14 +158,16 @@ func (p *NetboxBGPProvider) Configure(ctx context.Context, req provider.Configur
 		opts = append(opts, client.WithHTTPClient(httpClient))
 	}
 
-	client, err := client.NewClient(data.ServerURL.ValueString(), opts...)
+	client, err := client.NewClientWithResponses(data.ServerURL.ValueString(), opts...)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to create client", err.Error())
 		return
 	}
 
 	providerData := configuredProvider{
-		Client: client,
+		Client: &ProviderClient{
+			ClientWithResponses: client,
+		},
 	}
 	resp.DataSourceData = &providerData
 	resp.ResourceData = &providerData
@@ -191,7 +195,7 @@ func New(version string) func() provider.Provider {
 	}
 }
 
-func configureResourceClient(req resource.ConfigureRequest, resp *resource.ConfigureResponse) *client.Client {
+func configureResourceClient(req resource.ConfigureRequest, resp *resource.ConfigureResponse) *ProviderClient {
 	// Prevent panic if the provider has not been configured.
 	if req.ProviderData == nil {
 		return nil
@@ -209,7 +213,7 @@ func configureResourceClient(req resource.ConfigureRequest, resp *resource.Confi
 	return data.Client
 }
 
-func configureDataSourceClient(req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) *client.Client {
+func configureDataSourceClient(req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) *ProviderClient {
 	// Prevent panic if the provider has not been configured.
 	if req.ProviderData == nil {
 		return nil

@@ -15,11 +15,11 @@ func testSessions(t *testing.T) string {
 	resource "netboxbgp_session" "test1" {
 		name              = "Session 1"
 		status            = "active"
-		device_id         = netbox_device.test.id
-		local_address_id  = netbox_ip_address.local.id
-		remote_address_id = netbox_ip_address.remote.id
-		local_as_id       = netbox_asn.test.id
-		remote_as_id      = netbox_asn.test.id
+		device         = netbox_device.test.id
+		local_address  = netbox_ip_address.local.id
+		remote_address = netbox_ip_address.remote.id
+		local_as       = netbox_asn.test.id
+		remote_as      = netbox_asn.test.id
 	}
 
 	resource "netbox_ip_address" "remote2" {
@@ -30,11 +30,11 @@ func testSessions(t *testing.T) string {
 	resource "netboxbgp_session" "test2" {
 		name              = "Session 2"
 		status            = "planned"
-		device_id         = netbox_device.test.id
-		local_address_id  = netbox_ip_address.local.id
-		remote_address_id = netbox_ip_address.remote2.id
-		local_as_id       = netbox_asn.test.id
-		remote_as_id      = netbox_asn.test.id
+		device         = netbox_device.test.id
+		local_address  = netbox_ip_address.local.id
+		remote_address = netbox_ip_address.remote2.id
+		local_as       = netbox_asn.test.id
+		remote_as      = netbox_asn.test.id
 	}
 
 	resource "netbox_ip_address" "remote3" {
@@ -45,11 +45,11 @@ func testSessions(t *testing.T) string {
 	resource "netboxbgp_session" "test3" {
 		name              = "Session 3"
 		status            = "active"
-		device_id         = netbox_device.test.id
-		local_address_id  = netbox_ip_address.local.id
-		remote_address_id = netbox_ip_address.remote3.id
-		local_as_id       = netbox_asn.test.id
-		remote_as_id      = netbox_asn.test.id
+		device         = netbox_device.test.id
+		local_address  = netbox_ip_address.local.id
+		remote_address = netbox_ip_address.remote3.id
+		local_as       = netbox_asn.test.id
+		remote_as      = netbox_asn.test.id
 	}`, baseResources(t), testIP(t, 2), testIP(t, 3))
 }
 

@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/ffddorf/terraform-provider-netbox-bgp/client"
+	"github.com/ffddorf/terraform-provider-netbox-bgp/internal/utils"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -14,7 +15,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-//go:generate sh -c "go run ../../cmd/gen-filters ../../client PluginsBgpBgpsessionListParams > sessions_filters.gen.go && go run golang.org/x/tools/cmd/goimports -w sessions_filters.gen.go"
+//go:generate sh -c "go run ../../cmd/gen-filters ../../client PluginsBgpBgpsessionListParams > sessions_filters.gen.go && go tool goimports -w sessions_filters.gen.go"
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ datasource.DataSource = &SessionsDataSource{}
@@ -24,7 +25,7 @@ func NewSessionsDataSource() datasource.DataSource {
 }
 
 type SessionsDataSource struct {
-	client *client.Client
+	client *ProviderClient
 }
 
 type SessionsDataSourceModel struct {
@@ -110,10 +111,14 @@ func (d *SessionsDataSource) Read(ctx context.Context, req datasource.ReadReques
 		return
 	}
 
-	params.Limit = fromInt64Value(data.Limit)
+	params.Limit = utils.FromInt64Value(data.Limit)
 	params.Ordering = data.Ordering.ValueStringPointer()
 
-	nextHTTPReq, err := client.NewPluginsBgpBgpsessionListRequest(d.client.Server, &params)
+	apiClient, ok := d.client.ClientInterface.(*client.Client)
+	if !ok {
+		panic("invalid client setup")
+	}
+	nextHTTPReq, err := client.NewPluginsBgpBgpsessionListRequest(apiClient.Server, &params)
 	for nextHTTPReq != nil {
 		if err != nil {
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("failed to create session list request: %s", err))
@@ -121,7 +126,7 @@ func (d *SessionsDataSource) Read(ctx context.Context, req datasource.ReadReques
 		}
 
 		var httpRes *http.Response
-		httpRes, err = doPlainReq(ctx, nextHTTPReq, d.client)
+		httpRes, err = doPlainReq(ctx, nextHTTPReq, apiClient)
 		if err != nil {
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("failed to retrieve sessions: %s", err))
 			return

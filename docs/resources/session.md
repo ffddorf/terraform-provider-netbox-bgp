@@ -3,12 +3,12 @@
 page_title: "netboxbgp_session Resource - netboxbgp"
 subcategory: ""
 description: |-
-  Session resource
+  
 ---
 
 # netboxbgp_session (Resource)
 
-Session resource
+
 
 
 
@@ -17,27 +17,28 @@ Session resource
 
 ### Required
 
-- `device_id` (Number)
-- `local_address_id` (Number)
-- `local_as_id` (Number)
-- `name` (String)
-- `remote_address_id` (Number)
-- `remote_as_id` (Number)
-- `status` (String) One of: "active", "failed", "offline", "planned"
+- `local_address` (Number) Reference to foreign ID
+- `local_as` (Number) Reference to foreign ID
+- `remote_address` (Number) Reference to foreign ID
+- `remote_as` (Number) Reference to foreign ID
 
 ### Optional
 
 - `comments` (String)
 - `description` (String)
-- `export_policy_ids` (List of Number)
-- `import_policy_ids` (List of Number)
-- `peer_group_id` (Number)
-- `prefix_list_in_id` (Number)
-- `prefix_list_out_id` (Number)
-- `site_id` (Number)
+- `device` (Number) Reference to foreign ID
+- `export_policies` (List of Number)
+- `id` (Number) A unique integer value identifying this bgp session.
+- `import_policies` (List of Number)
+- `name` (String)
+- `peer_group` (Number) Reference to foreign ID
+- `prefix_list_in` (Number) Reference to foreign ID
+- `prefix_list_out` (Number) Reference to foreign ID
+- `site` (Number) Reference to foreign ID
+- `status` (String) * `offline` - Offline
+* `active` - Active
+* `planned` - Planned
+* `failed` - Failed
 - `tags` (List of String)
-- `tenant_id` (Number)
-
-### Read-Only
-
-- `id` (Number) ID of the resource in Netbox
+- `tenant` (Number) Reference to foreign ID
+- `virtualmachine` (Number) Reference to foreign ID

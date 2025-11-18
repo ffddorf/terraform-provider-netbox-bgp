@@ -66,16 +66,15 @@ jobs:
           - "1.8.*"
           - "1.9.*"
         netbox:
-          - "3.7.8"
-          - "4.0.7"
+          - "4.4.6"
         include:
-          - netbox: "3.7.8"
-            netbox_bgp: "0.12.1"
-          - netbox: "4.0.7"
-            netbox_bgp: "0.13.2"
+          - netbox: "4.4.6"
+            netbox_bgp: "0.17.0"
     env:
       DOCKER_COMPOSE: docker compose --progress=plain
       BUILDKIT_PROGRESS: plain
+      NETBOX_VERSION: ${{ matrix.netbox }}
+      NETBOX_BGP_VERSION: ${{ matrix.netbox_bgp }}
     steps:
       - uses: actions/checkout@v4.1.7
       - uses: actions/setup-go@v5.0.2
@@ -92,7 +91,4 @@ jobs:
       - run: docker compose logs netbox
         if: failure() && steps.docker.outcome == 'failure'
       - run: make testacc
-        env:
-          NETBOX_VERSION: ${{ matrix.netbox }}
-          NETBOX_BGP_VERSION: ${{ matrix.netbox_bgp }}
         timeout-minutes: 10

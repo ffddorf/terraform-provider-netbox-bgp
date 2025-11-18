@@ -1,0 +1,19 @@
+provider:
+  name: netboxbgp
+resources:
+  session:
+    create:
+      path: /api/plugins/bgp/bgpsession/
+      method: POST
+    read:
+      path: /api/plugins/bgp/bgpsession/{id}/
+      method: GET
+    update:
+      path: /api/plugins/bgp/bgpsession/{id}/
+      method: PUT
+    delete:
+      path: /api/plugins/bgp/bgpsession/{id}/
+      method: DELETE
+    schema:
+      ignores:
+        - custom_fields
