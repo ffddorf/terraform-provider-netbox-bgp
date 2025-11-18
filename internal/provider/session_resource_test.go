@@ -94,7 +94,7 @@ resource "netbox_rir" "test" {
 resource "netbox_asn" "test" {
   asn    = %[4]d
 	rir_id = netbox_rir.test.id
-}`, testName(t), testIP(t, 0), testIP(t, 1), shortNum+1337)
+}`, testName(t), testIP(t, 1), testIP(t, 2), shortNum+1337)
 }
 
 func TestAccSessionResource(t *testing.T) {
@@ -107,13 +107,13 @@ func TestAccSessionResource(t *testing.T) {
 				Config: fmt.Sprintf(`%s
 
 					resource "netboxbgp_session" "test" {
-						name              = "My session"
-						status            = "active"
-						device_id         = netbox_device.test.id
-						local_address_id  = netbox_ip_address.local.id
-						remote_address_id = netbox_ip_address.remote.id
-						local_as_id       = netbox_asn.test.id
-						remote_as_id      = netbox_asn.test.id
+						name           = "My session"
+						status         = "active"
+						device         = netbox_device.test.id
+						local_address  = netbox_ip_address.local.id
+						remote_address = netbox_ip_address.remote.id
+						local_as       = netbox_asn.test.id
+						remote_as      = netbox_asn.test.id
 					}
 				`, baseResources(t)),
 				Check: resource.ComposeAggregateTestCheckFunc(
@@ -138,12 +138,12 @@ func TestAccSessionResource(t *testing.T) {
 					resource "netboxbgp_session" "test" {
 						name              = "My session changed"
 						status            = "active"
-						device_id         = netbox_device.test.id
-						local_address_id  = netbox_ip_address.local.id
-						remote_address_id = netbox_ip_address.remote.id
-						local_as_id       = netbox_asn.test.id
-						remote_as_id      = netbox_asn.test.id
-						site_id           = netbox_site.test.id
+						device         = netbox_device.test.id
+						local_address  = netbox_ip_address.local.id
+						remote_address = netbox_ip_address.remote.id
+						local_as       = netbox_asn.test.id
+						remote_as      = netbox_asn.test.id
+						site           = netbox_site.test.id
 						tags              = ["Integration Test", "temporary"]
 					}
 				`, baseResources(t)),
@@ -159,7 +159,7 @@ func TestAccSessionResource(t *testing.T) {
 				},
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("netboxbgp_session.test", "name", "My session changed"),
-					resource.TestCheckResourceAttrPair("netboxbgp_session.test", "site_id", "netbox_site.test", "id"),
+					resource.TestCheckResourceAttrPair("netboxbgp_session.test", "site", "netbox_site.test", "id"),
 				),
 			},
 		},

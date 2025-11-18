@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/ffddorf/terraform-provider-netbox-bgp/client"
+	"github.com/ffddorf/terraform-provider-netbox-bgp/internal/utils"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -30,19 +31,19 @@ type PeerGroupDataSourceModel struct {
 }
 
 func (pgm *PeerGroupDataSourceModel) FillFromAPIModel(resp *client.BGPPeerGroup) {
-	pgm.ID = maybeInt64Value(resp.Id)
-	pgm.Name = maybeStringValue(&resp.Name)
-	pgm.Description = maybeStringValue(resp.Description)
-	pgm.Comments = maybeStringValue(resp.Comments)
+	pgm.ID = utils.MaybeInt64Value(resp.Id)
+	pgm.Name = utils.MaybeStringValue(&resp.Name)
+	pgm.Description = utils.MaybeStringValue(resp.Description)
+	pgm.Comments = utils.MaybeStringValue(resp.Comments)
 
 	if resp.ExportPolicies != nil {
 		for _, policy := range *resp.ExportPolicies {
-			pgm.ExportPolicyIDs = append(pgm.ExportPolicyIDs, maybeInt64Value(policy.Id))
+			pgm.ExportPolicyIDs = append(pgm.ExportPolicyIDs, utils.MaybeInt64Value(policy.Id))
 		}
 	}
 	if resp.ImportPolicies != nil && len(*resp.ImportPolicies) > 0 {
 		for _, policy := range *resp.ImportPolicies {
-			pgm.ImportPolicyIDs = append(pgm.ImportPolicyIDs, maybeInt64Value(policy.Id))
+			pgm.ImportPolicyIDs = append(pgm.ImportPolicyIDs, utils.MaybeInt64Value(policy.Id))
 		}
 	}
 }

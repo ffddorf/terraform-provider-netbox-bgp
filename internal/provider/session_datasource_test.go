@@ -17,13 +17,13 @@ func TestAccSessionDataSource(t *testing.T) {
 			{
 				Config: fmt.Sprintf(`%s
 					resource "netboxbgp_session" "test" {
-						name              = "My session"
-						status            = "active"
-						device_id         = netbox_device.test.id
-						local_address_id  = netbox_ip_address.local.id
-						remote_address_id = netbox_ip_address.remote.id
-						local_as_id       = netbox_asn.test.id
-						remote_as_id      = netbox_asn.test.id
+						name           = "My session"
+						status         = "active"
+						device         = netbox_device.test.id
+						local_address  = netbox_ip_address.local.id
+						remote_address = netbox_ip_address.remote.id
+						local_as       = netbox_asn.test.id
+						remote_as      = netbox_asn.test.id
 					}
 
 					data "netboxbgp_session" "test" {

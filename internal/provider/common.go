@@ -2,6 +2,7 @@ package provider
 
 import (
 	"github.com/ffddorf/terraform-provider-netbox-bgp/client"
+	"github.com/ffddorf/terraform-provider-netbox-bgp/internal/utils"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -61,7 +62,7 @@ type NestedTenant struct {
 
 func (tfo NestedSite) ToAPIModel() client.BriefSite {
 	return client.BriefSite{
-		Id:      toIntPointer(tfo.ID.ValueInt64Pointer()),
+		Id:      utils.ToIntPointer(tfo.ID.ValueInt64Pointer()),
 		Url:     tfo.URL.ValueStringPointer(),
 		Display: tfo.Display.ValueStringPointer(),
 		Name:    tfo.Name.ValueString(),
@@ -71,7 +72,7 @@ func (tfo NestedSite) ToAPIModel() client.BriefSite {
 
 func (tfo NestedASN) ToAPIModel() client.BriefASN {
 	return client.BriefASN{
-		Id:      toIntPointer(tfo.ID.ValueInt64Pointer()),
+		Id:      utils.ToIntPointer(tfo.ID.ValueInt64Pointer()),
 		Url:     tfo.URL.ValueStringPointer(),
 		Display: tfo.Display.ValueStringPointer(),
 		Asn:     tfo.ASN.ValueInt64(),
@@ -87,7 +88,7 @@ func (tfo NestedIPAddress) ToAPIModel() client.BriefIPAddress {
 		fam = client.BriefIPAddressFamilyValueN6
 	}
 	ipa := client.BriefIPAddress{
-		Id:      toIntPointer(tfo.ID.ValueInt64Pointer()),
+		Id:      utils.ToIntPointer(tfo.ID.ValueInt64Pointer()),
 		Url:     tfo.URL.ValueStringPointer(),
 		Display: tfo.Display.ValueStringPointer(),
 		Family: &struct {
@@ -103,7 +104,7 @@ func (tfo NestedIPAddress) ToAPIModel() client.BriefIPAddress {
 
 func (tfo NestedDevice) ToAPIModel() client.BriefDevice {
 	return client.BriefDevice{
-		Id:      toIntPointer(tfo.ID.ValueInt64Pointer()),
+		Id:      utils.ToIntPointer(tfo.ID.ValueInt64Pointer()),
 		Url:     tfo.URL.ValueStringPointer(),
 		Display: tfo.Display.ValueStringPointer(),
 		Name:    tfo.Name.ValueStringPointer(),
@@ -112,7 +113,7 @@ func (tfo NestedDevice) ToAPIModel() client.BriefDevice {
 
 func (tfo NestedBGPPeerGroup) ToAPIModel() client.BriefBGPPeerGroup {
 	return client.BriefBGPPeerGroup{
-		Id:          toIntPointer(tfo.ID.ValueInt64Pointer()),
+		Id:          utils.ToIntPointer(tfo.ID.ValueInt64Pointer()),
 		Url:         tfo.URL.ValueStringPointer(),
 		Display:     tfo.Display.ValueStringPointer(),
 		Name:        tfo.Name.ValueString(),
@@ -122,7 +123,7 @@ func (tfo NestedBGPPeerGroup) ToAPIModel() client.BriefBGPPeerGroup {
 
 func (tfo NestedPrefixList) ToAPIModel() client.BriefPrefixList {
 	return client.BriefPrefixList{
-		Id:      toIntPointer(tfo.ID.ValueInt64Pointer()),
+		Id:      utils.ToIntPointer(tfo.ID.ValueInt64Pointer()),
 		Url:     tfo.URL.ValueStringPointer(),
 		Display: tfo.Display.ValueStringPointer(),
 		Name:    tfo.Name.ValueString(),
@@ -131,7 +132,7 @@ func (tfo NestedPrefixList) ToAPIModel() client.BriefPrefixList {
 
 func (tfo NestedTenant) ToAPIModel() client.BriefTenant {
 	return client.BriefTenant{
-		Id:      toIntPointer(tfo.ID.ValueInt64Pointer()),
+		Id:      utils.ToIntPointer(tfo.ID.ValueInt64Pointer()),
 		Url:     tfo.URL.ValueStringPointer(),
 		Display: tfo.Display.ValueStringPointer(),
 		Name:    tfo.Name.ValueString(),
@@ -145,8 +146,8 @@ func NestedSiteFromAPI(resp *client.BriefSite) *NestedSite {
 	}
 	tfo := &NestedSite{}
 	tfo.ID = types.Int64Value(int64(*resp.Id))
-	tfo.URL = maybeStringValue(resp.Url)
-	tfo.Display = maybeStringValue(resp.Display)
+	tfo.URL = utils.MaybeStringValue(resp.Url)
+	tfo.Display = utils.MaybeStringValue(resp.Display)
 	tfo.Name = types.StringValue(resp.Name)
 	tfo.Slug = types.StringValue(resp.Slug)
 	return tfo
@@ -158,8 +159,8 @@ func NestedASNFromAPI(resp *client.BriefASN) *NestedASN {
 	}
 	tfo := &NestedASN{}
 	tfo.ID = types.Int64Value(int64(*resp.Id))
-	tfo.URL = maybeStringValue(resp.Url)
-	tfo.Display = maybeStringValue(resp.Display)
+	tfo.URL = utils.MaybeStringValue(resp.Url)
+	tfo.Display = utils.MaybeStringValue(resp.Display)
 	tfo.ASN = types.Int64Value(resp.Asn)
 	return tfo
 }
@@ -170,9 +171,9 @@ func NestedIPAddressFromAPI(resp *client.BriefIPAddress) *NestedIPAddress {
 	}
 	tfo := &NestedIPAddress{}
 	tfo.ID = types.Int64Value(int64(*resp.Id))
-	tfo.URL = maybeStringValue(resp.Url)
-	tfo.Display = maybeStringValue(resp.Display)
-	tfo.Family = maybeInt64Value((*int)(resp.Family.Value))
+	tfo.URL = utils.MaybeStringValue(resp.Url)
+	tfo.Display = utils.MaybeStringValue(resp.Display)
+	tfo.Family = utils.MaybeInt64Value((*int)(resp.Family.Value))
 	tfo.Address = types.StringValue(resp.Address)
 	return tfo
 }
@@ -183,9 +184,9 @@ func NestedDeviceFromAPI(resp *client.BriefDevice) *NestedDevice {
 	}
 	tfo := &NestedDevice{}
 	tfo.ID = types.Int64Value(int64(*resp.Id))
-	tfo.URL = maybeStringValue(resp.Url)
-	tfo.Display = maybeStringValue(resp.Display)
-	tfo.Name = maybeStringValue(resp.Name)
+	tfo.URL = utils.MaybeStringValue(resp.Url)
+	tfo.Display = utils.MaybeStringValue(resp.Display)
+	tfo.Name = utils.MaybeStringValue(resp.Name)
 	return tfo
 }
 
@@ -195,10 +196,10 @@ func NestedBGPPeerGroupFromAPI(resp *client.BriefBGPPeerGroup) *NestedBGPPeerGro
 	}
 	tfo := &NestedBGPPeerGroup{}
 	tfo.ID = types.Int64Value(int64(*resp.Id))
-	tfo.URL = maybeStringValue(resp.Url)
-	tfo.Display = maybeStringValue(resp.Display)
+	tfo.URL = utils.MaybeStringValue(resp.Url)
+	tfo.Display = utils.MaybeStringValue(resp.Display)
 	tfo.Name = types.StringValue(resp.Name)
-	tfo.Description = maybeStringValue(resp.Description)
+	tfo.Description = utils.MaybeStringValue(resp.Description)
 	return tfo
 }
 
@@ -208,8 +209,8 @@ func NestedPrefixListFromAPI(resp *client.BriefPrefixList) *NestedPrefixList {
 	}
 	tfo := &NestedPrefixList{}
 	tfo.ID = types.Int64Value(int64(*resp.Id))
-	tfo.URL = maybeStringValue(resp.Url)
-	tfo.Display = maybeStringValue(resp.Display)
+	tfo.URL = utils.MaybeStringValue(resp.Url)
+	tfo.Display = utils.MaybeStringValue(resp.Display)
 	tfo.Name = types.StringValue(resp.Name)
 	return tfo
 }
@@ -220,8 +221,8 @@ func NestedTenantFromAPI(resp *client.BriefTenant) *NestedTenant {
 	}
 	tfo := &NestedTenant{}
 	tfo.ID = types.Int64Value(int64(*resp.Id))
-	tfo.URL = maybeStringValue(resp.Url)
-	tfo.Display = maybeStringValue(resp.Display)
+	tfo.URL = utils.MaybeStringValue(resp.Url)
+	tfo.Display = utils.MaybeStringValue(resp.Display)
 	tfo.Name = types.StringValue(resp.Name)
 	tfo.Slug = types.StringValue(resp.Slug)
 	return tfo

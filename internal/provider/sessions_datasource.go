@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/ffddorf/terraform-provider-netbox-bgp/client"
+	"github.com/ffddorf/terraform-provider-netbox-bgp/internal/utils"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -110,7 +111,7 @@ func (d *SessionsDataSource) Read(ctx context.Context, req datasource.ReadReques
 		return
 	}
 
-	params.Limit = fromInt64Value(data.Limit)
+	params.Limit = utils.FromInt64Value(data.Limit)
 	params.Ordering = data.Ordering.ValueStringPointer()
 
 	nextHTTPReq, err := client.NewPluginsBgpBgpsessionListRequest(d.client.Server, &params)
