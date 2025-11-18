@@ -6,6 +6,9 @@ services:
       - POSTGRES_USER=netbox
       - POSTGRES_PASSWORD=netbox
       - POSTGRES_DB=netbox
+    volumes:
+      - ./integration/seed.sql:/docker-entrypoint-initdb.d/seed.sql
+
   redis:
     image: redis:6-alpine
   netbox: &netbox-base
