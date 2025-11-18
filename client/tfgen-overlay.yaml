@@ -14,3 +14,8 @@ actions:
     update:
       items:
         type: string
+  - target: "$.components.schemas.BriefIPAddress.properties.family.properties"
+    remove: true
+  - target: "$.components.schemas.BriefIPAddress.properties.family"
+    update:
+      type: integer
