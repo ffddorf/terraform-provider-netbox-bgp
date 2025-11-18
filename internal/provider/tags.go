@@ -48,7 +48,7 @@ func (pc *ProviderClient) TagsForAPI(
 	pc.tagCacheMu.Unlock()
 
 	if len(unknownTags) > 0 {
-		resp, err := pc.ClientWithResponses.ExtrasTagsListWithResponse(ctx, &client.ExtrasTagsListParams{
+		resp, err := pc.ExtrasTagsListWithResponse(ctx, &client.ExtrasTagsListParams{
 			Slug: &unknownTags,
 		})
 		if err != nil || resp.JSON200 == nil {

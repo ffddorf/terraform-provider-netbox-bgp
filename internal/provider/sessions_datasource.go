@@ -114,7 +114,10 @@ func (d *SessionsDataSource) Read(ctx context.Context, req datasource.ReadReques
 	params.Limit = utils.FromInt64Value(data.Limit)
 	params.Ordering = data.Ordering.ValueStringPointer()
 
-	apiClient := d.client.ClientWithResponses.ClientInterface.(*client.Client)
+	apiClient, ok := d.client.ClientInterface.(*client.Client)
+	if !ok {
+		panic("invalid client setup")
+	}
 	nextHTTPReq, err := client.NewPluginsBgpBgpsessionListRequest(apiClient.Server, &params)
 	for nextHTTPReq != nil {
 		if err != nil {
