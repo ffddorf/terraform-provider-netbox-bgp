@@ -44,6 +44,7 @@ func (m *SessionModel) ToAPIModel(ctx context.Context, diags diag.Diagnostics) c
 	}
 	utils.SetForeignID(p.PrefixListIn, m.PrefixListIn)
 	utils.SetForeignID(p.PrefixListOut, m.PrefixListOut)
+	utils.SetForeignID(p.Virtualmachine, m.Virtualmachine)
 
 	p.Tags = utils.TagsForAPIModel(ctx, m.Tags, diags)
 
@@ -56,44 +57,21 @@ func (m *SessionModel) FillFromAPIModel(ctx context.Context, resp *client.BGPSes
 	m.Id = utils.MaybeInt64Value(resp.Id)
 	m.Comments = utils.MaybeStringValue(resp.Comments)
 	m.Description = utils.MaybeStringValue(resp.Description)
-	if resp.Device != nil {
-		m.Device = utils.MaybeInt64Value(resp.Device.Id)
-	}
-	if resp.ExportPolicies != nil && len(*resp.ExportPolicies) > 0 {
-		var ds diag.Diagnostics
-		m.ExportPolicies, ds = types.ListValueFrom(ctx, types.Int64Type, resp.ExportPolicies)
-		for _, d := range ds {
-			diags.Append(diag.WithPath(path.Root("export_policy_ids"), d))
-		}
-	}
-	if resp.ImportPolicies != nil && len(*resp.ImportPolicies) > 0 {
-		var ds diag.Diagnostics
-		m.ImportPolicies, ds = types.ListValueFrom(ctx, types.Int64Type, resp.ImportPolicies)
-		for _, d := range ds {
-			diags.Append(diag.WithPath(path.Root("import_policy_ids"), d))
-		}
-	}
+	m.Device = utils.MaybeInt64ValueSubfield(resp.Device, func(d client.BriefDevice) *int { return d.Id })
+	m.ExportPolicies = utils.MaybeListValue(ctx, types.Int64Type, path.Root("export_policies"), resp.ExportPolicies, diags)
+	m.ImportPolicies = utils.MaybeListValue(ctx, types.Int64Type, path.Root("import_policies"), resp.ImportPolicies, diags)
 	m.LocalAddress = utils.MaybeInt64Value(resp.LocalAddress.Id)
 	m.LocalAs = utils.MaybeInt64Value(resp.LocalAs.Id)
 	m.Name = utils.MaybeStringValue(resp.Name)
-	if resp.PeerGroup != nil {
-		m.PeerGroup = utils.MaybeInt64Value(resp.PeerGroup.Id)
-	}
-	if resp.PrefixListIn != nil {
-		m.PrefixListIn = utils.MaybeInt64Value(resp.PrefixListIn.Id)
-	}
-	if resp.PrefixListOut != nil {
-		m.PrefixListOut = utils.MaybeInt64Value(resp.PrefixListOut.Id)
-	}
+	m.PeerGroup = utils.MaybeInt64ValueSubfield(resp.PeerGroup, func(pg client.BriefBGPPeerGroup) *int { return pg.Id })
+	m.PrefixListIn = utils.MaybeInt64ValueSubfield(resp.PrefixListIn, func(pfxl client.BriefPrefixList) *int { return pfxl.Id })
+	m.PrefixListOut = utils.MaybeInt64ValueSubfield(resp.PrefixListOut, func(pfxl client.BriefPrefixList) *int { return pfxl.Id })
 	m.RemoteAddress = utils.MaybeInt64Value(resp.RemoteAddress.Id)
 	m.RemoteAs = utils.MaybeInt64Value(resp.RemoteAs.Id)
-	if resp.Site != nil {
-		m.Site = utils.MaybeInt64Value(resp.Site.Id)
-	}
+	m.Site = utils.MaybeInt64ValueSubfield(resp.Site, func(s client.BriefSite) *int { return s.Id })
 	m.Status = utils.MaybeStringValue((*string)(resp.Status.Value))
-	if resp.Tenant != nil {
-		m.Tenant = utils.MaybeInt64Value(resp.Tenant.Id)
-	}
+	m.Tenant = utils.MaybeInt64ValueSubfield(resp.Tenant, func(t client.BriefTenant) *int { return t.Id })
+	m.Virtualmachine = utils.MaybeInt64ValueSubfield(resp.Virtualmachine, func(vm client.BriefVirtualMachine) *int { return vm.Id })
 
 	m.Tags = utils.TagsFromAPI(ctx, resp.Tags, diags)
 
