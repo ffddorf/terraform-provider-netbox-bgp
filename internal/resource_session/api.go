@@ -2,6 +2,7 @@ package resource_session
 
 import (
 	"context"
+	"time"
 
 	"github.com/ffddorf/terraform-provider-netbox-bgp/client"
 	"github.com/ffddorf/terraform-provider-netbox-bgp/internal/utils"
@@ -56,10 +57,17 @@ func (m *SessionModel) ToAPIModel(ctx context.Context, diags diag.Diagnostics) c
 func (m *SessionModel) FillFromAPIModel(ctx context.Context, resp *client.BGPSession, diags diag.Diagnostics) {
 	m.Id = utils.MaybeInt64Value(resp.Id)
 	m.Comments = utils.MaybeStringValue(resp.Comments)
+	m.Created = utils.MaybeStringifiedValue(resp.Created, func(t time.Time) string {
+		return t.Format(time.RFC3339)
+	})
 	m.Description = utils.MaybeStringValue(resp.Description)
 	m.Device = utils.MaybeInt64ValueSubfield(resp.Device, func(d client.BriefDevice) *int { return d.Id })
+	m.Display = utils.MaybeStringValue(resp.Display)
 	m.ExportPolicies = utils.MaybeListValue(ctx, types.Int64Type, path.Root("export_policies"), resp.ExportPolicies, diags)
 	m.ImportPolicies = utils.MaybeListValue(ctx, types.Int64Type, path.Root("import_policies"), resp.ImportPolicies, diags)
+	m.LastUpdated = utils.MaybeStringifiedValue(resp.LastUpdated, func(t time.Time) string {
+		return t.Format(time.RFC3339)
+	})
 	m.LocalAddress = utils.MaybeInt64Value(resp.LocalAddress.Id)
 	m.LocalAs = utils.MaybeInt64Value(resp.LocalAs.Id)
 	m.Name = utils.MaybeStringValue(resp.Name)
@@ -72,6 +80,7 @@ func (m *SessionModel) FillFromAPIModel(ctx context.Context, resp *client.BGPSes
 	m.Status = utils.MaybeStringValue((*string)(resp.Status.Value))
 	m.Tenant = utils.MaybeInt64ValueSubfield(resp.Tenant, func(t client.BriefTenant) *int { return t.Id })
 	m.Virtualmachine = utils.MaybeInt64ValueSubfield(resp.Virtualmachine, func(vm client.BriefVirtualMachine) *int { return vm.Id })
+	m.Url = utils.MaybeStringValue(resp.Url)
 
 	m.Tags = utils.TagsFromAPI(ctx, resp.Tags, diags)
 

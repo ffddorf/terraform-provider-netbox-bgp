@@ -173,10 +173,34 @@
 						}
 					},
 					{
+						"name": "created",
+						"string": {
+							"computed_optional_required": "computed"
+						}
+					},
+					{
+						"name": "display",
+						"string": {
+							"computed_optional_required": "computed"
+						}
+					},
+					{
 						"name": "id",
 						"int64": {
-							"computed_optional_required": "computed_optional",
+							"computed_optional_required": "computed",
 							"description": "A unique integer value identifying this bgp session."
+						}
+					},
+					{
+						"name": "last_updated",
+						"string": {
+							"computed_optional_required": "computed"
+						}
+					},
+					{
+						"name": "url",
+						"string": {
+							"computed_optional_required": "computed"
 						}
 					}
 				]

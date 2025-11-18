@@ -45,6 +45,14 @@ func MaybeStringValue(in *string) types.String {
 	return types.StringPointerValue(in)
 }
 
+func MaybeStringifiedValue[T any](in *T, convert func(T) string) types.String {
+	if in == nil {
+		return types.StringNull()
+	}
+
+	return types.StringValue(convert(*in))
+}
+
 func MaybeInt64Value(in *int) types.Int64 {
 	if in == nil {
 		return types.Int64Null()

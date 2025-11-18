@@ -18,6 +18,9 @@ func SessionResourceSchema(ctx context.Context) schema.Schema {
 				Optional: true,
 				Computed: true,
 			},
+			"created": schema.StringAttribute{
+				Computed: true,
+			},
 			"description": schema.StringAttribute{
 				Optional: true,
 				Computed: true,
@@ -31,13 +34,15 @@ func SessionResourceSchema(ctx context.Context) schema.Schema {
 				Description:         "Reference to foreign ID",
 				MarkdownDescription: "Reference to foreign ID",
 			},
+			"display": schema.StringAttribute{
+				Computed: true,
+			},
 			"export_policies": schema.ListAttribute{
 				ElementType: types.Int64Type,
 				Optional:    true,
 				Computed:    true,
 			},
 			"id": schema.Int64Attribute{
-				Optional:            true,
 				Computed:            true,
 				Description:         "A unique integer value identifying this bgp session.",
 				MarkdownDescription: "A unique integer value identifying this bgp session.",
@@ -46,6 +51,9 @@ func SessionResourceSchema(ctx context.Context) schema.Schema {
 				ElementType: types.Int64Type,
 				Optional:    true,
 				Computed:    true,
+			},
+			"last_updated": schema.StringAttribute{
+				Computed: true,
 			},
 			"local_address": schema.Int64Attribute{
 				Required:            true,
@@ -123,6 +131,9 @@ func SessionResourceSchema(ctx context.Context) schema.Schema {
 				Description:         "Reference to foreign ID",
 				MarkdownDescription: "Reference to foreign ID",
 			},
+			"url": schema.StringAttribute{
+				Computed: true,
+			},
 			"virtualmachine": schema.Int64Attribute{
 				Optional:            true,
 				Computed:            true,
@@ -135,11 +146,14 @@ func SessionResourceSchema(ctx context.Context) schema.Schema {
 
 type SessionModel struct {
 	Comments       types.String `tfsdk:"comments"`
+	Created        types.String `tfsdk:"created"`
 	Description    types.String `tfsdk:"description"`
 	Device         types.Int64  `tfsdk:"device"`
+	Display        types.String `tfsdk:"display"`
 	ExportPolicies types.List   `tfsdk:"export_policies"`
 	Id             types.Int64  `tfsdk:"id"`
 	ImportPolicies types.List   `tfsdk:"import_policies"`
+	LastUpdated    types.String `tfsdk:"last_updated"`
 	LocalAddress   types.Int64  `tfsdk:"local_address"`
 	LocalAs        types.Int64  `tfsdk:"local_as"`
 	Name           types.String `tfsdk:"name"`
@@ -152,5 +166,6 @@ type SessionModel struct {
 	Status         types.String `tfsdk:"status"`
 	Tags           types.List   `tfsdk:"tags"`
 	Tenant         types.Int64  `tfsdk:"tenant"`
+	Url            types.String `tfsdk:"url"`
 	Virtualmachine types.Int64  `tfsdk:"virtualmachine"`
 }

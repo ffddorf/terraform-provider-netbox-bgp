@@ -28,7 +28,6 @@ description: |-
 - `description` (String)
 - `device` (Number) Reference to foreign ID
 - `export_policies` (List of Number)
-- `id` (Number) A unique integer value identifying this bgp session.
 - `import_policies` (List of Number)
 - `name` (String)
 - `peer_group` (Number) Reference to foreign ID
@@ -42,3 +41,11 @@ description: |-
 - `tags` (List of String)
 - `tenant` (Number) Reference to foreign ID
 - `virtualmachine` (Number) Reference to foreign ID
+
+### Read-Only
+
+- `created` (String)
+- `display` (String)
+- `id` (Number) A unique integer value identifying this bgp session.
+- `last_updated` (String)
+- `url` (String)

@@ -17,3 +17,5 @@ resources:
     schema:
       ignores:
         - custom_fields
+        - export_policies.custom_fields
+        - import_policies.custom_fields
