@@ -18,7 +18,7 @@ func NewPeerGroupDataSource() datasource.DataSource {
 }
 
 type PeerGroupDataSource struct {
-	client *client.Client
+	client *ProviderClient
 }
 
 type PeerGroupDataSourceModel struct {

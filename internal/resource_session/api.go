@@ -45,8 +45,6 @@ func (m *SessionModel) ToAPIModel(ctx context.Context, diags diag.Diagnostics) c
 	utils.SetForeignID(p.PrefixListIn, m.PrefixListIn)
 	utils.SetForeignID(p.PrefixListOut, m.PrefixListOut)
 
-	p.Tags = utils.TagsForAPIModel(ctx, m.Tags, diags)
-
 	// todo: custom fields
 
 	return p
@@ -94,8 +92,6 @@ func (m *SessionModel) FillFromAPIModel(ctx context.Context, resp *client.BGPSes
 	if resp.Tenant != nil {
 		m.Tenant = utils.MaybeInt64Value(resp.Tenant.Id)
 	}
-
-	m.Tags = utils.TagsFromAPI(ctx, resp.Tags, diags)
 
 	// todo: custom fields
 }

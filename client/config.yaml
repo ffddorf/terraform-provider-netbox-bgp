@@ -6,6 +6,7 @@ generate:
 output-options:
   include-tags:
     - plugins
+    - extras
   overlay:
     path: overlay.yaml
 output: client.gen.go

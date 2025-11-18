@@ -20,7 +20,7 @@ func NewSessionDataSource() datasource.DataSource {
 }
 
 type SessionDataSource struct {
-	client *client.Client
+	client *ProviderClient
 }
 
 type SessionDataSourceModel struct {

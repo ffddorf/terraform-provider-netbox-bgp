@@ -25,7 +25,7 @@ func NewSessionsDataSource() datasource.DataSource {
 }
 
 type SessionsDataSource struct {
-	client *client.Client
+	client *ProviderClient
 }
 
 type SessionsDataSourceModel struct {
@@ -114,7 +114,8 @@ func (d *SessionsDataSource) Read(ctx context.Context, req datasource.ReadReques
 	params.Limit = utils.FromInt64Value(data.Limit)
 	params.Ordering = data.Ordering.ValueStringPointer()
 
-	nextHTTPReq, err := client.NewPluginsBgpBgpsessionListRequest(d.client.Server, &params)
+	apiClient := d.client.ClientWithResponses.ClientInterface.(*client.Client)
+	nextHTTPReq, err := client.NewPluginsBgpBgpsessionListRequest(apiClient.Server, &params)
 	for nextHTTPReq != nil {
 		if err != nil {
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("failed to create session list request: %s", err))
@@ -122,7 +123,7 @@ func (d *SessionsDataSource) Read(ctx context.Context, req datasource.ReadReques
 		}
 
 		var httpRes *http.Response
-		httpRes, err = doPlainReq(ctx, nextHTTPReq, d.client)
+		httpRes, err = doPlainReq(ctx, nextHTTPReq, apiClient)
 		if err != nil {
 			resp.Diagnostics.AddError("Client Error", fmt.Sprintf("failed to retrieve sessions: %s", err))
 			return
