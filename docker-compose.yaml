@@ -45,8 +45,8 @@ services:
       test: ["CMD", "curl", "-f", "http://localhost:8080/login/"]
       interval: 10s
       timeout: 10s
-      retries: 20
-      start_period: 5s
+      retries: 10
+      start_period: 30s
 
   netbox-worker:
     <<: *netbox-base
