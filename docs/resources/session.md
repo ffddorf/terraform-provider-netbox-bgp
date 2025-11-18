@@ -17,51 +17,28 @@ description: |-
 
 ### Required
 
-- `device` (Number)
-- `local_address` (Number)
-- `local_as` (Number)
-- `remote_address` (Number)
-- `remote_as` (Number)
+- `local_address` (Number) Reference to foreign ID
+- `local_as` (Number) Reference to foreign ID
+- `remote_address` (Number) Reference to foreign ID
+- `remote_as` (Number) Reference to foreign ID
 
 ### Optional
 
 - `comments` (String)
 - `description` (String)
+- `device` (Number) Reference to foreign ID
 - `export_policies` (List of Number)
+- `id` (Number) A unique integer value identifying this bgp session.
 - `import_policies` (List of Number)
 - `name` (String)
-- `peer_group` (Number)
-- `prefix_list_in` (Number)
-- `prefix_list_out` (Number)
-- `site` (Number)
+- `peer_group` (Number) Reference to foreign ID
+- `prefix_list_in` (Number) Reference to foreign ID
+- `prefix_list_out` (Number) Reference to foreign ID
+- `site` (Number) Reference to foreign ID
 - `status` (String) * `offline` - Offline
 * `active` - Active
 * `planned` - Planned
 * `failed` - Failed
-- `tags` (Attributes List) (see [below for nested schema](#nestedatt--tags))
-- `tenant` (Number)
-
-### Read-Only
-
-- `created` (String)
-- `display` (String)
-- `id` (Number) A unique integer value identifying this bgp session.
-- `last_updated` (String)
-
-<a id="nestedatt--tags"></a>
-### Nested Schema for `tags`
-
-Required:
-
-- `name` (String)
-- `slug` (String)
-
-Optional:
-
-- `color` (String)
-
-Read-Only:
-
-- `display` (String)
-- `id` (Number)
-- `url` (String)
+- `tags` (List of String)
+- `tenant` (Number) Reference to foreign ID
+- `virtualmachine` (Number) Reference to foreign ID
