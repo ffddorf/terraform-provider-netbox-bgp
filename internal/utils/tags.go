@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/ffddorf/terraform-provider-netbox-bgp/client"
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -40,8 +41,11 @@ func TagsForAPIModel(ctx context.Context, l types.List, diags diag.Diagnostics) 
 }
 
 func TagsFromAPI(ctx context.Context, tags *[]client.NestedTag, diags diag.Diagnostics) types.List {
-	if tags == nil || len(*tags) == 0 {
+	if tags == nil {
 		return types.ListNull(types.StringType)
+	}
+	if len(*tags) == 0 {
+		return types.ListValueMust(types.StringType, []attr.Value{})
 	}
 
 	tagNames := make([]string, 0, len(*tags))
