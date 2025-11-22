@@ -47,12 +47,12 @@ func (r *SessionResource) Read(ctx context.Context, req resource.ReadRequest, re
 	}
 
 	parsed, err := r.client.PluginsBgpSessionRetrieveWithResponse(ctx, int(data.Id.ValueInt64()))
-	res := MaybeAPIError("failed to fetch session", err, parsed.JSON200, parsed.HTTPResponse, parsed.Body, resp.Diagnostics)
+	resp.Diagnostics.Append(MaybeAPIError("failed to fetch session", err, parsed.JSON200, parsed.HTTPResponse, parsed.Body)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	data.FillFromAPIModel(ctx, res, resp.Diagnostics)
+	data.FillFromAPIModel(ctx, parsed.JSON200, resp.Diagnostics)
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -74,12 +74,12 @@ func (r *SessionResource) Create(ctx context.Context, req resource.CreateRequest
 	}
 
 	parsed, err := r.client.PluginsBgpSessionCreateWithResponse(ctx, params)
-	res := MaybeAPIError("failed to create session", err, parsed.JSON201, parsed.HTTPResponse, parsed.Body, resp.Diagnostics)
+	resp.Diagnostics.Append(MaybeAPIError("failed to create session", err, parsed.JSON201, parsed.HTTPResponse, parsed.Body)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	data.FillFromAPIModel(ctx, res, resp.Diagnostics)
+	data.FillFromAPIModel(ctx, parsed.JSON201, resp.Diagnostics)
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -102,12 +102,12 @@ func (r *SessionResource) Update(ctx context.Context, req resource.UpdateRequest
 		return
 	}
 	parsed, err := r.client.PluginsBgpSessionUpdateWithResponse(ctx, int(id), params)
-	res := MaybeAPIError("failed to update session", err, parsed.JSON200, parsed.HTTPResponse, parsed.Body, resp.Diagnostics)
+	resp.Diagnostics.Append(MaybeAPIError("failed to update session", err, parsed.JSON200, parsed.HTTPResponse, parsed.Body)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	data.FillFromAPIModel(ctx, res, resp.Diagnostics)
+	data.FillFromAPIModel(ctx, parsed.JSON200, resp.Diagnostics)
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -128,7 +128,7 @@ func (r *SessionResource) Delete(ctx context.Context, req resource.DeleteRequest
 	if parsed.StatusCode() != http.StatusNoContent {
 		toCheck = nil // response not usable
 	}
-	MaybeAPIError("failed to delete session", err, toCheck, parsed.HTTPResponse, parsed.Body, resp.Diagnostics)
+	resp.Diagnostics.Append(MaybeAPIError("failed to delete session", err, toCheck, parsed.HTTPResponse, parsed.Body)...)
 }
 
 // ImportState implements resource.ResourceWithImportState.

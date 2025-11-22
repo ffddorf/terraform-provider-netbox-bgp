@@ -47,12 +47,12 @@ func (r *PrefixlistResource) Read(ctx context.Context, req resource.ReadRequest,
 	}
 
 	parsed, err := r.client.PluginsBgpPrefixListRetrieveWithResponse(ctx, int(data.Id.ValueInt64()))
-	res := MaybeAPIError("failed to fetch prefixlist", err, parsed.JSON200, parsed.HTTPResponse, parsed.Body, resp.Diagnostics)
+	resp.Diagnostics.Append(MaybeAPIError("failed to fetch prefixlist", err, parsed.JSON200, parsed.HTTPResponse, parsed.Body)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	data.FillFromAPIModel(ctx, res, resp.Diagnostics)
+	data.FillFromAPIModel(ctx, parsed.JSON200, resp.Diagnostics)
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -74,12 +74,12 @@ func (r *PrefixlistResource) Create(ctx context.Context, req resource.CreateRequ
 	}
 
 	parsed, err := r.client.PluginsBgpPrefixListCreateWithResponse(ctx, params)
-	res := MaybeAPIError("failed to create prefixlist", err, parsed.JSON201, parsed.HTTPResponse, parsed.Body, resp.Diagnostics)
+	resp.Diagnostics.Append(MaybeAPIError("failed to create prefixlist", err, parsed.JSON201, parsed.HTTPResponse, parsed.Body)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	data.FillFromAPIModel(ctx, res, resp.Diagnostics)
+	data.FillFromAPIModel(ctx, parsed.JSON201, resp.Diagnostics)
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -102,12 +102,12 @@ func (r *PrefixlistResource) Update(ctx context.Context, req resource.UpdateRequ
 		return
 	}
 	parsed, err := r.client.PluginsBgpPrefixListUpdateWithResponse(ctx, int(id), params)
-	res := MaybeAPIError("failed to update prefixlist", err, parsed.JSON200, parsed.HTTPResponse, parsed.Body, resp.Diagnostics)
+	resp.Diagnostics.Append(MaybeAPIError("failed to update prefixlist", err, parsed.JSON200, parsed.HTTPResponse, parsed.Body)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	data.FillFromAPIModel(ctx, res, resp.Diagnostics)
+	data.FillFromAPIModel(ctx, parsed.JSON200, resp.Diagnostics)
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -128,7 +128,7 @@ func (r *PrefixlistResource) Delete(ctx context.Context, req resource.DeleteRequ
 	if parsed.StatusCode() != http.StatusNoContent {
 		toCheck = nil // response not usable
 	}
-	MaybeAPIError("failed to delete prefixlist", err, toCheck, parsed.HTTPResponse, parsed.Body, resp.Diagnostics)
+	resp.Diagnostics.Append(MaybeAPIError("failed to delete prefixlist", err, toCheck, parsed.HTTPResponse, parsed.Body)...)
 }
 
 // ImportState implements resource.ResourceWithImportState.

@@ -12,16 +12,19 @@ type ProviderClient struct {
 	*client.ClientWithResponses
 }
 
-func MaybeAPIError[T any](detail string, err error, resp *T, raw *http.Response, body []byte, diags diag.Diagnostics) *T {
+func MaybeAPIError[T any](detail string, err error, resp *T, raw *http.Response, body []byte) diag.Diagnostics {
 	if err != nil {
-		diags.AddError("Client Error", detail+": "+err.Error())
-		return nil
+		return []diag.Diagnostic{
+			diag.NewErrorDiagnostic("Client Error", detail+": "+err.Error()),
+		}
 	}
 
 	if resp == nil {
-		diags.AddError("Client Error", fmt.Sprintf("%s: invalid response %d with body: %s", detail, raw.StatusCode, string(body)))
-		return nil
+		return []diag.Diagnostic{diag.NewErrorDiagnostic(
+			"Client Error",
+			fmt.Sprintf("%s: invalid response %d with body: %s", detail, raw.StatusCode, string(body)),
+		)}
 	}
 
-	return resp
+	return nil
 }

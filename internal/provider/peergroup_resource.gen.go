@@ -47,12 +47,12 @@ func (r *PeergroupResource) Read(ctx context.Context, req resource.ReadRequest, 
 	}
 
 	parsed, err := r.client.PluginsBgpPeerGroupRetrieveWithResponse(ctx, int(data.Id.ValueInt64()))
-	res := MaybeAPIError("failed to fetch peergroup", err, parsed.JSON200, parsed.HTTPResponse, parsed.Body, resp.Diagnostics)
+	resp.Diagnostics.Append(MaybeAPIError("failed to fetch peergroup", err, parsed.JSON200, parsed.HTTPResponse, parsed.Body)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	data.FillFromAPIModel(ctx, res, resp.Diagnostics)
+	data.FillFromAPIModel(ctx, parsed.JSON200, resp.Diagnostics)
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -74,12 +74,12 @@ func (r *PeergroupResource) Create(ctx context.Context, req resource.CreateReque
 	}
 
 	parsed, err := r.client.PluginsBgpPeerGroupCreateWithResponse(ctx, params)
-	res := MaybeAPIError("failed to create peergroup", err, parsed.JSON201, parsed.HTTPResponse, parsed.Body, resp.Diagnostics)
+	resp.Diagnostics.Append(MaybeAPIError("failed to create peergroup", err, parsed.JSON201, parsed.HTTPResponse, parsed.Body)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	data.FillFromAPIModel(ctx, res, resp.Diagnostics)
+	data.FillFromAPIModel(ctx, parsed.JSON201, resp.Diagnostics)
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -102,12 +102,12 @@ func (r *PeergroupResource) Update(ctx context.Context, req resource.UpdateReque
 		return
 	}
 	parsed, err := r.client.PluginsBgpPeerGroupUpdateWithResponse(ctx, int(id), params)
-	res := MaybeAPIError("failed to update peergroup", err, parsed.JSON200, parsed.HTTPResponse, parsed.Body, resp.Diagnostics)
+	resp.Diagnostics.Append(MaybeAPIError("failed to update peergroup", err, parsed.JSON200, parsed.HTTPResponse, parsed.Body)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	data.FillFromAPIModel(ctx, res, resp.Diagnostics)
+	data.FillFromAPIModel(ctx, parsed.JSON200, resp.Diagnostics)
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -128,7 +128,7 @@ func (r *PeergroupResource) Delete(ctx context.Context, req resource.DeleteReque
 	if parsed.StatusCode() != http.StatusNoContent {
 		toCheck = nil // response not usable
 	}
-	MaybeAPIError("failed to delete peergroup", err, toCheck, parsed.HTTPResponse, parsed.Body, resp.Diagnostics)
+	resp.Diagnostics.Append(MaybeAPIError("failed to delete peergroup", err, toCheck, parsed.HTTPResponse, parsed.Body)...)
 }
 
 // ImportState implements resource.ResourceWithImportState.

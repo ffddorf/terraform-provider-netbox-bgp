@@ -49,12 +49,12 @@ func (r *{{ $typeName }}) Read(ctx context.Context, req resource.ReadRequest, re
 	}
 
 	parsed, err := r.client.PluginsBgp{{ .APIName }}RetrieveWithResponse(ctx, int(data.Id.ValueInt64()))
-	res := MaybeAPIError("failed to fetch {{ .Name }}", err, parsed.JSON200, parsed.HTTPResponse, parsed.Body, resp.Diagnostics)
+	resp.Diagnostics.Append(MaybeAPIError("failed to fetch {{ .Name }}", err, parsed.JSON200, parsed.HTTPResponse, parsed.Body)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	data.FillFromAPIModel(ctx, res, resp.Diagnostics)
+	data.FillFromAPIModel(ctx, parsed.JSON200, resp.Diagnostics)
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -76,12 +76,12 @@ func (r *{{ $typeName }}) Create(ctx context.Context, req resource.CreateRequest
 	}
 
 	parsed, err := r.client.PluginsBgp{{ .APIName }}CreateWithResponse(ctx, params)
-	res := MaybeAPIError("failed to create {{ .Name }}", err, parsed.JSON201, parsed.HTTPResponse, parsed.Body, resp.Diagnostics)
+	resp.Diagnostics.Append(MaybeAPIError("failed to create {{ .Name }}", err, parsed.JSON201, parsed.HTTPResponse, parsed.Body)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	data.FillFromAPIModel(ctx, res, resp.Diagnostics)
+	data.FillFromAPIModel(ctx, parsed.JSON201, resp.Diagnostics)
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -104,12 +104,12 @@ func (r *{{ $typeName }}) Update(ctx context.Context, req resource.UpdateRequest
 		return
 	}
 	parsed, err := r.client.PluginsBgp{{ .APIName }}UpdateWithResponse(ctx, int(id), params)
-	res := MaybeAPIError("failed to update {{ .Name }}", err, parsed.JSON200, parsed.HTTPResponse, parsed.Body, resp.Diagnostics)
+	resp.Diagnostics.Append(MaybeAPIError("failed to update {{ .Name }}", err, parsed.JSON200, parsed.HTTPResponse, parsed.Body)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	data.FillFromAPIModel(ctx, res, resp.Diagnostics)
+	data.FillFromAPIModel(ctx, parsed.JSON200, resp.Diagnostics)
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -130,7 +130,7 @@ func (r *{{ $typeName }}) Delete(ctx context.Context, req resource.DeleteRequest
 	if parsed.StatusCode() != http.StatusNoContent {
 		toCheck = nil // response not usable
 	}
-	MaybeAPIError("failed to delete {{ .Name }}", err, toCheck, parsed.HTTPResponse, parsed.Body, resp.Diagnostics)
+	resp.Diagnostics.Append(MaybeAPIError("failed to delete {{ .Name }}", err, toCheck, parsed.HTTPResponse, parsed.Body)...)
 }
 
 // ImportState implements resource.ResourceWithImportState.
