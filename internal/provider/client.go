@@ -2,6 +2,7 @@ package provider
 
 import (
 	"fmt"
+	"net/http"
 
 	"github.com/ffddorf/terraform-provider-netbox-bgp/client"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -11,12 +12,16 @@ type ProviderClient struct {
 	*client.ClientWithResponses
 }
 
-func APIErrorDiagnostic(summary, detail string, err error, statusCode int, body []byte) diag.ErrorDiagnostic {
-	var moreDetail string
+func MaybeAPIError[T any](detail string, err error, resp *T, raw *http.Response, body []byte, diags diag.Diagnostics) *T {
 	if err != nil {
-		moreDetail = err.Error()
-	} else {
-		moreDetail = fmt.Sprintf("invalid response %d with body: %s", statusCode, string(body))
+		diags.AddError("Client Error", detail+": "+err.Error())
+		return nil
 	}
-	return diag.NewErrorDiagnostic(summary, detail+": "+moreDetail)
+
+	if resp == nil {
+		diags.AddError("Client Error", fmt.Sprintf("%s: invalid response %d with body: %s", detail, raw.StatusCode, string(body)))
+		return nil
+	}
+
+	return resp
 }

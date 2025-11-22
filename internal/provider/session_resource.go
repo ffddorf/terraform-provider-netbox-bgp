@@ -2,14 +2,11 @@ package provider
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 
-	"github.com/ffddorf/terraform-provider-netbox-bgp/client"
 	"github.com/ffddorf/terraform-provider-netbox-bgp/internal/resource_session"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
-	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -49,27 +46,17 @@ func (r *SessionResource) Create(ctx context.Context, req resource.CreateRequest
 		return
 	}
 
-	httpRes, err := r.client.PluginsBgpSessionCreate(ctx, params)
-	if err != nil {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("failed to create session: %s", err))
-		return
-	}
-	res, err := client.ParsePluginsBgpSessionCreateResponse(httpRes)
-	if err != nil {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("failed to parse session response: %s", err))
-		return
-	}
-	if res.JSON201 == nil {
-		resp.Diagnostics.AddError("Client Error", httpError(httpRes, res.Body))
-		return
-	}
-
-	data.FillFromAPIModel(ctx, res.JSON201, resp.Diagnostics)
+	parsed, err := r.client.PluginsBgpSessionCreateWithResponse(ctx, params)
+	res := MaybeAPIError("failed to create session", err, parsed.JSON201, parsed.HTTPResponse, parsed.Body, resp.Diagnostics)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	tflog.Trace(ctx, "created a resource")
+	data.FillFromAPIModel(ctx, res, resp.Diagnostics)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -85,22 +72,13 @@ func (r *SessionResource) Read(ctx context.Context, req resource.ReadRequest, re
 		return
 	}
 
-	httpRes, err := r.client.PluginsBgpSessionRetrieve(ctx, int(data.Id.ValueInt64()))
-	if err != nil {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("failed to retrieve session: %s", err))
-		return
-	}
-	res, err := client.ParsePluginsBgpSessionRetrieveResponse(httpRes)
-	if err != nil {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("failed to parse session: %s", err))
-		return
-	}
-	if res.JSON200 == nil {
-		resp.Diagnostics.AddError("Client Error", httpError(httpRes, res.Body))
+	parsed, err := r.client.PluginsBgpSessionRetrieveWithResponse(ctx, int(data.Id.ValueInt64()))
+	res := MaybeAPIError("failed to fetch session", err, parsed.JSON200, parsed.HTTPResponse, parsed.Body, resp.Diagnostics)
+	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	data.FillFromAPIModel(ctx, res.JSON200, resp.Diagnostics)
+	data.FillFromAPIModel(ctx, res, resp.Diagnostics)
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -121,22 +99,13 @@ func (r *SessionResource) Update(ctx context.Context, req resource.UpdateRequest
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	httpRes, err := r.client.PluginsBgpSessionUpdate(ctx, int(id), params)
-	if err != nil {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("failed to update session: %s", err))
-		return
-	}
-	res, err := client.ParsePluginsBgpBgpsessionUpdateResponse(httpRes)
-	if err != nil {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("failed to parse session response: %s", err))
-		return
-	}
-	if res.JSON200 == nil {
-		resp.Diagnostics.AddError("Client Error", httpError(httpRes, res.Body))
+	parsed, err := r.client.PluginsBgpSessionUpdateWithResponse(ctx, int(id), params)
+	res := MaybeAPIError("failed to update session", err, parsed.JSON200, parsed.HTTPResponse, parsed.Body, resp.Diagnostics)
+	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	data.FillFromAPIModel(ctx, res.JSON200, resp.Diagnostics)
+	data.FillFromAPIModel(ctx, res, resp.Diagnostics)
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -151,20 +120,12 @@ func (r *SessionResource) Delete(ctx context.Context, req resource.DeleteRequest
 		return
 	}
 
-	httpRes, err := r.client.PluginsBgpSessionDestroy(ctx, int(data.Id.ValueInt64()))
-	if err != nil {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("failed to destroy session: %s", err))
-		return
+	parsed, err := r.client.PluginsBgpSessionDestroyWithResponse(ctx, int(data.Id.ValueInt64()))
+	toCheck := parsed
+	if parsed.StatusCode() != http.StatusNoContent {
+		toCheck = nil // response not usable
 	}
-	res, err := client.ParsePluginsBgpBgpsessionDestroyResponse(httpRes)
-	if err != nil {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("failed to parse response: %s", err))
-		return
-	}
-	if res.StatusCode() != http.StatusNoContent {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("failed to destroy session: %s", string(res.Body)))
-		return
-	}
+	MaybeAPIError("failed to delete session", err, toCheck, parsed.HTTPResponse, parsed.Body, resp.Diagnostics)
 }
 
 func (r *SessionResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
