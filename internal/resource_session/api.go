@@ -32,14 +32,14 @@ func (m *SessionModel) ToAPIModel(ctx context.Context, diags diag.Diagnostics) c
 	{
 		policies, ds := utils.ToIntListPointer(ctx, m.ImportPolicies)
 		for _, d := range ds {
-			diags.Append(diag.WithPath(path.Root("import_policy_ids"), d))
+			diags.Append(diag.WithPath(path.Root("import_policies"), d))
 		}
 		p.ImportPolicies = &policies
 	}
 	{
 		policies, ds := utils.ToIntListPointer(ctx, m.ExportPolicies)
 		for _, d := range ds {
-			diags.Append(diag.WithPath(path.Root("export_policy_ids"), d))
+			diags.Append(diag.WithPath(path.Root("export_policies"), d))
 		}
 		p.ExportPolicies = &policies
 	}
