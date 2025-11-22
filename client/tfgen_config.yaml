@@ -19,3 +19,21 @@ resources:
         - custom_fields
         - export_policies.custom_fields
         - import_policies.custom_fields
+  peergroup:
+    create:
+      path: /api/plugins/bgp/peer-group/
+      method: POST
+    read:
+      path: /api/plugins/bgp/peer-group/{id}/
+      method: GET
+    update:
+      path: /api/plugins/bgp/peer-group/{id}/
+      method: PUT
+    delete:
+      path: /api/plugins/bgp/peer-group/{id}/
+      method: DELETE
+    schema:
+      ignores:
+        - custom_fields
+        - export_policies.custom_fields
+        - import_policies.custom_fields

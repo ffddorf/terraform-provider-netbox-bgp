@@ -176,6 +176,7 @@ func (p *NetboxBGPProvider) Configure(ctx context.Context, req provider.Configur
 func (p *NetboxBGPProvider) Resources(ctx context.Context) []func() resource.Resource {
 	return []func() resource.Resource{
 		NewSessionResource,
+		NewPeergroupResource,
 	}
 }
 
