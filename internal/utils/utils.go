@@ -2,6 +2,7 @@ package utils
 
 import (
 	"context"
+	"time"
 
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -85,4 +86,8 @@ func MaybeListValue[T any](ctx context.Context, elementType attr.Type, path path
 		diags.Append(diag.WithPath(path, d))
 	}
 	return result
+}
+
+func TimeString(t time.Time) string {
+	return t.Format(time.RFC3339)
 }
