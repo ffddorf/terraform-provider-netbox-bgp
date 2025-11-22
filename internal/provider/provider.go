@@ -21,6 +21,8 @@ import (
 
 //go:generate go tool tfplugingen-framework generate resources --input ../../client/resource_spec.json  --output ../
 
+//go:generate go run ./gen
+
 // Ensure NetboxBGPProvider satisfies various provider interfaces.
 var _ provider.Provider = &NetboxBGPProvider{}
 
@@ -177,6 +179,7 @@ func (p *NetboxBGPProvider) Resources(ctx context.Context) []func() resource.Res
 	return []func() resource.Resource{
 		NewSessionResource,
 		NewPeergroupResource,
+		NewPrefixlistResource,
 	}
 }
 
