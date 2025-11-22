@@ -1,0 +1,33 @@
+package resource_prefixlist
+
+import (
+	"context"
+
+	"github.com/ffddorf/terraform-provider-netbox-bgp/client"
+	"github.com/ffddorf/terraform-provider-netbox-bgp/internal/utils"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework/types"
+)
+
+func (p *PrefixlistModel) ToAPIModel(ctx context.Context, diags diag.Diagnostics) client.PrefixListRequest {
+	return client.PrefixListRequest{
+		Comments:    p.Comments.ValueStringPointer(),
+		Description: p.Description.ValueStringPointer(),
+		Family:      client.PrefixListRequestFamily(p.Family.ValueString()),
+		Name:        p.Name.ValueString(),
+		Tags:        utils.TagsForAPIModel(ctx, p.Tags, diags),
+	}
+}
+
+func (p *PrefixlistModel) FillFromAPIModel(ctx context.Context, resp *client.PrefixList, diags diag.Diagnostics) {
+	*p = PrefixlistModel{
+		Comments:    utils.MaybeStringValue(resp.Comments),
+		Description: utils.MaybeStringValue(resp.Description),
+		Display:     utils.MaybeStringValue(resp.Display),
+		Family:      types.StringValue(string(resp.Family)),
+		Id:          types.Int64Value(int64(*resp.Id)),
+		Name:        types.StringValue(resp.Name),
+		Tags:        utils.TagsFromAPI(ctx, resp.Tags, diags),
+		Url:         utils.MaybeStringValue(resp.Url),
+	}
+}

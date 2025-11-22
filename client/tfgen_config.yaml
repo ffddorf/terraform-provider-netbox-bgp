@@ -37,3 +37,19 @@ resources:
         - custom_fields
         - export_policies.custom_fields
         - import_policies.custom_fields
+  prefixlist:
+    create:
+      path: /api/plugins/bgp/prefix-list/
+      method: POST
+    read:
+      path: /api/plugins/bgp/prefix-list/{id}/
+      method: GET
+    update:
+      path: /api/plugins/bgp/prefix-list/{id}/
+      method: PUT
+    delete:
+      path: /api/plugins/bgp/prefix-list/{id}/
+      method: DELETE
+    schema:
+      ignores:
+        - custom_fields
