@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v4.1.7
+      - uses: actions/checkout@v4.3.1
       - uses: actions/setup-go@v6.1.0
         with:
           go-version-file: "go.mod"
@@ -38,7 +38,7 @@ jobs:
   generate:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4.1.7
+      - uses: actions/checkout@v4.3.1
       - uses: actions/setup-go@v6.1.0
         with:
           go-version-file: "go.mod"
@@ -76,7 +76,7 @@ jobs:
       NETBOX_VERSION: ${{ matrix.netbox }}
       NETBOX_BGP_VERSION: ${{ matrix.netbox_bgp }}
     steps:
-      - uses: actions/checkout@v4.1.7
+      - uses: actions/checkout@v4.3.1
       - uses: actions/setup-go@v6.1.0
         with:
           go-version-file: "go.mod"
