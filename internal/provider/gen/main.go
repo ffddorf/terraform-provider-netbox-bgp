@@ -33,6 +33,7 @@ func main() {
 		{Name: "peergroup", APIName: "PeerGroup"},
 		{Name: "prefixlist", APIName: "PrefixList"},
 		{Name: "prefixlistrule", APIName: "PrefixListRule"},
+		{Name: "aspathlist", APIName: "AspathList"},
 	}
 
 	for _, res := range resources {

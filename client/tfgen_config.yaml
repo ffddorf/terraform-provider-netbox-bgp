@@ -69,3 +69,19 @@ resources:
     schema:
       ignores:
         - custom_fields
+  aspathlist:
+    create:
+      path: /api/plugins/bgp/aspath-list/
+      method: POST
+    read:
+      path: /api/plugins/bgp/aspath-list/{id}/
+      method: GET
+    update:
+      path: /api/plugins/bgp/aspath-list/{id}/
+      method: PUT
+    delete:
+      path: /api/plugins/bgp/aspath-list/{id}/
+      method: DELETE
+    schema:
+      ignores:
+        - custom_fields

@@ -181,6 +181,7 @@ func (p *NetboxBGPProvider) Resources(ctx context.Context) []func() resource.Res
 		NewPeergroupResource,
 		NewPrefixlistResource,
 		NewPrefixlistruleResource,
+		NewAspathlistResource,
 	}
 }
 

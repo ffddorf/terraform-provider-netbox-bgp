@@ -4,6 +4,83 @@
 	},
 	"resources": [
 		{
+			"name": "aspathlist",
+			"schema": {
+				"attributes": [
+					{
+						"name": "comments",
+						"string": {
+							"computed_optional_required": "computed_optional"
+						}
+					},
+					{
+						"name": "description",
+						"string": {
+							"computed_optional_required": "computed_optional",
+							"validators": [
+								{
+									"custom": {
+										"imports": [
+											{
+												"path": "github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
+											}
+										],
+										"schema_definition": "stringvalidator.LengthAtMost(200)"
+									}
+								}
+							]
+						}
+					},
+					{
+						"name": "name",
+						"string": {
+							"computed_optional_required": "required",
+							"validators": [
+								{
+									"custom": {
+										"imports": [
+											{
+												"path": "github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
+											}
+										],
+										"schema_definition": "stringvalidator.LengthBetween(1, 100)"
+									}
+								}
+							]
+						}
+					},
+					{
+						"name": "tags",
+						"list": {
+							"computed_optional_required": "computed_optional",
+							"element_type": {
+								"string": {}
+							}
+						}
+					},
+					{
+						"name": "display",
+						"string": {
+							"computed_optional_required": "computed"
+						}
+					},
+					{
+						"name": "id",
+						"int64": {
+							"computed_optional_required": "computed",
+							"description": "A unique integer value identifying this as path list."
+						}
+					},
+					{
+						"name": "url",
+						"string": {
+							"computed_optional_required": "computed"
+						}
+					}
+				]
+			}
+		},
+		{
 			"name": "peergroup",
 			"schema": {
 				"attributes": [
