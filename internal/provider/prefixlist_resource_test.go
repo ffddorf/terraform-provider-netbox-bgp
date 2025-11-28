@@ -15,16 +15,16 @@ func TestAccPrefixlistResource(t *testing.T) {
 			{
 				Config: `
 					resource "netboxbgp_prefixlist" "test" {
-						name        = "rfc1918"
+						name        = "some-neighbor"
 						family      = "ipv4"
-						description = "RFC 1918 prefixes"
-						comments    = "do not announce publicly"
+						description = "Prefix belonging to that neighbor"
+						comments    = "on some IX"
 						tags        = []
 					}
 				`,
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttrSet("netboxbgp_prefixlist.test", "id"),
-					resource.TestCheckResourceAttr("netboxbgp_prefixlist.test", "name", "rfc1918"),
+					resource.TestCheckResourceAttr("netboxbgp_prefixlist.test", "name", "some-neighbor"),
 				),
 			},
 			{
