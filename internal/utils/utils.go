@@ -18,22 +18,25 @@ func ToIntPointer(from *int64) *int {
 	return &val
 }
 
-func ToIntListPointer(ctx context.Context, from types.List) ([]int, diag.Diagnostics) {
+func ToIntListPointer(ctx context.Context, from types.List, path path.Path, diags diag.Diagnostics) *[]int {
 	if from.IsNull() || from.IsUnknown() {
-		return []int{}, nil
+		return &[]int{}
 	}
 
 	var values []int64
-	diags := from.ElementsAs(ctx, &values, false)
-	if diags.HasError() {
-		return nil, diags
+	errs := from.ElementsAs(ctx, &values, false)
+	if errs.HasError() {
+		for _, d := range errs {
+			diags.Append(diag.WithPath(path, d))
+		}
+		return nil
 	}
 
 	out := make([]int, 0, len(values))
 	for _, val := range values {
 		out = append(out, int(val))
 	}
-	return out, diags
+	return &out
 }
 
 func MaybeStringValue(in *string) types.String {

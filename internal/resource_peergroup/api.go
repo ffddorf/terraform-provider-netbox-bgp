@@ -14,23 +14,11 @@ var _ utils.APIConvertibleModel[client.BGPPeerGroupRequest, client.BGPPeerGroup]
 
 func (m *PeergroupModel) ToAPIModel(ctx context.Context, diags diag.Diagnostics) client.BGPPeerGroupRequest {
 	r := client.BGPPeerGroupRequest{
-		Comments:    utils.FromStringValue(m.Comments),
-		Description: utils.FromStringValue(m.Description),
-		Name:        m.Name.ValueString(),
-	}
-	{
-		policies, ds := utils.ToIntListPointer(ctx, m.ImportPolicies)
-		for _, d := range ds {
-			diags.Append(diag.WithPath(path.Root("import_policies"), d))
-		}
-		r.ImportPolicies = &policies
-	}
-	{
-		policies, ds := utils.ToIntListPointer(ctx, m.ExportPolicies)
-		for _, d := range ds {
-			diags.Append(diag.WithPath(path.Root("export_policies"), d))
-		}
-		r.ExportPolicies = &policies
+		Comments:       utils.FromStringValue(m.Comments),
+		Description:    utils.FromStringValue(m.Description),
+		Name:           m.Name.ValueString(),
+		ExportPolicies: utils.ToIntListPointer(ctx, m.ExportPolicies, path.Root("export_policies"), diags),
+		ImportPolicies: utils.ToIntListPointer(ctx, m.ImportPolicies, path.Root("import_policies"), diags),
 	}
 	return r
 }

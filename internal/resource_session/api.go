@@ -30,20 +30,8 @@ func (m *SessionModel) ToAPIModel(ctx context.Context, diags diag.Diagnostics) c
 	p.LocalAs = *utils.SetForeignID(&p.LocalAs, m.LocalAs)
 	p.RemoteAs = *utils.SetForeignID(&p.RemoteAs, m.RemoteAs)
 	p.PeerGroup = utils.SetForeignID(p.PeerGroup, m.PeerGroup)
-	{
-		policies, ds := utils.ToIntListPointer(ctx, m.ImportPolicies)
-		for _, d := range ds {
-			diags.Append(diag.WithPath(path.Root("import_policies"), d))
-		}
-		p.ImportPolicies = &policies
-	}
-	{
-		policies, ds := utils.ToIntListPointer(ctx, m.ExportPolicies)
-		for _, d := range ds {
-			diags.Append(diag.WithPath(path.Root("export_policies"), d))
-		}
-		p.ExportPolicies = &policies
-	}
+	p.ImportPolicies = utils.ToIntListPointer(ctx, m.ImportPolicies, path.Root("import_policies"), diags)
+	p.ExportPolicies = utils.ToIntListPointer(ctx, m.ExportPolicies, path.Root("export_policies"), diags)
 	utils.SetForeignID(p.PrefixListIn, m.PrefixListIn)
 	utils.SetForeignID(p.PrefixListOut, m.PrefixListOut)
 	utils.SetForeignID(p.Virtualmachine, m.Virtualmachine)
