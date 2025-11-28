@@ -34,6 +34,7 @@ func main() {
 		{Name: "prefixlist", APIName: "PrefixList"},
 		{Name: "prefixlistrule", APIName: "PrefixListRule"},
 		{Name: "aspathlist", APIName: "AspathList"},
+		{Name: "aspathlistrule", APIName: "AspathListRule"},
 	}
 
 	for _, res := range resources {
