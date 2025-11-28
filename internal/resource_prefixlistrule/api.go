@@ -9,6 +9,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
+var _ utils.APIConvertibleModel[client.PrefixListRuleRequest, client.PrefixListRule] = (*PrefixlistruleModel)(nil)
+
 func (p *PrefixlistruleModel) ToAPIModel(ctx context.Context, diags diag.Diagnostics) client.PrefixListRuleRequest {
 	r := client.PrefixListRuleRequest{
 		Action:       client.PrefixListRuleRequestAction(p.Action.ValueString()),

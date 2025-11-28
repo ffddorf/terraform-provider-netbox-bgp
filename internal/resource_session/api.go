@@ -10,6 +10,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
+var _ utils.APIConvertibleModel[client.WritableBGPSessionRequest, client.BGPSession] = (*SessionModel)(nil)
+
 func (m *SessionModel) ToAPIModel(ctx context.Context, diags diag.Diagnostics) client.WritableBGPSessionRequest {
 	p := client.WritableBGPSessionRequest{}
 

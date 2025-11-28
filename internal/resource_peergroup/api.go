@@ -10,6 +10,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
+var _ utils.APIConvertibleModel[client.BGPPeerGroupRequest, client.BGPPeerGroup] = (*PeergroupModel)(nil)
+
 func (m *PeergroupModel) ToAPIModel(ctx context.Context, diags diag.Diagnostics) client.BGPPeerGroupRequest {
 	r := client.BGPPeerGroupRequest{
 		Comments:    utils.FromStringValue(m.Comments),

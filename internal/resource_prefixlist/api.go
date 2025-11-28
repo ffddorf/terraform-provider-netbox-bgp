@@ -9,6 +9,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
+var _ utils.APIConvertibleModel[client.PrefixListRequest, client.PrefixList] = (*PrefixlistModel)(nil)
+
 func (p *PrefixlistModel) ToAPIModel(ctx context.Context, diags diag.Diagnostics) client.PrefixListRequest {
 	return client.PrefixListRequest{
 		Comments:    utils.FromStringValue(p.Comments),
