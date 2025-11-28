@@ -186,6 +186,176 @@
 			}
 		},
 		{
+			"name": "prefixlistrule",
+			"schema": {
+				"attributes": [
+					{
+						"name": "action",
+						"string": {
+							"computed_optional_required": "required",
+							"description": "* `permit` - Permit\n* `deny` - Deny",
+							"validators": [
+								{
+									"custom": {
+										"imports": [
+											{
+												"path": "github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
+											}
+										],
+										"schema_definition": "stringvalidator.OneOf(\n\"permit\",\n\"deny\",\n)"
+									}
+								}
+							]
+						}
+					},
+					{
+						"name": "comments",
+						"string": {
+							"computed_optional_required": "computed_optional"
+						}
+					},
+					{
+						"name": "description",
+						"string": {
+							"computed_optional_required": "computed_optional",
+							"validators": [
+								{
+									"custom": {
+										"imports": [
+											{
+												"path": "github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
+											}
+										],
+										"schema_definition": "stringvalidator.LengthAtMost(200)"
+									}
+								}
+							]
+						}
+					},
+					{
+						"name": "ge",
+						"int64": {
+							"computed_optional_required": "computed_optional",
+							"validators": [
+								{
+									"custom": {
+										"imports": [
+											{
+												"path": "github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
+											}
+										],
+										"schema_definition": "int64validator.Between(0, 128)"
+									}
+								}
+							]
+						}
+					},
+					{
+						"name": "index",
+						"int64": {
+							"computed_optional_required": "required",
+							"validators": [
+								{
+									"custom": {
+										"imports": [
+											{
+												"path": "github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
+											}
+										],
+										"schema_definition": "int64validator.Between(0, 2147483647)"
+									}
+								}
+							]
+						}
+					},
+					{
+						"name": "le",
+						"int64": {
+							"computed_optional_required": "computed_optional",
+							"validators": [
+								{
+									"custom": {
+										"imports": [
+											{
+												"path": "github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
+											}
+										],
+										"schema_definition": "int64validator.Between(0, 128)"
+									}
+								}
+							]
+						}
+					},
+					{
+						"name": "prefix",
+						"int64": {
+							"computed_optional_required": "computed_optional",
+							"description": "Reference to foreign ID"
+						}
+					},
+					{
+						"name": "prefix_custom",
+						"string": {
+							"computed_optional_required": "computed_optional",
+							"validators": [
+								{
+									"custom": {
+										"imports": [
+											{
+												"path": "github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
+											}
+										],
+										"schema_definition": "stringvalidator.LengthAtLeast(1)"
+									}
+								}
+							]
+						}
+					},
+					{
+						"name": "prefix_list",
+						"int64": {
+							"computed_optional_required": "required",
+							"description": "Reference to foreign ID"
+						}
+					},
+					{
+						"name": "tags",
+						"list": {
+							"computed_optional_required": "computed_optional",
+							"element_type": {
+								"string": {}
+							}
+						}
+					},
+					{
+						"name": "created",
+						"string": {
+							"computed_optional_required": "computed"
+						}
+					},
+					{
+						"name": "display",
+						"string": {
+							"computed_optional_required": "computed"
+						}
+					},
+					{
+						"name": "id",
+						"int64": {
+							"computed_optional_required": "computed",
+							"description": "A unique integer value identifying this prefix list rule."
+						}
+					},
+					{
+						"name": "last_updated",
+						"string": {
+							"computed_optional_required": "computed"
+						}
+					}
+				]
+			}
+		},
+		{
 			"name": "session",
 			"schema": {
 				"attributes": [
