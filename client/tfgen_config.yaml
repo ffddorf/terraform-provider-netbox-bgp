@@ -3,16 +3,16 @@ provider:
 resources:
   session:
     create:
-      path: /api/plugins/bgp/bgpsession/
+      path: /api/plugins/bgp/session/
       method: POST
     read:
-      path: /api/plugins/bgp/bgpsession/{id}/
+      path: /api/plugins/bgp/session/{id}/
       method: GET
     update:
-      path: /api/plugins/bgp/bgpsession/{id}/
+      path: /api/plugins/bgp/session/{id}/
       method: PUT
     delete:
-      path: /api/plugins/bgp/bgpsession/{id}/
+      path: /api/plugins/bgp/session/{id}/
       method: DELETE
     schema:
       ignores:
