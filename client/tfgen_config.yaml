@@ -101,3 +101,19 @@ resources:
     schema:
       ignores:
         - custom_fields
+  routingpolicy:
+    create:
+      path: /api/plugins/bgp/routing-policy/
+      method: POST
+    read:
+      path: /api/plugins/bgp/routing-policy/{id}/
+      method: GET
+    update:
+      path: /api/plugins/bgp/routing-policy/{id}/
+      method: PUT
+    delete:
+      path: /api/plugins/bgp/routing-policy/{id}/
+      method: DELETE
+    schema:
+      ignores:
+        - custom_fields
