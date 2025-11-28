@@ -12,8 +12,8 @@ import (
 
 func (m *PeergroupModel) ToAPIModel(ctx context.Context, diags diag.Diagnostics) client.BGPPeerGroupRequest {
 	r := client.BGPPeerGroupRequest{
-		Comments:    m.Comments.ValueStringPointer(),
-		Description: m.Description.ValueStringPointer(),
+		Comments:    utils.FromStringValue(m.Comments),
+		Description: utils.FromStringValue(m.Description),
 		Name:        m.Name.ValueString(),
 	}
 	{

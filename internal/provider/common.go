@@ -63,8 +63,8 @@ type NestedTenant struct {
 func (tfo NestedSite) ToAPIModel() client.BriefSite {
 	return client.BriefSite{
 		Id:      utils.ToIntPointer(tfo.ID.ValueInt64Pointer()),
-		Url:     tfo.URL.ValueStringPointer(),
-		Display: tfo.Display.ValueStringPointer(),
+		Url:     utils.FromStringValue(tfo.URL),
+		Display: utils.FromStringValue(tfo.Display),
 		Name:    tfo.Name.ValueString(),
 		Slug:    tfo.Slug.ValueString(),
 	}
@@ -73,8 +73,8 @@ func (tfo NestedSite) ToAPIModel() client.BriefSite {
 func (tfo NestedASN) ToAPIModel() client.BriefASN {
 	return client.BriefASN{
 		Id:      utils.ToIntPointer(tfo.ID.ValueInt64Pointer()),
-		Url:     tfo.URL.ValueStringPointer(),
-		Display: tfo.Display.ValueStringPointer(),
+		Url:     utils.FromStringValue(tfo.URL),
+		Display: utils.FromStringValue(tfo.Display),
 		Asn:     tfo.ASN.ValueInt64(),
 	}
 }
@@ -89,8 +89,8 @@ func (tfo NestedIPAddress) ToAPIModel() client.BriefIPAddress {
 	}
 	ipa := client.BriefIPAddress{
 		Id:      utils.ToIntPointer(tfo.ID.ValueInt64Pointer()),
-		Url:     tfo.URL.ValueStringPointer(),
-		Display: tfo.Display.ValueStringPointer(),
+		Url:     utils.FromStringValue(tfo.URL),
+		Display: utils.FromStringValue(tfo.Display),
 		Family: &struct {
 			Label *client.BriefIPAddressFamilyLabel "json:\"label,omitempty\""
 			Value *client.BriefIPAddressFamilyValue "json:\"value,omitempty\""
@@ -105,27 +105,27 @@ func (tfo NestedIPAddress) ToAPIModel() client.BriefIPAddress {
 func (tfo NestedDevice) ToAPIModel() client.BriefDevice {
 	return client.BriefDevice{
 		Id:      utils.ToIntPointer(tfo.ID.ValueInt64Pointer()),
-		Url:     tfo.URL.ValueStringPointer(),
-		Display: tfo.Display.ValueStringPointer(),
-		Name:    tfo.Name.ValueStringPointer(),
+		Url:     utils.FromStringValue(tfo.URL),
+		Display: utils.FromStringValue(tfo.Display),
+		Name:    utils.FromStringValue(tfo.Name),
 	}
 }
 
 func (tfo NestedBGPPeerGroup) ToAPIModel() client.BriefBGPPeerGroup {
 	return client.BriefBGPPeerGroup{
 		Id:          utils.ToIntPointer(tfo.ID.ValueInt64Pointer()),
-		Url:         tfo.URL.ValueStringPointer(),
-		Display:     tfo.Display.ValueStringPointer(),
+		Url:         utils.FromStringValue(tfo.URL),
+		Display:     utils.FromStringValue(tfo.Display),
 		Name:        tfo.Name.ValueString(),
-		Description: tfo.Description.ValueStringPointer(),
+		Description: utils.FromStringValue(tfo.Description),
 	}
 }
 
 func (tfo NestedPrefixList) ToAPIModel() client.BriefPrefixList {
 	return client.BriefPrefixList{
 		Id:      utils.ToIntPointer(tfo.ID.ValueInt64Pointer()),
-		Url:     tfo.URL.ValueStringPointer(),
-		Display: tfo.Display.ValueStringPointer(),
+		Url:     utils.FromStringValue(tfo.URL),
+		Display: utils.FromStringValue(tfo.Display),
 		Name:    tfo.Name.ValueString(),
 	}
 }
@@ -133,8 +133,8 @@ func (tfo NestedPrefixList) ToAPIModel() client.BriefPrefixList {
 func (tfo NestedTenant) ToAPIModel() client.BriefTenant {
 	return client.BriefTenant{
 		Id:      utils.ToIntPointer(tfo.ID.ValueInt64Pointer()),
-		Url:     tfo.URL.ValueStringPointer(),
-		Display: tfo.Display.ValueStringPointer(),
+		Url:     utils.FromStringValue(tfo.URL),
+		Display: utils.FromStringValue(tfo.Display),
 		Name:    tfo.Name.ValueString(),
 		Slug:    tfo.Slug.ValueString(),
 	}

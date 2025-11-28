@@ -76,6 +76,21 @@ func FromInt64Value(in types.Int64) *int {
 	return ToIntPointer(in.ValueInt64Pointer())
 }
 
+func FromStringValue(in types.String) *string {
+	if in.IsNull() || in.IsUnknown() {
+		return nil
+	}
+	return in.ValueStringPointer()
+}
+
+func FromIntValue(in types.Int64) *int {
+	if in.IsNull() || in.IsUnknown() {
+		return nil
+	}
+	v := int(in.ValueInt64())
+	return &v
+}
+
 func MaybeListValue[T any](ctx context.Context, elementType attr.Type, path path.Path, in *[]T, diags diag.Diagnostics) types.List {
 	if in == nil || len(*in) == 0 {
 		return types.ListNull(elementType)

@@ -13,9 +13,9 @@ import (
 func (m *SessionModel) ToAPIModel(ctx context.Context, diags diag.Diagnostics) client.WritableBGPSessionRequest {
 	p := client.WritableBGPSessionRequest{}
 
-	p.Name = m.Name.ValueStringPointer()
-	p.Description = m.Description.ValueStringPointer()
-	p.Comments = m.Comments.ValueStringPointer()
+	p.Name = utils.FromStringValue(m.Name)
+	p.Description = utils.FromStringValue(m.Description)
+	p.Comments = utils.FromStringValue(m.Comments)
 	if !m.Status.IsNull() {
 		status := client.WritableBGPSessionRequestStatus(m.Status.ValueString())
 		p.Status = &status

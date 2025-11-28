@@ -112,7 +112,7 @@ func (d *SessionsDataSource) Read(ctx context.Context, req datasource.ReadReques
 	}
 
 	params.Limit = utils.FromInt64Value(data.Limit)
-	params.Ordering = data.Ordering.ValueStringPointer()
+	params.Ordering = utils.FromStringValue(data.Ordering)
 
 	apiClient, ok := d.client.ClientInterface.(*client.Client)
 	if !ok {

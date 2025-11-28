@@ -11,8 +11,8 @@ import (
 
 func (p *PrefixlistModel) ToAPIModel(ctx context.Context, diags diag.Diagnostics) client.PrefixListRequest {
 	return client.PrefixListRequest{
-		Comments:    p.Comments.ValueStringPointer(),
-		Description: p.Description.ValueStringPointer(),
+		Comments:    utils.FromStringValue(p.Comments),
+		Description: utils.FromStringValue(p.Description),
 		Family:      client.PrefixListRequestFamily(p.Family.ValueString()),
 		Name:        p.Name.ValueString(),
 		Tags:        utils.TagsForAPIModel(ctx, p.Tags, diags),
