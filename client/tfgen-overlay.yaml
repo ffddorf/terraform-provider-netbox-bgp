@@ -14,3 +14,16 @@ actions:
     update:
       items:
         type: string
+  # changes to RoutingPolicyRule
+  - target: "$.components.schemas.RoutingPolicyRule.properties.match_custom"
+    update:
+      type: string
+  - target: "$.components.schemas.RoutingPolicyRule.properties.set_actions"
+    update:
+      type: string
+  - target: "$.components.schemas.RoutingPolicyRuleRequest.properties.match_custom"
+    update:
+      type: string
+  - target: "$.components.schemas.RoutingPolicyRuleRequest.properties.set_actions"
+    update:
+      type: string

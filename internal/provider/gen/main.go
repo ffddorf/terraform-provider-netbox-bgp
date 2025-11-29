@@ -36,6 +36,7 @@ func main() {
 		{Name: "aspathlist", APIName: "AspathList"},
 		{Name: "aspathlistrule", APIName: "AspathListRule"},
 		{Name: "routingpolicy", APIName: "RoutingPolicy"},
+		{Name: "routingpolicyrule", APIName: "RoutingPolicyRule"},
 	}
 
 	for _, res := range resources {

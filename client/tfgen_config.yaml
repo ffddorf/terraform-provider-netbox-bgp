@@ -117,3 +117,30 @@ resources:
     schema:
       ignores:
         - custom_fields
+  routingpolicyrule:
+    create:
+      path: /api/plugins/bgp/routing-policy-rule/
+      method: POST
+    read:
+      path: /api/plugins/bgp/routing-policy-rule/{id}/
+      method: GET
+    update:
+      path: /api/plugins/bgp/routing-policy-rule/{id}/
+      method: PUT
+    delete:
+      path: /api/plugins/bgp/routing-policy-rule/{id}/
+      method: DELETE
+    schema:
+      ignores:
+        - custom_fields
+        - match_aspath_list.custom_fields
+        - match_community.custom_fields
+        - match_community_list.custom_fields
+        - match_ip_address.custom_fields
+        - match_ipv6_address.custom_fields
+      attributes:
+        overrides:
+          match_custom:
+            description: Provide a JSON-serialized object.
+          set_actions:
+            description: Provide a JSON-serialized object.

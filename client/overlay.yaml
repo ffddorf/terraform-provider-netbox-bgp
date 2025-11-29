@@ -12,3 +12,15 @@ actions:
   - target: "$.components.schemas.*.properties.*.oneOf[?(@.type == 'integer')]"
     update:
       "$ref": "#/components/schemas/ForeignID"
+  - target: "$.components.schemas.RoutingPolicyRuleRequest.properties.match_custom"
+    update:
+      x-go-type: json.RawMessage
+  - target: "$.components.schemas.RoutingPolicyRuleRequest.properties.set_actions"
+    update:
+      x-go-type: json.RawMessage
+  - target: "$.components.schemas.RoutingPolicyRule.properties.match_custom"
+    update:
+      x-go-type: json.RawMessage
+  - target: "$.components.schemas.RoutingPolicyRule.properties.set_actions"
+    update:
+      x-go-type: json.RawMessage

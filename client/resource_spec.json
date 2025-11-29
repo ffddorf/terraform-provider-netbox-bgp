@@ -637,6 +637,180 @@
 			}
 		},
 		{
+			"name": "routingpolicyrule",
+			"schema": {
+				"attributes": [
+					{
+						"name": "action",
+						"string": {
+							"computed_optional_required": "required",
+							"description": "* `permit` - Permit\n* `deny` - Deny",
+							"validators": [
+								{
+									"custom": {
+										"imports": [
+											{
+												"path": "github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
+											}
+										],
+										"schema_definition": "stringvalidator.OneOf(\n\"permit\",\n\"deny\",\n)"
+									}
+								}
+							]
+						}
+					},
+					{
+						"name": "comments",
+						"string": {
+							"computed_optional_required": "computed_optional"
+						}
+					},
+					{
+						"name": "continue_entry",
+						"int64": {
+							"computed_optional_required": "computed_optional",
+							"validators": [
+								{
+									"custom": {
+										"imports": [
+											{
+												"path": "github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
+											}
+										],
+										"schema_definition": "int64validator.Between(0, 2147483647)"
+									}
+								}
+							]
+						}
+					},
+					{
+						"name": "description",
+						"string": {
+							"computed_optional_required": "computed_optional",
+							"validators": [
+								{
+									"custom": {
+										"imports": [
+											{
+												"path": "github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
+											}
+										],
+										"schema_definition": "stringvalidator.LengthAtMost(500)"
+									}
+								}
+							]
+						}
+					},
+					{
+						"name": "index",
+						"int64": {
+							"computed_optional_required": "required",
+							"validators": [
+								{
+									"custom": {
+										"imports": [
+											{
+												"path": "github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
+											}
+										],
+										"schema_definition": "int64validator.Between(0, 2147483647)"
+									}
+								}
+							]
+						}
+					},
+					{
+						"name": "match_aspath_list",
+						"list": {
+							"computed_optional_required": "computed_optional",
+							"element_type": {
+								"int64": {}
+							}
+						}
+					},
+					{
+						"name": "match_community",
+						"list": {
+							"computed_optional_required": "computed_optional",
+							"element_type": {
+								"int64": {}
+							}
+						}
+					},
+					{
+						"name": "match_community_list",
+						"list": {
+							"computed_optional_required": "computed_optional",
+							"element_type": {
+								"int64": {}
+							}
+						}
+					},
+					{
+						"name": "match_custom",
+						"string": {
+							"computed_optional_required": "computed_optional",
+							"description": "Provide a JSON-serialized object."
+						}
+					},
+					{
+						"name": "match_ip_address",
+						"list": {
+							"computed_optional_required": "computed_optional",
+							"element_type": {
+								"int64": {}
+							}
+						}
+					},
+					{
+						"name": "match_ipv6_address",
+						"list": {
+							"computed_optional_required": "computed_optional",
+							"element_type": {
+								"int64": {}
+							}
+						}
+					},
+					{
+						"name": "routing_policy",
+						"int64": {
+							"computed_optional_required": "required",
+							"description": "Reference to foreign ID"
+						}
+					},
+					{
+						"name": "set_actions",
+						"string": {
+							"computed_optional_required": "computed_optional",
+							"description": "Provide a JSON-serialized object."
+						}
+					},
+					{
+						"name": "tags",
+						"list": {
+							"computed_optional_required": "computed_optional",
+							"element_type": {
+								"string": {}
+							}
+						}
+					},
+					{
+						"name": "display",
+						"string": {
+							"computed_optional_required": "computed"
+						}
+					},
+					{
+						"name": "id",
+						"int64": {
+							"computed_optional_required": "computed",
+							"description": "A unique integer value identifying this routing policy rule."
+						}
+					}
+				]
+			}
+		},
+		{
 			"name": "session",
 			"schema": {
 				"attributes": [

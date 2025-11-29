@@ -2,6 +2,8 @@ package utils
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-framework/attr"
@@ -120,4 +122,20 @@ func MaybeListValueAccessor[M, T any](
 
 func TimeString(t time.Time) string {
 	return t.Format(time.RFC3339)
+}
+
+func MaybeRawJSON(in types.String, path path.Path, diags diag.Diagnostics) *json.RawMessage {
+	if in.IsUnknown() || in.IsNull() {
+		return nil
+	}
+
+	val := json.RawMessage(in.ValueString())
+	// validate by parsing
+	var tester any
+	if err := json.Unmarshal(val, &tester); err != nil {
+		diags.AddAttributeError(path, "Format error", fmt.Sprintf("Unable to parse input as JSON: %v", err))
+		return nil
+	}
+
+	return &val
 }

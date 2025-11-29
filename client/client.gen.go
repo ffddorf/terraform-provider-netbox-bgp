@@ -4633,13 +4633,13 @@ type RoutingPolicyRule struct {
 	MatchAspathList    *[]ASPathList           `json:"match_aspath_list,omitempty"`
 	MatchCommunity     *[]Community            `json:"match_community,omitempty"`
 	MatchCommunityList *[]CommunityList        `json:"match_community_list,omitempty"`
-	MatchCustom        interface{}             `json:"match_custom"`
+	MatchCustom        *json.RawMessage        `json:"match_custom"`
 	MatchIpAddress     *[]PrefixList           `json:"match_ip_address,omitempty"`
 	MatchIpv6Address   *[]PrefixList           `json:"match_ipv6_address,omitempty"`
 
 	// RoutingPolicy Adds support for custom fields and tags.
 	RoutingPolicy BriefRoutingPolicy `json:"routing_policy"`
-	SetActions    interface{}        `json:"set_actions"`
+	SetActions    *json.RawMessage   `json:"set_actions"`
 	Tags          *[]NestedTag       `json:"tags,omitempty"`
 }
 
@@ -4660,11 +4660,11 @@ type RoutingPolicyRuleRequest struct {
 	MatchAspathList    *[]int                                 `json:"match_aspath_list,omitempty"`
 	MatchCommunity     *[]int                                 `json:"match_community,omitempty"`
 	MatchCommunityList *[]int                                 `json:"match_community_list,omitempty"`
-	MatchCustom        interface{}                            `json:"match_custom"`
+	MatchCustom        *json.RawMessage                       `json:"match_custom"`
 	MatchIpAddress     *[]int                                 `json:"match_ip_address,omitempty"`
 	MatchIpv6Address   *[]int                                 `json:"match_ipv6_address,omitempty"`
 	RoutingPolicy      RoutingPolicyRuleRequest_RoutingPolicy `json:"routing_policy"`
-	SetActions         interface{}                            `json:"set_actions"`
+	SetActions         *json.RawMessage                       `json:"set_actions"`
 	Tags               *[]NestedTagRequest                    `json:"tags,omitempty"`
 }
 

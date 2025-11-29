@@ -1,8 +1,10 @@
 package provider
 
 import (
+	"encoding/binary"
 	"fmt"
 	"hash/fnv"
+	"net/netip"
 	"testing"
 
 	"github.com/google/uuid"
@@ -30,4 +32,15 @@ func testIP(t *testing.T, offset uint64) string {
 	num := testNum(t)
 	shortNum := num % 250
 	return fmt.Sprintf("203.0.113.%d", shortNum+offset)
+}
+
+func testIP6(t *testing.T, offset uint64) string {
+	num := testNum(t) + offset
+	net := netip.MustParseAddr("2001:db8::").AsSlice()[:8]
+	result := binary.BigEndian.AppendUint64(net, num)
+	addr, ok := netip.AddrFromSlice(result)
+	if !ok {
+		t.Errorf("failed to convert slice to addr: %v", result)
+	}
+	return addr.String()
 }
