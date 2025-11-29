@@ -24,7 +24,7 @@ func TestAccPrefixlistruleResource(t *testing.T) {
 					}
 
 					resource "netbox_prefix" "lan" {
-						prefix = "%[2]s/16"
+						prefix = "%[2]s/32"
 						status = "active"
 					}
 
