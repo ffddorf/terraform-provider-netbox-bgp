@@ -1,6 +1,7 @@
 package provider
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
@@ -13,9 +14,9 @@ func TestAccPrefixlistruleResource(t *testing.T) {
 		ExternalProviders:        testExternalProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: `
+				Config: fmt.Sprintf(`
 					resource "netboxbgp_prefixlist" "test" {
-						name        = "rfc1918"
+						name        = "%[1]s"
 						family      = "ipv4"
 						description = "RFC 1918 prefixes"
 						comments    = "do not announce publicly"
@@ -23,7 +24,7 @@ func TestAccPrefixlistruleResource(t *testing.T) {
 					}
 
 					resource "netbox_prefix" "lan" {
-						prefix = "192.168.0.0/16"
+						prefix = "%[2]s/16"
 						status = "active"
 					}
 
@@ -40,7 +41,7 @@ func TestAccPrefixlistruleResource(t *testing.T) {
 						prefix_custom = "10.0.0.0/8"
 						prefix_list   = netboxbgp_prefixlist.test.id
 					}
-				`,
+				`, testName(t), testIP(t, 0)),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttrSet("netboxbgp_prefixlistrule.lan", "id"),
 					resource.TestCheckResourceAttrSet("netboxbgp_prefixlistrule.custom", "id"),

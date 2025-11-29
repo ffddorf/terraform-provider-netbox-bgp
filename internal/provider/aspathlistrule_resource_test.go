@@ -1,6 +1,7 @@
 package provider
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
@@ -12,9 +13,9 @@ func TestAccAspathlistruleResource(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: `
+				Config: fmt.Sprintf(`
 					resource "netboxbgp_aspathlist" "test" {
-						name        = "IXP"
+						name        = "%[1]s"
 						description = "Rules for ASPaths on interchanges"
 						comments    = "some foo"
 					}
@@ -28,7 +29,7 @@ func TestAccAspathlistruleResource(t *testing.T) {
 
 						description = "some text here"
 					}
-				`,
+				`, testName(t)),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttrSet("netboxbgp_aspathlistrule.test", "id"),
 					resource.TestCheckResourceAttr("netboxbgp_aspathlistrule.test", "action", "permit"),
