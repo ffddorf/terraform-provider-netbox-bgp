@@ -62,19 +62,27 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        terraform:
-          - "1.8.*"
-          - "1.9.*"
-        netbox:
+        # renovate: datasource=github-releases depName=netbox-community/netbox
+        netbox_version:
           - "4.4.6"
+        # renovate: datasource=github-releases depName=netbox-community/netbox-bgp
+        netbox_bgp_version:
+          - "0.17.0"
+        flavor:
+          - terraform
+          - opentofu
         include:
-          - netbox: "4.4.6"
-            netbox_bgp: "0.17.0"
+          - flavor: terraform
+            # renovate: datasource=github-releases depName=hashicorp/terraform
+            terraform_version: "1.14"
+          - flavor: opentofu
+            # renovate: datasource=github-releases depName=opentofu/opentofu
+            opentofu_version: "1.10"
     env:
       DOCKER_COMPOSE: docker compose --progress=plain
       BUILDKIT_PROGRESS: plain
-      NETBOX_VERSION: ${{ matrix.netbox }}
-      NETBOX_BGP_VERSION: ${{ matrix.netbox_bgp }}
+      NETBOX_VERSION: ${{ matrix.netbox_version }}
+      NETBOX_BGP_VERSION: ${{ matrix.netbox_bgp_version }}
     steps:
       - uses: actions/checkout@v6.0.0
       - uses: actions/setup-go@v6.1.0
@@ -82,9 +90,22 @@ jobs:
           go-version-file: "go.mod"
           cache: true
       - uses: hashicorp/setup-terraform@v3.1.2
+        if: matrix.flavor == 'terraform'
         with:
-          terraform_version: ${{ matrix.terraform }}
+          terraform_version: ${{ matrix.terraform_version }}
           terraform_wrapper: false
+      - uses: opentofu/setup-opentofu@v1
+        if: matrix.flavor == 'opentofu'
+        with:
+          tofu_version: ${{ matrix.opentofu_version }}
+          tofu_wrapper: false
+      - if: matrix.flavor == 'opentofu'
+        run: |
+          cat >>"$GITHUB_ENV" <<EOF
+            TF_ACC_TERRAFORM_PATH=$(which tofu)
+            TF_ACC_PROVIDER_NAMESPACE=hashicorp
+            TF_ACC_PROVIDER_HOST=registry.opentofu.org
+          EOF
       - run: go mod download
       - run: make docker-up
         id: docker
