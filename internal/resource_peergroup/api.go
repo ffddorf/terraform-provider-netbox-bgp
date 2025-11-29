@@ -25,13 +25,25 @@ func (m *PeergroupModel) ToAPIModel(ctx context.Context, diags diag.Diagnostics)
 
 func (m *PeergroupModel) FillFromAPIModel(ctx context.Context, resp *client.BGPPeerGroup, diags diag.Diagnostics) {
 	*m = PeergroupModel{
-		Id:             utils.MaybeInt64Value(resp.Id),
-		Comments:       utils.MaybeStringValue(resp.Comments),
-		Description:    utils.MaybeStringValue(resp.Description),
-		Display:        utils.MaybeStringValue(resp.Display),
-		ExportPolicies: utils.MaybeListValue(ctx, types.Int64Type, path.Root("export_policies"), resp.ExportPolicies, diags),
-		ImportPolicies: utils.MaybeListValue(ctx, types.Int64Type, path.Root("import_policies"), resp.ImportPolicies, diags),
-		Name:           utils.MaybeStringValue(&resp.Name),
-		Url:            utils.MaybeStringValue(resp.Url),
+		Id:          utils.MaybeInt64Value(resp.Id),
+		Comments:    utils.MaybeStringValue(resp.Comments),
+		Description: utils.MaybeStringValue(resp.Description),
+		Display:     utils.MaybeStringValue(resp.Display),
+		ExportPolicies: utils.MaybeListValueAccessor(ctx,
+			types.Int64Type,
+			path.Root("export_policies"),
+			resp.ExportPolicies,
+			func(in client.RoutingPolicy) int64 { return int64(*in.Id) },
+			diags,
+		),
+		ImportPolicies: utils.MaybeListValueAccessor(ctx,
+			types.Int64Type,
+			path.Root("import_policies"),
+			resp.ImportPolicies,
+			func(in client.RoutingPolicy) int64 { return int64(*in.Id) },
+			diags,
+		),
+		Name: utils.MaybeStringValue(&resp.Name),
+		Url:  utils.MaybeStringValue(resp.Url),
 	}
 }

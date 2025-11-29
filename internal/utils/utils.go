@@ -94,16 +94,28 @@ func FromIntValue(in types.Int64) *int {
 	return &v
 }
 
-func MaybeListValue[T any](ctx context.Context, elementType attr.Type, path path.Path, in *[]T, diags diag.Diagnostics) types.List {
+func MaybeListValueAccessor[M, T any](
+	ctx context.Context,
+	elementType attr.Type,
+	path path.Path,
+	in *[]M,
+	acc func(M) T,
+	diags diag.Diagnostics,
+) types.List {
 	if in == nil || len(*in) == 0 {
 		return types.ListNull(elementType)
 	}
 
-	result, ds := types.ListValueFrom(ctx, elementType, in)
+	l := make([]T, 0, len(*in))
+	for _, v := range *in {
+		l = append(l, acc(v))
+	}
+
+	v, ds := types.ListValueFrom(ctx, elementType, l)
 	for _, d := range ds {
 		diags.Append(diag.WithPath(path, d))
 	}
-	return result
+	return v
 }
 
 func TimeString(t time.Time) string {

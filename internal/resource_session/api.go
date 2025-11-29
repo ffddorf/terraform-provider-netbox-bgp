@@ -50,8 +50,20 @@ func (m *SessionModel) FillFromAPIModel(ctx context.Context, resp *client.BGPSes
 	m.Description = utils.MaybeStringValue(resp.Description)
 	m.Device = utils.MaybeInt64ValueSubfield(resp.Device, func(d client.BriefDevice) *int { return d.Id })
 	m.Display = utils.MaybeStringValue(resp.Display)
-	m.ExportPolicies = utils.MaybeListValue(ctx, types.Int64Type, path.Root("export_policies"), resp.ExportPolicies, diags)
-	m.ImportPolicies = utils.MaybeListValue(ctx, types.Int64Type, path.Root("import_policies"), resp.ImportPolicies, diags)
+	m.ExportPolicies = utils.MaybeListValueAccessor(ctx,
+		types.Int64Type,
+		path.Root("export_policies"),
+		resp.ExportPolicies,
+		func(in client.RoutingPolicy) int64 { return int64(*in.Id) },
+		diags,
+	)
+	m.ImportPolicies = utils.MaybeListValueAccessor(ctx,
+		types.Int64Type,
+		path.Root("import_policies"),
+		resp.ImportPolicies,
+		func(in client.RoutingPolicy) int64 { return int64(*in.Id) },
+		diags,
+	)
 	m.LastUpdated = utils.MaybeStringifiedValue(resp.LastUpdated, utils.TimeString)
 	m.LocalAddress = utils.MaybeInt64Value(resp.LocalAddress.Id)
 	m.LocalAs = utils.MaybeInt64Value(resp.LocalAs.Id)
