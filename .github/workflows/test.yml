@@ -100,7 +100,12 @@ jobs:
           tofu_version: ${{ matrix.opentofu_version }}
           tofu_wrapper: false
       - if: matrix.flavor == 'opentofu'
-        run: echo "TF_ACC_TERRAFORM_PATH=$(which tofu)" >> "$GITHUB_ENV"
+        run: |
+          cat >>"$GITHUB_ENV" <<EOF
+            TF_ACC_TERRAFORM_PATH=$(which tofu)
+            TF_ACC_PROVIDER_NAMESPACE=hashicorp
+            TF_ACC_PROVIDER_HOST=registry.opentofu.org
+          EOF
       - run: go mod download
       - run: make docker-up
         id: docker
