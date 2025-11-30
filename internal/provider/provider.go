@@ -6,12 +6,14 @@ package provider
 import (
 	"context"
 	"crypto/tls"
+	"crypto/x509"
 	_ "embed"
 	"fmt"
 	"net/http"
 
 	"github.com/ffddorf/terraform-provider-netbox-bgp/client"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/provider/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -46,6 +48,7 @@ type NetboxBGPProviderModel struct {
 	AllowInsecureHTTPS types.Bool   `tfsdk:"allow_insecure_https"`
 	Headers            types.Map    `tfsdk:"headers"`
 	RequestTimeout     types.Int64  `tfsdk:"request_timeout"`
+	CACertFile         types.String `tfsdk:"ca_cert_file"`
 }
 
 type NetboxBGPProviderEnvModel struct {
@@ -54,6 +57,7 @@ type NetboxBGPProviderEnvModel struct {
 	AllowInsecureHTTPS *bool             `env:"NETBOX_ALLOW_INSECURE_HTTPS"`
 	RequestTimeout     int64             `env:"NETBOX_REQUEST_TIMEOUT"`
 	Headers            map[string]string `env:"NETBOX_HEADERS"`
+	CACertFile         string            `env:"NETBOX_CA_CERT_FILE"`
 }
 
 func (p *NetboxBGPProvider) Metadata(ctx context.Context, req provider.MetadataRequest, resp *provider.MetadataResponse) {
@@ -84,6 +88,10 @@ func (p *NetboxBGPProvider) Schema(ctx context.Context, req provider.SchemaReque
 			},
 			"request_timeout": schema.Int64Attribute{
 				MarkdownDescription: "Netbox API HTTP request timeout in seconds. Can be set via the `NETBOX_REQUEST_TIMEOUT` environment variable.",
+				Optional:            true,
+			},
+			"ca_cert_file": schema.StringAttribute{
+				MarkdownDescription: "CA certificate bundle to use for verification of Netbox server certificate. Can be set via the `NETBOX_CA_CERT_FILE` environment variable.",
 				Optional:            true,
 			},
 		},
@@ -139,6 +147,9 @@ func (p *NetboxBGPProvider) Configure(ctx context.Context, req provider.Configur
 		}
 		data.Headers = envHeaders
 	}
+	if data.CACertFile.IsNull() && envData.CACertFile != "" {
+		data.CACertFile = types.StringValue(envData.CACertFile)
+	}
 
 	// apply defaults
 	if data.RequestTimeout.IsNull() {
@@ -158,9 +169,23 @@ func (p *NetboxBGPProvider) Configure(ctx context.Context, req provider.Configur
 	opts := []client.ClientOption{
 		client.WithRequestEditorFn(apiKeyAuth(data.APIToken.ValueString())), // auth
 	}
+	var rootCAs *x509.CertPool
+	if !data.CACertFile.IsNull() {
+		pool, err := loadCACertsFromFile(data.CACertFile.ValueString())
+		if err != nil {
+			resp.Diagnostics.AddAttributeError(
+				path.Root("ca_cert_file"),
+				"Invalid Provider Config",
+				err.Error(),
+			)
+			return
+		}
+		rootCAs = pool
+	}
 	var transport http.RoundTripper = &http.Transport{
 		TLSClientConfig: &tls.Config{
 			InsecureSkipVerify: data.AllowInsecureHTTPS.ValueBool(),
+			RootCAs:            rootCAs,
 		},
 	}
 	if !data.Headers.IsNull() {
