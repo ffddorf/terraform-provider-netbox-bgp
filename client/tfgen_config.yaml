@@ -19,7 +19,7 @@ resources:
         - custom_fields
         - export_policies.custom_fields
         - import_policies.custom_fields
-  peergroup:
+  peer_group:
     create:
       path: /api/plugins/bgp/peer-group/
       method: POST
@@ -37,7 +37,7 @@ resources:
         - custom_fields
         - export_policies.custom_fields
         - import_policies.custom_fields
-  prefixlist:
+  prefix_list:
     create:
       path: /api/plugins/bgp/prefix-list/
       method: POST
@@ -53,7 +53,7 @@ resources:
     schema:
       ignores:
         - custom_fields
-  prefixlistrule:
+  prefix_list_rule:
     create:
       path: /api/plugins/bgp/prefix-list-rule/
       method: POST
@@ -69,7 +69,7 @@ resources:
     schema:
       ignores:
         - custom_fields
-  aspathlist:
+  aspath_list:
     create:
       path: /api/plugins/bgp/aspath-list/
       method: POST
@@ -85,7 +85,7 @@ resources:
     schema:
       ignores:
         - custom_fields
-  aspathlistrule:
+  aspath_list_rule:
     create:
       path: /api/plugins/bgp/aspath-list-rule/
       method: POST
@@ -101,7 +101,7 @@ resources:
     schema:
       ignores:
         - custom_fields
-  routingpolicy:
+  routing_policy:
     create:
       path: /api/plugins/bgp/routing-policy/
       method: POST
@@ -117,7 +117,7 @@ resources:
     schema:
       ignores:
         - custom_fields
-  routingpolicyrule:
+  routing_policy_rule:
     create:
       path: /api/plugins/bgp/routing-policy-rule/
       method: POST

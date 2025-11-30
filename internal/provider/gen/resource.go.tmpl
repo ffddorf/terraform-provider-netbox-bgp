@@ -11,7 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
 
-{{- $typeName := printf "%sResource" (.Name | toPublicName) }}
+{{- $typeName := printf "%sResource" (.Name | toCamelCase) }}
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.Resource = &{{ $typeName }}{}
@@ -33,7 +33,7 @@ func (*{{ $typeName }}) Metadata(ctx context.Context, req resource.MetadataReque
 
 // Schema implements resource.Resource.
 func (*{{ $typeName }}) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
-	resp.Schema = resource_{{ .Name }}.{{ .Name | toPublicName }}ResourceSchema(ctx)
+	resp.Schema = resource_{{ .Name }}.{{ .Name | toCamelCase }}ResourceSchema(ctx)
 }
 
 func (r *{{ $typeName }}) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
@@ -42,13 +42,13 @@ func (r *{{ $typeName }}) Configure(ctx context.Context, req resource.ConfigureR
 
 // Read implements resource.Resource.
 func (r *{{ $typeName }}) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var data resource_{{ .Name }}.{{ .Name | toPublicName }}Model
+	var data resource_{{ .Name }}.{{ .Name | toCamelCase }}Model
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	parsed, err := r.client.PluginsBgp{{ .APIName }}RetrieveWithResponse(ctx, int(data.Id.ValueInt64()))
+	parsed, err := r.client.PluginsBgp{{ .Name | toCamelCase }}RetrieveWithResponse(ctx, int(data.Id.ValueInt64()))
 	resp.Diagnostics.Append(MaybeAPIError("failed to fetch {{ .Name }}", err, parsed.JSON200, parsed.HTTPResponse, parsed.Body)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -64,7 +64,7 @@ func (r *{{ $typeName }}) Read(ctx context.Context, req resource.ReadRequest, re
 
 // Create implements resource.Resource.
 func (r *{{ $typeName }}) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var data resource_{{ .Name }}.{{ .Name | toPublicName }}Model
+	var data resource_{{ .Name }}.{{ .Name | toCamelCase }}Model
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -75,7 +75,7 @@ func (r *{{ $typeName }}) Create(ctx context.Context, req resource.CreateRequest
 		return
 	}
 
-	parsed, err := r.client.PluginsBgp{{ .APIName }}CreateWithResponse(ctx, params)
+	parsed, err := r.client.PluginsBgp{{ .Name | toCamelCase }}CreateWithResponse(ctx, params)
 	resp.Diagnostics.Append(MaybeAPIError("failed to create {{ .Name }}", err, parsed.JSON201, parsed.HTTPResponse, parsed.Body)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -91,7 +91,7 @@ func (r *{{ $typeName }}) Create(ctx context.Context, req resource.CreateRequest
 
 // Update implements resource.Resource.
 func (r *{{ $typeName }}) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var data resource_{{ .Name }}.{{ .Name | toPublicName }}Model
+	var data resource_{{ .Name }}.{{ .Name | toCamelCase }}Model
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 	var id int64
 	resp.Diagnostics.Append(req.State.GetAttribute(ctx, path.Root("id"), &id)...)
@@ -103,7 +103,7 @@ func (r *{{ $typeName }}) Update(ctx context.Context, req resource.UpdateRequest
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	parsed, err := r.client.PluginsBgp{{ .APIName }}UpdateWithResponse(ctx, int(id), params)
+	parsed, err := r.client.PluginsBgp{{ .Name | toCamelCase }}UpdateWithResponse(ctx, int(id), params)
 	resp.Diagnostics.Append(MaybeAPIError("failed to update {{ .Name }}", err, parsed.JSON200, parsed.HTTPResponse, parsed.Body)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -119,13 +119,13 @@ func (r *{{ $typeName }}) Update(ctx context.Context, req resource.UpdateRequest
 
 // Delete implements resource.Resource.
 func (r *{{ $typeName }}) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	var data resource_{{ .Name }}.{{ .Name | toPublicName }}Model
+	var data resource_{{ .Name }}.{{ .Name | toCamelCase }}Model
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	parsed, err := r.client.PluginsBgp{{ .APIName }}DestroyWithResponse(ctx, int(data.Id.ValueInt64()))
+	parsed, err := r.client.PluginsBgp{{ .Name | toCamelCase }}DestroyWithResponse(ctx, int(data.Id.ValueInt64()))
 	toCheck := parsed
 	if parsed.StatusCode() != http.StatusNoContent {
 		toCheck = nil // response not usable

@@ -6,8 +6,7 @@ import (
 	"os"
 	"text/template"
 
-	"golang.org/x/text/cases"
-	"golang.org/x/text/language"
+	"github.com/iancoleman/strcase"
 )
 
 var (
@@ -16,42 +15,37 @@ var (
 	tmpl    = template.Must(
 		template.New("resource").
 			Funcs(template.FuncMap{
-				"toPublicName": cases.Title(language.AmericanEnglish).String,
+				"toCamelCase": strcase.ToCamel,
 			}).
 			Parse(tmplRaw),
 	)
 )
 
-type ResourceDef struct {
-	Name    string
-	APIName string
-}
-
 func main() {
-	resources := []ResourceDef{
-		{Name: "session", APIName: "Session"},
-		{Name: "peergroup", APIName: "PeerGroup"},
-		{Name: "prefixlist", APIName: "PrefixList"},
-		{Name: "prefixlistrule", APIName: "PrefixListRule"},
-		{Name: "aspathlist", APIName: "AspathList"},
-		{Name: "aspathlistrule", APIName: "AspathListRule"},
-		{Name: "routingpolicy", APIName: "RoutingPolicy"},
-		{Name: "routingpolicyrule", APIName: "RoutingPolicyRule"},
+	resources := []string{
+		"session",
+		"peer_group",
+		"prefix_list",
+		"prefix_list_rule",
+		"aspath_list",
+		"aspath_list_rule",
+		"routing_policy",
+		"routing_policy_rule",
 	}
 
 	for _, res := range resources {
 		if err := createResource(res); err != nil {
-			panic(fmt.Errorf("failed to create %s: %w", res.Name, err))
+			panic(fmt.Errorf("failed to create %s: %w", res, err))
 		}
 	}
 }
 
-func createResource(res ResourceDef) error {
-	f, err := os.Create(res.Name + "_resource.gen.go")
+func createResource(res string) error {
+	f, err := os.Create(res + "_resource.gen.go")
 	if err != nil {
 		return err
 	}
 	defer f.Close()
 
-	return tmpl.Execute(f, res)
+	return tmpl.Execute(f, struct{ Name string }{Name: res})
 }

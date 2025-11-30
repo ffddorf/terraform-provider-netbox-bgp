@@ -4,7 +4,7 @@
 	},
 	"resources": [
 		{
-			"name": "aspathlist",
+			"name": "aspath_list",
 			"schema": {
 				"attributes": [
 					{
@@ -81,7 +81,7 @@
 			}
 		},
 		{
-			"name": "aspathlistrule",
+			"name": "aspath_list_rule",
 			"schema": {
 				"attributes": [
 					{
@@ -208,7 +208,7 @@
 			}
 		},
 		{
-			"name": "peergroup",
+			"name": "peer_group",
 			"schema": {
 				"attributes": [
 					{
@@ -294,7 +294,7 @@
 			}
 		},
 		{
-			"name": "prefixlist",
+			"name": "prefix_list",
 			"schema": {
 				"attributes": [
 					{
@@ -390,7 +390,7 @@
 			}
 		},
 		{
-			"name": "prefixlistrule",
+			"name": "prefix_list_rule",
 			"schema": {
 				"attributes": [
 					{
@@ -560,7 +560,7 @@
 			}
 		},
 		{
-			"name": "routingpolicy",
+			"name": "routing_policy",
 			"schema": {
 				"attributes": [
 					{
@@ -637,7 +637,7 @@
 			}
 		},
 		{
-			"name": "routingpolicyrule",
+			"name": "routing_policy_rule",
 			"schema": {
 				"attributes": [
 					{
