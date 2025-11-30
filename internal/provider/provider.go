@@ -76,6 +76,7 @@ func (p *NetboxBGPProvider) Schema(ctx context.Context, req provider.SchemaReque
 			"api_token": schema.StringAttribute{
 				MarkdownDescription: "Netbox API authentication token. Can be set via the `NETBOX_API_TOKEN` environment variable.",
 				Optional:            true,
+				Sensitive:           true,
 			},
 			"allow_insecure_https": schema.BoolAttribute{
 				MarkdownDescription: "Flag to set whether to allow https with invalid certificates. Can be set via the `NETBOX_ALLOW_INSECURE_HTTPS` environment variable. Defaults to `false`.",
@@ -85,6 +86,7 @@ func (p *NetboxBGPProvider) Schema(ctx context.Context, req provider.SchemaReque
 				MarkdownDescription: "Set these header on all requests to Netbox. Can be set via the `NETBOX_HEADERS` environment variable in the format `header-a:value-a,header-b:value-b`",
 				ElementType:         types.StringType,
 				Optional:            true,
+				Sensitive:           true,
 			},
 			"request_timeout": schema.Int64Attribute{
 				MarkdownDescription: "Netbox API HTTP request timeout in seconds. Can be set via the `NETBOX_REQUEST_TIMEOUT` environment variable.",
