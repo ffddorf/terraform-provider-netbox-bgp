@@ -49,10 +49,11 @@ type NetboxBGPProviderModel struct {
 }
 
 type NetboxBGPProviderEnvModel struct {
-	ServerURL          string `env:"NETBOX_SERVER_URL"`
-	APIToken           string `env:"NETBOX_API_TOKEN"`
-	AllowInsecureHTTPS *bool  `env:"NETBOX_ALLOW_INSECURE_HTTPS"`
-	RequestTimeout     int64  `env:"NETBOX_REQUEST_TIMEOUT"`
+	ServerURL          string            `env:"NETBOX_SERVER_URL"`
+	APIToken           string            `env:"NETBOX_API_TOKEN"`
+	AllowInsecureHTTPS *bool             `env:"NETBOX_ALLOW_INSECURE_HTTPS"`
+	RequestTimeout     int64             `env:"NETBOX_REQUEST_TIMEOUT"`
+	Headers            map[string]string `env:"NETBOX_HEADERS"`
 }
 
 func (p *NetboxBGPProvider) Metadata(ctx context.Context, req provider.MetadataRequest, resp *provider.MetadataResponse) {
@@ -77,7 +78,7 @@ func (p *NetboxBGPProvider) Schema(ctx context.Context, req provider.SchemaReque
 				Optional:            true,
 			},
 			"headers": schema.MapAttribute{
-				MarkdownDescription: "Set these header on all requests to Netbox. Can be set via the `NETBOX_HEADERS` environment variable.",
+				MarkdownDescription: "Set these header on all requests to Netbox. Can be set via the `NETBOX_HEADERS` environment variable in the format `header-a:value-a,header-b:value-b`",
 				ElementType:         types.StringType,
 				Optional:            true,
 			},
@@ -130,6 +131,14 @@ func (p *NetboxBGPProvider) Configure(ctx context.Context, req provider.Configur
 	if data.RequestTimeout.IsNull() && envData.RequestTimeout > 0 {
 		data.RequestTimeout = types.Int64Value(envData.RequestTimeout)
 	}
+	if data.Headers.IsNull() && len(envData.Headers) > 0 {
+		envHeaders, ds := types.MapValueFrom(ctx, types.StringType, envData.Headers)
+		resp.Diagnostics.Append(ds...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+		data.Headers = envHeaders
+	}
 
 	// apply defaults
 	if data.RequestTimeout.IsNull() {
@@ -149,16 +158,23 @@ func (p *NetboxBGPProvider) Configure(ctx context.Context, req provider.Configur
 	opts := []client.ClientOption{
 		client.WithRequestEditorFn(apiKeyAuth(data.APIToken.ValueString())), // auth
 	}
-	if !data.AllowInsecureHTTPS.IsNull() && data.AllowInsecureHTTPS.ValueBool() {
-		httpClient := &http.Client{
-			Transport: &http.Transport{
-				TLSClientConfig: &tls.Config{
-					InsecureSkipVerify: true,
-				},
-			},
-		}
-		opts = append(opts, client.WithHTTPClient(httpClient))
+	var transport http.RoundTripper = &http.Transport{
+		TLSClientConfig: &tls.Config{
+			InsecureSkipVerify: data.AllowInsecureHTTPS.ValueBool(),
+		},
 	}
+	if !data.Headers.IsNull() {
+		var headers map[string]string
+		resp.Diagnostics.Append(data.Headers.ElementsAs(ctx, &headers, false)...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
+		transport = client.NewHeadersTransport(transport, headers)
+	}
+	httpClient := &http.Client{
+		Transport: transport,
+	}
+	opts = append(opts, client.WithHTTPClient(httpClient))
 
 	client, err := client.NewClientWithResponses(data.ServerURL.ValueString(), opts...)
 	if err != nil {
