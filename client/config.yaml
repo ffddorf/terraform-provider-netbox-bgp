@@ -7,6 +7,7 @@ output-options:
   include-tags:
     - plugins
     - extras
+    - status
   overlay:
     path: overlay.yaml
 output: client.gen.go

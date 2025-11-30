@@ -10,6 +10,7 @@ import (
 	_ "embed"
 	"fmt"
 	"net/http"
+	"slices"
 
 	"github.com/ffddorf/terraform-provider-netbox-bgp/client"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -31,6 +32,8 @@ var _ provider.Provider = &NetboxBGPProvider{}
 var (
 	//go:embed provider.md
 	providerDocs string
+
+	supportedPluginVersions = []string{"0.17.0"}
 )
 
 // NetboxBGPProvider defines the provider implementation.
@@ -207,6 +210,27 @@ func (p *NetboxBGPProvider) Configure(ctx context.Context, req provider.Configur
 	if err != nil {
 		resp.Diagnostics.AddError("failed to create client", err.Error())
 		return
+	}
+
+	status, err := client.StatusRetrieveWithResponse(ctx)
+	resp.Diagnostics.Append(MaybeAPIError("Failed to determine plugin status", err, status.JSON200, status.HTTPResponse, status.Body)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	if plugins, ok := (*status.JSON200)["plugins"].(map[string]string); ok {
+		if version, ok := plugins["netbox_bgp"]; ok {
+			if !slices.Contains(supportedPluginVersions, version) {
+				resp.Diagnostics.AddWarning(
+					"Client Warning",
+					fmt.Sprintf("Detected version %q of the netbox_bgp plugin which has not been tested with this provider. Errors might occur.", version),
+				)
+			}
+		} else {
+			resp.Diagnostics.AddWarning("Client Warning", "The netbox_bgp plugin doesn't seem to be installed, usage of this provider might fail.")
+		}
+	} else {
+		resp.Diagnostics.AddWarning("Client Error", "Unable to determine plugin status, skipping check")
 	}
 
 	providerData := configuredProvider{

@@ -16590,6 +16590,9 @@ type ClientInterface interface {
 
 	// PluginsSecretsUserKeysRetrieve request
 	PluginsSecretsUserKeysRetrieve(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// StatusRetrieve request
+	StatusRetrieve(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
 }
 
 func (c *Client) ExtrasBookmarksBulkDestroyWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -23026,6 +23029,18 @@ func (c *Client) PluginsSecretsUserKeysList(ctx context.Context, params *Plugins
 
 func (c *Client) PluginsSecretsUserKeysRetrieve(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewPluginsSecretsUserKeysRetrieveRequest(c.Server, id)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) StatusRetrieve(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewStatusRetrieveRequest(c.Server)
 	if err != nil {
 		return nil, err
 	}
@@ -76368,6 +76383,33 @@ func NewPluginsSecretsUserKeysRetrieveRequest(server string, id int) (*http.Requ
 	return req, nil
 }
 
+// NewStatusRetrieveRequest generates requests for StatusRetrieve
+func NewStatusRetrieveRequest(server string) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/api/status/")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []RequestEditorFn) error {
 	for _, r := range c.RequestEditors {
 		if err := r(ctx, req); err != nil {
@@ -77811,6 +77853,9 @@ type ClientWithResponsesInterface interface {
 
 	// PluginsSecretsUserKeysRetrieveWithResponse request
 	PluginsSecretsUserKeysRetrieveWithResponse(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*PluginsSecretsUserKeysRetrieveResponse, error)
+
+	// StatusRetrieveWithResponse request
+	StatusRetrieveWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*StatusRetrieveResponse, error)
 }
 
 type ExtrasBookmarksBulkDestroyResponse struct {
@@ -84938,6 +84983,28 @@ func (r PluginsSecretsUserKeysRetrieveResponse) StatusCode() int {
 	return 0
 }
 
+type StatusRetrieveResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *map[string]interface{}
+}
+
+// Status returns HTTPResponse.Status
+func (r StatusRetrieveResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r StatusRetrieveResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
 // ExtrasBookmarksBulkDestroyWithBodyWithResponse request with arbitrary body returning *ExtrasBookmarksBulkDestroyResponse
 func (c *ClientWithResponses) ExtrasBookmarksBulkDestroyWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ExtrasBookmarksBulkDestroyResponse, error) {
 	rsp, err := c.ExtrasBookmarksBulkDestroyWithBody(ctx, contentType, body, reqEditors...)
@@ -89559,6 +89626,15 @@ func (c *ClientWithResponses) PluginsSecretsUserKeysRetrieveWithResponse(ctx con
 		return nil, err
 	}
 	return ParsePluginsSecretsUserKeysRetrieveResponse(rsp)
+}
+
+// StatusRetrieveWithResponse request returning *StatusRetrieveResponse
+func (c *ClientWithResponses) StatusRetrieveWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*StatusRetrieveResponse, error) {
+	rsp, err := c.StatusRetrieve(ctx, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseStatusRetrieveResponse(rsp)
 }
 
 // ParseExtrasBookmarksBulkDestroyResponse parses an HTTP response from a ExtrasBookmarksBulkDestroyWithResponse call
@@ -97360,6 +97436,32 @@ func ParsePluginsSecretsUserKeysRetrieveResponse(rsp *http.Response) (*PluginsSe
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest UserKey
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseStatusRetrieveResponse parses an HTTP response from a StatusRetrieveWithResponse call
+func ParseStatusRetrieveResponse(rsp *http.Response) (*StatusRetrieveResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &StatusRetrieveResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest map[string]interface{}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
