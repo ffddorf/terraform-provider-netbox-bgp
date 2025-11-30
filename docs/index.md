@@ -27,7 +27,8 @@ provider "netboxbgp" {
 ### Optional
 
 - `allow_insecure_https` (Boolean) Flag to set whether to allow https with invalid certificates. Can be set via the `NETBOX_ALLOW_INSECURE_HTTPS` environment variable. Defaults to `false`.
-- `api_token` (String) Netbox API authentication token. Can be set via the `NETBOX_API_TOKEN` environment variable.
-- `headers` (Map of String) Set these header on all requests to Netbox. Can be set via the `NETBOX_HEADERS` environment variable.
+- `api_token` (String, Sensitive) Netbox API authentication token. Can be set via the `NETBOX_API_TOKEN` environment variable.
+- `ca_cert_file` (String) CA certificate bundle to use for verification of Netbox server certificate. Can be set via the `NETBOX_CA_CERT_FILE` environment variable.
+- `headers` (Map of String, Sensitive) Set these header on all requests to Netbox. Can be set via the `NETBOX_HEADERS` environment variable in the format `header-a:value-a,header-b:value-b`
 - `request_timeout` (Number) Netbox API HTTP request timeout in seconds. Can be set via the `NETBOX_REQUEST_TIMEOUT` environment variable.
 - `server_url` (String) Location of Netbox server including scheme (http or https) and optional port. Can be set via the `NETBOX_SERVER_URL` environment variable.
