@@ -218,8 +218,8 @@ func (p *NetboxBGPProvider) Configure(ctx context.Context, req provider.Configur
 		return
 	}
 
-	if plugins, ok := (*status.JSON200)["plugins"].(map[string]string); ok {
-		if version, ok := plugins["netbox_bgp"]; ok {
+	if plugins, ok := (*status.JSON200)["plugins"].(map[string]any); ok {
+		if version, ok := plugins["netbox_bgp"].(string); ok {
 			if !slices.Contains(supportedPluginVersions, version) {
 				resp.Diagnostics.AddWarning(
 					"Client Warning",
