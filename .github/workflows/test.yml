@@ -64,7 +64,7 @@ jobs:
       matrix:
         # renovate: datasource=github-releases depName=netbox-community/netbox
         netbox_version:
-          - "4.4.6"
+          - "4.4.7"
         # renovate: datasource=github-releases depName=netbox-community/netbox-bgp
         netbox_bgp_version:
           - "0.17.0"
