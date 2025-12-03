@@ -4,14 +4,14 @@
   customManagers: [
     {
       customType: "regex",
-      managerFilePatterns: ["\\.github/workflows/.+\\.ya?ml"],
+      managerFilePatterns: ["/^\\.github/workflows/.+\\.ya?ml$/"],
       matchStrings: [
         '# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)\\s+\\S+_version:\\s*(-\\s+)?"(?<currentValue>\\S+)"',
       ],
     },
     {
       customType: "regex",
-      managerFilePatterns: ["docker-compose\\.ya?ml"],
+      managerFilePatterns: ["/docker-compose\\.ya?ml$/"],
       matchStrings: [
         "# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)\\s+\\S+_VERSION:\\s*(\\$\\{.+_VERSION:-)?(?<currentValue>[^\\s}]+)\\}?",
       ],
