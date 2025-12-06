@@ -4,6 +4,7 @@ package resource_routing_policy_rule
 
 import (
 	"context"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
@@ -74,6 +75,7 @@ func RoutingPolicyRuleResourceSchema(ctx context.Context) schema.Schema {
 				Computed:    true,
 			},
 			"match_custom": schema.StringAttribute{
+				CustomType:          jsontypes.NormalizedType{},
 				Optional:            true,
 				Computed:            true,
 				Description:         "Provide a JSON-serialized object.",
@@ -95,6 +97,7 @@ func RoutingPolicyRuleResourceSchema(ctx context.Context) schema.Schema {
 				MarkdownDescription: "Reference to foreign ID",
 			},
 			"set_actions": schema.StringAttribute{
+				CustomType:          jsontypes.NormalizedType{},
 				Optional:            true,
 				Computed:            true,
 				Description:         "Provide a JSON-serialized object.",
@@ -110,20 +113,20 @@ func RoutingPolicyRuleResourceSchema(ctx context.Context) schema.Schema {
 }
 
 type RoutingPolicyRuleModel struct {
-	Action             types.String `tfsdk:"action"`
-	Comments           types.String `tfsdk:"comments"`
-	ContinueEntry      types.Int64  `tfsdk:"continue_entry"`
-	Description        types.String `tfsdk:"description"`
-	Display            types.String `tfsdk:"display"`
-	Id                 types.Int64  `tfsdk:"id"`
-	Index              types.Int64  `tfsdk:"index"`
-	MatchAspathList    types.List   `tfsdk:"match_aspath_list"`
-	MatchCommunity     types.List   `tfsdk:"match_community"`
-	MatchCommunityList types.List   `tfsdk:"match_community_list"`
-	MatchCustom        types.String `tfsdk:"match_custom"`
-	MatchIpAddress     types.List   `tfsdk:"match_ip_address"`
-	MatchIpv6Address   types.List   `tfsdk:"match_ipv6_address"`
-	RoutingPolicy      types.Int64  `tfsdk:"routing_policy"`
-	SetActions         types.String `tfsdk:"set_actions"`
-	Tags               types.List   `tfsdk:"tags"`
+	Action             types.String         `tfsdk:"action"`
+	Comments           types.String         `tfsdk:"comments"`
+	ContinueEntry      types.Int64          `tfsdk:"continue_entry"`
+	Description        types.String         `tfsdk:"description"`
+	Display            types.String         `tfsdk:"display"`
+	Id                 types.Int64          `tfsdk:"id"`
+	Index              types.Int64          `tfsdk:"index"`
+	MatchAspathList    types.List           `tfsdk:"match_aspath_list"`
+	MatchCommunity     types.List           `tfsdk:"match_community"`
+	MatchCommunityList types.List           `tfsdk:"match_community_list"`
+	MatchCustom        jsontypes.Normalized `tfsdk:"match_custom"`
+	MatchIpAddress     types.List           `tfsdk:"match_ip_address"`
+	MatchIpv6Address   types.List           `tfsdk:"match_ipv6_address"`
+	RoutingPolicy      types.Int64          `tfsdk:"routing_policy"`
+	SetActions         jsontypes.Normalized `tfsdk:"set_actions"`
+	Tags               types.List           `tfsdk:"tags"`
 }

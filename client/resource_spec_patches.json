@@ -1,0 +1,35 @@
+[
+  {
+    "op": "add",
+    "path": "/resources/6/schema/attributes/8/string/custom_type",
+    "value": {
+      "import": {
+        "path": "github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
+      },
+      "type": "jsontypes.NormalizedType{}",
+      "value_type": "jsontypes.Normalized"
+    }
+  },
+  {
+    "op": "add",
+    "path": "/resources/6/schema/attributes/12/string/custom_type",
+    "value": {
+      "import": {
+        "path": "github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
+      },
+      "type": "jsontypes.NormalizedType{}",
+      "value_type": "jsontypes.Normalized"
+    }
+  },
+  {
+    "op": "add",
+    "path": "/resources/4/schema/attributes/7/string/custom_type",
+    "value": {
+      "import": {
+        "path": "github.com/hashicorp/terraform-plugin-framework-nettypes/cidrtypes"
+      },
+      "type": "cidrtypes.IPPrefixType{}",
+      "value_type": "cidrtypes.IPPrefix"
+    }
+  }
+]

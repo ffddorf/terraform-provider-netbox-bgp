@@ -22,7 +22,7 @@ import (
 	"github.com/sethvargo/go-envconfig"
 )
 
-//go:generate go tool tfplugingen-framework generate resources --input ../../client/resource_spec.json  --output ../
+//go:generate go tool tfplugingen-framework generate resources --input ../../client/resource_spec.patched.json  --output ../
 
 //go:generate go run ./gen
 
