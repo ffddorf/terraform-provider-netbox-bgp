@@ -4,6 +4,7 @@ package resource_prefix_list_rule
 
 import (
 	"context"
+	"github.com/hashicorp/terraform-plugin-framework-nettypes/cidrtypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
@@ -78,8 +79,9 @@ func PrefixListRuleResourceSchema(ctx context.Context) schema.Schema {
 				MarkdownDescription: "Reference to foreign ID",
 			},
 			"prefix_custom": schema.StringAttribute{
-				Optional: true,
-				Computed: true,
+				CustomType: cidrtypes.IPPrefixType{},
+				Optional:   true,
+				Computed:   true,
 				Validators: []validator.String{
 					stringvalidator.LengthAtLeast(1),
 				},
@@ -99,18 +101,18 @@ func PrefixListRuleResourceSchema(ctx context.Context) schema.Schema {
 }
 
 type PrefixListRuleModel struct {
-	Action       types.String `tfsdk:"action"`
-	Comments     types.String `tfsdk:"comments"`
-	Created      types.String `tfsdk:"created"`
-	Description  types.String `tfsdk:"description"`
-	Display      types.String `tfsdk:"display"`
-	Ge           types.Int64  `tfsdk:"ge"`
-	Id           types.Int64  `tfsdk:"id"`
-	Index        types.Int64  `tfsdk:"index"`
-	LastUpdated  types.String `tfsdk:"last_updated"`
-	Le           types.Int64  `tfsdk:"le"`
-	Prefix       types.Int64  `tfsdk:"prefix"`
-	PrefixCustom types.String `tfsdk:"prefix_custom"`
-	PrefixList   types.Int64  `tfsdk:"prefix_list"`
-	Tags         types.List   `tfsdk:"tags"`
+	Action       types.String       `tfsdk:"action"`
+	Comments     types.String       `tfsdk:"comments"`
+	Created      types.String       `tfsdk:"created"`
+	Description  types.String       `tfsdk:"description"`
+	Display      types.String       `tfsdk:"display"`
+	Ge           types.Int64        `tfsdk:"ge"`
+	Id           types.Int64        `tfsdk:"id"`
+	Index        types.Int64        `tfsdk:"index"`
+	LastUpdated  types.String       `tfsdk:"last_updated"`
+	Le           types.Int64        `tfsdk:"le"`
+	Prefix       types.Int64        `tfsdk:"prefix"`
+	PrefixCustom cidrtypes.IPPrefix `tfsdk:"prefix_custom"`
+	PrefixList   types.Int64        `tfsdk:"prefix_list"`
+	Tags         types.List         `tfsdk:"tags"`
 }

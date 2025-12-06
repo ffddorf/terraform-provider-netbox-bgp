@@ -13,6 +13,12 @@ import (
 	"github.com/hashicorp/terraform-plugin-go/tftypes"
 )
 
+type StringValuable interface {
+	attr.Value
+	ValueString() string
+	ValueStringPointer() *string
+}
+
 func ToIntPointer(from *int64) *int {
 	if from == nil {
 		return nil
@@ -100,7 +106,7 @@ func FromInt64Value(in types.Int64) *int {
 	return ToIntPointer(in.ValueInt64Pointer())
 }
 
-func FromStringValue(in types.String) *string {
+func FromStringValue(in StringValuable) *string {
 	if in.IsNull() || in.IsUnknown() {
 		return nil
 	}
@@ -141,11 +147,6 @@ func MaybeListValueAccessor[M, T any](
 
 func TimeString(t time.Time) string {
 	return t.Format(time.RFC3339)
-}
-
-type StringValuable interface {
-	attr.Value
-	ValueString() string
 }
 
 func MaybeRawJSON(in StringValuable, path path.Path, diags diag.Diagnostics) *json.RawMessage {

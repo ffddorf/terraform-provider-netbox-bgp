@@ -5,6 +5,7 @@ import (
 
 	"github.com/ffddorf/terraform-provider-netbox-bgp/client"
 	"github.com/ffddorf/terraform-provider-netbox-bgp/internal/utils"
+	"github.com/hashicorp/terraform-plugin-framework-nettypes/cidrtypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -40,7 +41,7 @@ func (p *PrefixListRuleModel) FillFromAPIModel(ctx context.Context, resp *client
 		LastUpdated:  utils.MaybeStringifiedValue(resp.LastUpdated, utils.TimeString),
 		Le:           utils.MaybeInt64Value(resp.Le),
 		Prefix:       utils.MaybeInt64ValueSubfield(resp.Prefix, func(p client.BriefPrefix) *int { return p.Id }),
-		PrefixCustom: utils.MaybeStringValue(resp.PrefixCustom),
+		PrefixCustom: utils.MaybeConvertedValue[string, cidrtypes.IPPrefix](ctx, resp.PrefixCustom),
 		PrefixList:   types.Int64Value(int64(*resp.PrefixList.Id)),
 		Tags:         utils.TagsFromAPI(ctx, resp.Tags, diags),
 	}
