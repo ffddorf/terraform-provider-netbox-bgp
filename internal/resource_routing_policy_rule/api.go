@@ -2,10 +2,10 @@ package resource_routing_policy_rule
 
 import (
 	"context"
-	"encoding/json"
 
 	"github.com/ffddorf/terraform-provider-netbox-bgp/client"
 	"github.com/ffddorf/terraform-provider-netbox-bgp/internal/utils"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
@@ -66,7 +66,7 @@ func (r *RoutingPolicyRuleModel) FillFromAPIModel(ctx context.Context, p *client
 			func(in client.CommunityList) int64 { return int64(*in.Id) },
 			diags,
 		),
-		MatchCustom: utils.MaybeStringifiedValue(p.MatchCustom, func(msg json.RawMessage) string { return string(msg) }),
+		MatchCustom: utils.MaybeConvertedValue[string, jsontypes.Normalized](ctx, utils.SafeBytesToString(p.MatchCustom)),
 		MatchIpAddress: utils.MaybeListValueAccessor(ctx,
 			attr.Type(types.Int64Type),
 			path.Root("match_ip_address"),
@@ -82,7 +82,7 @@ func (r *RoutingPolicyRuleModel) FillFromAPIModel(ctx context.Context, p *client
 			diags,
 		),
 		RoutingPolicy: types.Int64Value(int64(*p.RoutingPolicy.Id)),
-		SetActions:    utils.MaybeStringifiedValue(p.SetActions, func(msg json.RawMessage) string { return string(msg) }),
+		SetActions:    utils.MaybeConvertedValue[string, jsontypes.Normalized](ctx, utils.SafeBytesToString(p.SetActions)),
 		Tags:          utils.TagsFromAPI(ctx, p.Tags, diags),
 	}
 }

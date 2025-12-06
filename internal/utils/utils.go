@@ -10,6 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/hashicorp/terraform-plugin-go/tftypes"
 )
 
 func ToIntPointer(from *int64) *int {
@@ -57,6 +58,24 @@ func MaybeStringifiedValue[T any](in *T, convert func(T) string) types.String {
 	}
 
 	return types.StringValue(convert(*in))
+}
+
+func MaybeConvertedValue[S any, T attr.Value](ctx context.Context, in *S) T {
+	var zero T
+	t := zero.Type(ctx)
+	v, err := t.ValueFromTerraform(ctx, tftypes.NewValue(t.TerraformType(ctx), in))
+	if err != nil {
+		return zero
+	}
+	return v.(T) // nolint:forcetypeassert
+}
+
+func SafeBytesToString[T ~[]byte](in *T) *string {
+	if in == nil {
+		return nil
+	}
+	v := string(*in)
+	return &v
 }
 
 func MaybeInt64Value(in *int) types.Int64 {
@@ -124,7 +143,12 @@ func TimeString(t time.Time) string {
 	return t.Format(time.RFC3339)
 }
 
-func MaybeRawJSON(in types.String, path path.Path, diags diag.Diagnostics) *json.RawMessage {
+type StringValuable interface {
+	attr.Value
+	ValueString() string
+}
+
+func MaybeRawJSON(in StringValuable, path path.Path, diags diag.Diagnostics) *json.RawMessage {
 	if in.IsUnknown() || in.IsNull() {
 		return nil
 	}
