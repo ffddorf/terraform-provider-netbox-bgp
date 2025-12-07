@@ -19,7 +19,11 @@ var testExternalProviders = map[string]resource.ExternalProvider{
 }
 
 func testName(t *testing.T) string {
-	return t.Name() + "_" + uuid.NewString()
+	name := t.Name()
+	if len(name) > 20 {
+		name = name[:20]
+	}
+	return name + "_" + uuid.NewString()
 }
 
 func testNum(t *testing.T) uint64 {

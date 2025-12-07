@@ -18,10 +18,7 @@ func (m *SessionModel) ToAPIModel(ctx context.Context, diags diag.Diagnostics) c
 	p.Name = utils.FromStringValue(m.Name)
 	p.Description = utils.FromStringValue(m.Description)
 	p.Comments = utils.FromStringValue(m.Comments)
-	if !m.Status.IsNull() {
-		status := client.WritableBGPSessionRequestStatus(m.Status.ValueString())
-		p.Status = &status
-	}
+	p.Status = (*client.WritableBGPSessionRequestStatus)(utils.FromStringValue(m.Status))
 	p.Site = utils.SetForeignID(p.Site, m.Site)
 	p.Tenant = utils.SetForeignID(p.Tenant, m.Tenant)
 	p.Device = utils.SetForeignID(p.Device, m.Device)
