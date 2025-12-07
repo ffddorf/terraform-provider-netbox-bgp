@@ -19,7 +19,7 @@ var (
 )
 
 func TagsForAPIModel(ctx context.Context, l types.List, diags diag.Diagnostics) *[]client.NestedTagRequest {
-	if l.IsNull() {
+	if l.IsUnknown() || l.IsNull() {
 		return nil
 	}
 
