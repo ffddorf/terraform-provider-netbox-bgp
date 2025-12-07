@@ -22,6 +22,7 @@ func (m *SessionModel) ToAPIModel(ctx context.Context, diags diag.Diagnostics) c
 	p.Site = utils.SetForeignID(p.Site, m.Site)
 	p.Tenant = utils.SetForeignID(p.Tenant, m.Tenant)
 	p.Device = utils.SetForeignID(p.Device, m.Device)
+	p.Virtualmachine = utils.SetForeignID(p.Virtualmachine, m.Virtualmachine)
 	p.LocalAddress = *utils.SetForeignID(&p.LocalAddress, m.LocalAddress)
 	p.RemoteAddress = *utils.SetForeignID(&p.RemoteAddress, m.RemoteAddress)
 	p.LocalAs = *utils.SetForeignID(&p.LocalAs, m.LocalAs)
