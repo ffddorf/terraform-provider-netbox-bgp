@@ -27,3 +27,7 @@ actions:
   - target: "$.components.schemas.RoutingPolicyRuleRequest.properties.set_actions"
     update:
       type: string
+  # fixes to the schema (potentially upstream)
+  - target: "$.components.schemas.WritableBGPSessionRequest.required"
+    update:
+      - "status"

@@ -21,6 +21,7 @@ description: |-
 - `local_as` (Number) Reference to foreign ID
 - `remote_address` (Number) Reference to foreign ID
 - `remote_as` (Number) Reference to foreign ID
+- `status` (String) `offline`, `active`, `planned` or `failed`
 
 ### Optional
 
@@ -34,7 +35,6 @@ description: |-
 - `prefix_list_in` (Number) Reference to foreign ID
 - `prefix_list_out` (Number) Reference to foreign ID
 - `site` (Number) Reference to foreign ID
-- `status` (String) `offline`, `active`, `planned` or `failed`
 - `tags` (List of String)
 - `tenant` (Number) Reference to foreign ID
 - `virtualmachine` (Number) Reference to foreign ID

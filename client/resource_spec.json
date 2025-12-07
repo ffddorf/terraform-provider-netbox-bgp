@@ -940,7 +940,7 @@
 					{
 						"name": "status",
 						"string": {
-							"computed_optional_required": "computed_optional",
+							"computed_optional_required": "required",
 							"description": "`offline`, `active`, `planned` or `failed`",
 							"validators": [
 								{

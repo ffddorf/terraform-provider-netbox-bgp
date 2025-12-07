@@ -107,8 +107,7 @@ func SessionResourceSchema(ctx context.Context) schema.Schema {
 				MarkdownDescription: "Reference to foreign ID",
 			},
 			"status": schema.StringAttribute{
-				Optional:            true,
-				Computed:            true,
+				Required:            true,
 				Description:         "`offline`, `active`, `planned` or `failed`",
 				MarkdownDescription: "`offline`, `active`, `planned` or `failed`",
 				Validators: []validator.String{
