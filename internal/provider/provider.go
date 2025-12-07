@@ -23,6 +23,7 @@ import (
 )
 
 //go:generate go tool tfplugingen-framework generate resources --input ../../client/resource_spec.patched.json  --output ../
+//go:generate go tool tfplugingen-framework generate data-sources --input ../../client/resource_spec.patched.json  --output ../datasources --package datasources
 
 //go:generate go run ./gen
 
@@ -260,6 +261,7 @@ func (p *NetboxBGPProvider) DataSources(ctx context.Context) []func() datasource
 		NewSessionDataSource,
 		NewSessionsDataSource,
 		NewPeerGroupDataSource,
+		NewPrefixListDataSource,
 	}
 }
 
