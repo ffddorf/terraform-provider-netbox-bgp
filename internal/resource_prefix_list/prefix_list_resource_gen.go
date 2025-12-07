@@ -30,8 +30,8 @@ func PrefixListResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"family": schema.StringAttribute{
 				Required:            true,
-				Description:         "* `ipv4` - IPv4\n* `ipv6` - IPv6",
-				MarkdownDescription: "* `ipv4` - IPv4\n* `ipv6` - IPv6",
+				Description:         "`ipv4` or `ipv6`",
+				MarkdownDescription: "`ipv4` or `ipv6`",
 				Validators: []validator.String{
 					stringvalidator.OneOf(
 						"ipv4",

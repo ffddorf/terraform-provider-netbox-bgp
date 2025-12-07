@@ -88,7 +88,7 @@
 						"name": "action",
 						"string": {
 							"computed_optional_required": "required",
-							"description": "* `permit` - Permit\n* `deny` - Deny",
+							"description": "`permit` or `deny`",
 							"validators": [
 								{
 									"custom": {
@@ -325,7 +325,7 @@
 						"name": "family",
 						"string": {
 							"computed_optional_required": "required",
-							"description": "* `ipv4` - IPv4\n* `ipv6` - IPv6",
+							"description": "`ipv4` or `ipv6`",
 							"validators": [
 								{
 									"custom": {
@@ -397,7 +397,7 @@
 						"name": "action",
 						"string": {
 							"computed_optional_required": "required",
-							"description": "* `permit` - Permit\n* `deny` - Deny",
+							"description": "`permit` or `deny`",
 							"validators": [
 								{
 									"custom": {
@@ -644,7 +644,7 @@
 						"name": "action",
 						"string": {
 							"computed_optional_required": "required",
-							"description": "* `permit` - Permit\n* `deny` - Deny",
+							"description": "`permit` or `deny`",
 							"validators": [
 								{
 									"custom": {
@@ -941,7 +941,7 @@
 						"name": "status",
 						"string": {
 							"computed_optional_required": "computed_optional",
-							"description": "* `offline` - Offline\n* `active` - Active\n* `planned` - Planned\n* `failed` - Failed",
+							"description": "`offline`, `active`, `planned` or `failed`",
 							"validators": [
 								{
 									"custom": {

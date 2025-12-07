@@ -109,8 +109,8 @@ func SessionResourceSchema(ctx context.Context) schema.Schema {
 			"status": schema.StringAttribute{
 				Optional:            true,
 				Computed:            true,
-				Description:         "* `offline` - Offline\n* `active` - Active\n* `planned` - Planned\n* `failed` - Failed",
-				MarkdownDescription: "* `offline` - Offline\n* `active` - Active\n* `planned` - Planned\n* `failed` - Failed",
+				Description:         "`offline`, `active`, `planned` or `failed`",
+				MarkdownDescription: "`offline`, `active`, `planned` or `failed`",
 				Validators: []validator.String{
 					stringvalidator.OneOf(
 						"offline",

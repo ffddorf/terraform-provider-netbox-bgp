@@ -17,8 +17,8 @@ func AspathListRuleResourceSchema(ctx context.Context) schema.Schema {
 		Attributes: map[string]schema.Attribute{
 			"action": schema.StringAttribute{
 				Required:            true,
-				Description:         "* `permit` - Permit\n* `deny` - Deny",
-				MarkdownDescription: "* `permit` - Permit\n* `deny` - Deny",
+				Description:         "`permit` or `deny`",
+				MarkdownDescription: "`permit` or `deny`",
 				Validators: []validator.String{
 					stringvalidator.OneOf(
 						"permit",

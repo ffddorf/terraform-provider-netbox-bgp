@@ -17,8 +17,7 @@ description: |-
 
 ### Required
 
-- `action` (String) * `permit` - Permit
-* `deny` - Deny
+- `action` (String) `permit` or `deny`
 - `index` (Number)
 - `routing_policy` (Number) Reference to foreign ID
 

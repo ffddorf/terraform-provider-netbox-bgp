@@ -19,6 +19,10 @@ resources:
         - custom_fields
         - export_policies.custom_fields
         - import_policies.custom_fields
+      attributes:
+        overrides:
+          status:
+            description: "`offline`, `active`, `planned` or `failed`"
   peer_group:
     create:
       path: /api/plugins/bgp/peer-group/
@@ -53,6 +57,10 @@ resources:
     schema:
       ignores:
         - custom_fields
+      attributes:
+        overrides:
+          family:
+            description: "`ipv4` or `ipv6`"
   prefix_list_rule:
     create:
       path: /api/plugins/bgp/prefix-list-rule/
@@ -69,6 +77,10 @@ resources:
     schema:
       ignores:
         - custom_fields
+      attributes:
+        overrides:
+          action:
+            description: "`permit` or `deny`"
   aspath_list:
     create:
       path: /api/plugins/bgp/aspath-list/
@@ -101,6 +113,10 @@ resources:
     schema:
       ignores:
         - custom_fields
+      attributes:
+        overrides:
+          action:
+            description: "`permit` or `deny`"
   routing_policy:
     create:
       path: /api/plugins/bgp/routing-policy/
@@ -140,6 +156,8 @@ resources:
         - match_ipv6_address.custom_fields
       attributes:
         overrides:
+          action:
+            description: "`permit` or `deny`"
           match_custom:
             description: Provide a JSON-serialized object.
           set_actions:

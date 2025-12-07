@@ -34,10 +34,7 @@ description: |-
 - `prefix_list_in` (Number) Reference to foreign ID
 - `prefix_list_out` (Number) Reference to foreign ID
 - `site` (Number) Reference to foreign ID
-- `status` (String) * `offline` - Offline
-* `active` - Active
-* `planned` - Planned
-* `failed` - Failed
+- `status` (String) `offline`, `active`, `planned` or `failed`
 - `tags` (List of String)
 - `tenant` (Number) Reference to foreign ID
 - `virtualmachine` (Number) Reference to foreign ID

@@ -17,8 +17,7 @@ description: |-
 
 ### Required
 
-- `family` (String) * `ipv4` - IPv4
-* `ipv6` - IPv6
+- `family` (String) `ipv4` or `ipv6`
 - `name` (String)
 
 ### Optional

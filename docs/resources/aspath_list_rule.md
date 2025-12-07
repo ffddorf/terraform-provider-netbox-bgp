@@ -17,8 +17,7 @@ description: |-
 
 ### Required
 
-- `action` (String) * `permit` - Permit
-* `deny` - Deny
+- `action` (String) `permit` or `deny`
 - `aspath_list` (Number) Reference to foreign ID
 - `index` (Number)
 - `pattern` (String)
