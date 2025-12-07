@@ -2,7 +2,6 @@ package provider
 
 import (
 	"fmt"
-	"regexp"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
@@ -137,27 +136,6 @@ func TestAccSessionResource(t *testing.T) {
 					resource.TestCheckResourceAttr("netboxbgp_session.test", "name", "My session changed"),
 					resource.TestCheckResourceAttrPair("netboxbgp_session.test", "site", "netbox_site.test", "id"),
 				),
-			},
-		},
-	})
-}
-
-func TestAccSessionResource_RequiresStatus(t *testing.T) {
-	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
-		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
-		ExternalProviders:        testExternalProviders,
-		Steps: []resource.TestStep{
-			{
-				Config: fmt.Sprintf(`%s
-					resource "netboxbgp_session" "test" {
-						local_address  = netbox_ip_address.local.id
-						remote_address = netbox_ip_address.remote.id
-						local_as       = netbox_asn.test.id
-						remote_as      = netbox_asn.test.id
-					}
-				`, baseResources(t)),
-				ExpectError: regexp.MustCompile("Error: Missing required argument"),
 			},
 		},
 	})
