@@ -67,7 +67,7 @@ jobs:
           - "4.4.7"
         # renovate: datasource=github-releases depName=netbox-community/netbox-bgp
         netbox_bgp_version:
-          - "0.17.0"
+          - "0.18.0"
         flavor:
           - terraform
           - opentofu
