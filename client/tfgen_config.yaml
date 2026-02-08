@@ -162,3 +162,14 @@ resources:
             description: Provide a JSON-serialized object.
           set_actions:
             description: Provide a JSON-serialized object.
+
+data_sources:
+  prefix_list:
+    read:
+      path: /api/plugins/bgp/prefix-list/{id}/
+      method: GET
+    schema:
+      ignores:
+        - custom_fields
+        - export_policies.custom_fields
+        - import_policies.custom_fields

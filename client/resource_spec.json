@@ -1,4 +1,66 @@
 {
+	"datasources": [
+		{
+			"name": "prefix_list",
+			"schema": {
+				"attributes": [
+					{
+						"name": "id",
+						"int64": {
+							"computed_optional_required": "required",
+							"description": "A unique integer value identifying this prefix list."
+						}
+					},
+					{
+						"name": "comments",
+						"string": {
+							"computed_optional_required": "computed"
+						}
+					},
+					{
+						"name": "description",
+						"string": {
+							"computed_optional_required": "computed"
+						}
+					},
+					{
+						"name": "display",
+						"string": {
+							"computed_optional_required": "computed"
+						}
+					},
+					{
+						"name": "family",
+						"string": {
+							"computed_optional_required": "computed",
+							"description": "* `ipv4` - IPv4\n* `ipv6` - IPv6"
+						}
+					},
+					{
+						"name": "name",
+						"string": {
+							"computed_optional_required": "computed"
+						}
+					},
+					{
+						"name": "tags",
+						"list": {
+							"computed_optional_required": "computed",
+							"element_type": {
+								"string": {}
+							}
+						}
+					},
+					{
+						"name": "url",
+						"string": {
+							"computed_optional_required": "computed"
+						}
+					}
+				]
+			}
+		}
+	],
 	"provider": {
 		"name": "netboxbgp"
 	},
