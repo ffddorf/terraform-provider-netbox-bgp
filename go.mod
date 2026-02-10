@@ -2,7 +2,7 @@ module github.com/ffddorf/terraform-provider-netbox-bgp
 
 go 1.24.0
 
-toolchain go1.25.7
+toolchain go1.26.0
 
 require (
 	github.com/google/uuid v1.6.0
