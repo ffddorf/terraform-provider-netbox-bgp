@@ -77,7 +77,7 @@ jobs:
             terraform_version: "1.14"
           - flavor: opentofu
             # renovate: datasource=github-releases depName=opentofu/opentofu
-            opentofu_version: "1.10"
+            opentofu_version: "v1.11.5"
     env:
       DOCKER_COMPOSE: docker compose --progress=plain
       BUILDKIT_PROGRESS: plain
