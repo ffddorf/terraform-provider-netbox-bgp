@@ -64,10 +64,12 @@ jobs:
       matrix:
         # renovate: datasource=github-releases depName=netbox-community/netbox
         netbox_version:
-          - "4.4.7"
+          - "4.4.10"
+          - "4.5.4"
         # renovate: datasource=github-releases depName=netbox-community/netbox-bgp
         netbox_bgp_version:
           - "0.17.0"
+          - "0.18.0"
         flavor:
           - terraform
           - opentofu
