@@ -162,3 +162,15 @@ resources:
             description: Provide a JSON-serialized object.
           set_actions:
             description: Provide a JSON-serialized object.
+
+data_sources:
+  prefix_lists:
+    read:
+      path: /api/plugins/bgp/prefix-list/
+      method: GET
+    schema:
+      ignores:
+        - count # not allowed in terraform, can use length of results
+        - results.custom_fields
+        - results.export_policies.custom_fields
+        - results.import_policies.custom_fields

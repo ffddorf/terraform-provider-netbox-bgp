@@ -27,7 +27,7 @@ func testAccPreCheck(t *testing.T) {
 	// function.
 }
 
-func testClient(t *testing.T) *client.Client {
+func testClient(t *testing.T) *client.ClientWithResponses {
 	serverURL, ok := os.LookupEnv("NETBOX_SERVER_URL")
 	require.True(t, ok, "missing NETBOX_SERVER_URL")
 	apiToken, ok := os.LookupEnv("NETBOX_API_TOKEN")
@@ -36,7 +36,7 @@ func testClient(t *testing.T) *client.Client {
 	opts := []client.ClientOption{
 		client.WithRequestEditorFn(apiKeyAuth(apiToken)), // auth
 	}
-	client, err := client.NewClient(serverURL, opts...)
+	client, err := client.NewClientWithResponses(serverURL, opts...)
 	require.NoError(t, err)
 
 	return client

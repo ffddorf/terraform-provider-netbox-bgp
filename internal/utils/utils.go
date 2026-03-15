@@ -113,12 +113,32 @@ func FromStringValue(in StringValuable) *string {
 	return in.ValueStringPointer()
 }
 
+func FromBoolValue(in types.Bool) *bool {
+	if in.IsNull() || in.IsUnknown() {
+		return nil
+	}
+	return in.ValueBoolPointer()
+}
+
 func FromIntValue(in types.Int64) *int {
 	if in.IsNull() || in.IsUnknown() {
 		return nil
 	}
 	v := int(in.ValueInt64())
 	return &v
+}
+
+func FromListValue[T any](ctx context.Context, p path.Path, in types.List, diags diag.Diagnostics) *[]T {
+	if in.IsNull() || in.IsUnknown() {
+		return nil
+	}
+
+	var out []T
+	convertDiags := in.ElementsAs(ctx, &out, false)
+	for _, d := range convertDiags {
+		diags.Append(diag.WithPath(p, d))
+	}
+	return &out
 }
 
 func MaybeListValueAccessor[M, T any](
@@ -149,6 +169,14 @@ func TimeString(t time.Time) string {
 	return t.Format(time.RFC3339)
 }
 
+func TimeFromStringValue(v types.String) (time.Time, error) {
+	t, err := time.Parse(time.RFC3339, v.ValueString())
+	if err != nil {
+		return t, fmt.Errorf("failed to parse time as RFC3339: %w", err)
+	}
+	return t, nil
+}
+
 func MaybeRawJSON(in StringValuable, path path.Path, diags diag.Diagnostics) *json.RawMessage {
 	if in.IsUnknown() || in.IsNull() {
 		return nil
@@ -163,4 +191,53 @@ func MaybeRawJSON(in StringValuable, path path.Path, diags diag.Diagnostics) *js
 	}
 
 	return &val
+}
+
+func FromStringParsed[T any](ctx context.Context, p path.Path, in types.String, parser func(string) (T, error), diags diag.Diagnostics) *T {
+	if in.IsUnknown() || in.IsNull() {
+		return nil
+	}
+
+	parsed, err := parser(in.ValueString())
+	if err != nil {
+		diags.AddAttributeError(p, "Type Error", fmt.Sprintf("failed to parse string: %v", err))
+		return nil
+	}
+	return &parsed
+}
+
+func FromListParsed[T any, Inner attr.Value](ctx context.Context, p path.Path, in types.List, parser func(Inner) (T, error), diags diag.Diagnostics) *[]T {
+	var inner Inner
+	if !in.ElementType(ctx).Equal(inner.Type(ctx)) {
+		diags.AddError(
+			"Type Error",
+			fmt.Sprintf(
+				"Wrong type received in list, expected %q, got %q",
+				inner.Type(ctx).String(),
+				in.ElementType(ctx).String(),
+			),
+		)
+		return nil
+	}
+
+	if in.IsUnknown() || in.IsNull() {
+		return nil
+	}
+
+	elems := in.Elements()
+	out := make([]T, 0, len(elems))
+	for i, val := range elems {
+		asInner, _ := val.(Inner)
+		conv, err := parser(asInner)
+		if err != nil {
+			diags.AddAttributeError(
+				path.Empty().AtListIndex(i),
+				"Type Error",
+				fmt.Sprintf("failed to parse string value: %v", err),
+			)
+			continue
+		}
+		out = append(out, conv)
+	}
+	return &out
 }
