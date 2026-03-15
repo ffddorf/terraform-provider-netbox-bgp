@@ -114,8 +114,7 @@ jobs:
           EOF
       - run: go mod download
       - run: make docker-up
-        id: docker
-      - run: docker compose logs netbox
-        if: failure() && steps.docker.outcome == 'failure'
       - run: make testacc-only
         timeout-minutes: 10
+      - run: docker compose logs netbox
+        if: failure()
