@@ -7,7 +7,10 @@ default: testacc
 
 # Run acceptance tests
 .PHONY: testacc
-testacc: docker-up
+testacc: docker-up testacc-only
+
+.PHONY: testacc-only
+testacc-only:
 	TF_ACC=1 go test ./... -v $(TESTARGS) -timeout 120m
 
 # Run dockerized Netbox for acceptance testing

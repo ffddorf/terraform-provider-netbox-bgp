@@ -117,5 +117,5 @@ jobs:
         id: docker
       - run: docker compose logs netbox
         if: failure() && steps.docker.outcome == 'failure'
-      - run: make testacc
+      - run: make testacc-only
         timeout-minutes: 10
