@@ -62,22 +62,25 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # renovate: datasource=github-releases depName=netbox-community/netbox
-        netbox_version:
-          - "4.4.7"
-        # renovate: datasource=github-releases depName=netbox-community/netbox-bgp
         netbox_bgp_version:
           - "0.17.0"
         flavor:
           - terraform
           - opentofu
         include:
+          # Terraform runners incl version
           - flavor: terraform
-            # renovate: datasource=github-releases depName=hashicorp/terraform
+            # renovate: datasource=github-releases depName=hashicorp/terraform extractVersion=^v(?<version>.*)$
             terraform_version: "1.14"
           - flavor: opentofu
-            # renovate: datasource=github-releases depName=opentofu/opentofu
+            # renovate: datasource=github-releases depName=opentofu/opentofu extractVersion=^v(?<version>.*)$
             opentofu_version: "1.10"
+
+          # Plugin and netbox version coupling
+          - # renovate: datasource=github-releases depName=netbox-community/netbox
+            netbox_version: "4.4.10"
+            # renovate: datasource=github-releases depName=netbox-community/netbox-bgp
+            netbox_bgp_version: "0.17.0"
     env:
       DOCKER_COMPOSE: docker compose --progress=plain
       BUILDKIT_PROGRESS: plain
@@ -108,8 +111,7 @@ jobs:
           EOF
       - run: go mod download
       - run: make docker-up
-        id: docker
-      - run: docker compose logs netbox
-        if: failure() && steps.docker.outcome == 'failure'
-      - run: make testacc
+      - run: make testacc-only
         timeout-minutes: 10
+      - run: docker compose logs netbox
+        if: failure()

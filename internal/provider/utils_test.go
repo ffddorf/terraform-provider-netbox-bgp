@@ -13,7 +13,7 @@ import (
 
 var testExternalProviders = map[string]resource.ExternalProvider{
 	"netbox": {
-		VersionConstraint: "~> 3.8.7",
+		VersionConstraint: "~> 5.2.1",
 		Source:            "registry.terraform.io/e-breuninger/netbox",
 	},
 }
