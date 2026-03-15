@@ -50,7 +50,7 @@ func testSessions(t *testing.T) string {
 		remote_address = netbox_ip_address.remote3.id
 		local_as       = netbox_asn.test.id
 		remote_as      = netbox_asn.test.id
-	}`, baseResources(t), testIP(t, 2), testIP(t, 3))
+	}`, baseResources(t), testIP(t, 3), testIP(t, 4))
 }
 
 func TestAccSessionsDataSource(t *testing.T) {
