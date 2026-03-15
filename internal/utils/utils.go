@@ -227,7 +227,8 @@ func FromListParsed[T any, Inner attr.Value](ctx context.Context, p path.Path, i
 	elems := in.Elements()
 	out := make([]T, 0, len(elems))
 	for i, val := range elems {
-		conv, err := parser(val.(Inner))
+		asInner, _ := val.(Inner)
+		conv, err := parser(asInner)
 		if err != nil {
 			diags.AddAttributeError(
 				path.Empty().AtListIndex(i),
