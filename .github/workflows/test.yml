@@ -62,19 +62,22 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        netbox_version:
-          - "4.4.10"
-          - "4.5.4"
+        netbox_bgp_version:
+          - "0.17.0"
+          - "0.18.0"
         flavor:
           - terraform
           - opentofu
         include:
+          # Terraform runners incl version
           - flavor: terraform
             # renovate: datasource=github-releases depName=hashicorp/terraform extractVersion=^v(?<version>.*)$
             terraform_version: "1.14"
           - flavor: opentofu
             # renovate: datasource=github-releases depName=opentofu/opentofu extractVersion=^v(?<version>.*)$
             opentofu_version: "1.10"
+
+          # Plugin and netbox version coupling
           - netbox_version: "4.4.10"
             netbox_bgp_version: "0.17.0"
           - # renovate: datasource=github-releases depName=netbox-community/netbox
