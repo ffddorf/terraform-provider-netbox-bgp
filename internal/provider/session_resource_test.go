@@ -107,16 +107,23 @@ func TestAccSessionResource(t *testing.T) {
 						name = "%[2]s-b"
 					}
 
+					resource "netboxbgp_prefix_list" "test" {
+						name   = "%[2]s"
+						family = "ipv4"
+					}
+
 					resource "netboxbgp_session" "test" {
-						name           = "My session changed"
-						status         = "active"
-						device         = netbox_device.test.id
-						local_address  = netbox_ip_address.local.id
-						remote_address = netbox_ip_address.remote.id
-						local_as       = netbox_asn.test.id
-						remote_as      = netbox_asn.test.id
-						site           = netbox_site.test.id
-						tags           = ["%[2]s-a", "%[2]s-b"]
+						name            = "My session changed"
+						status          = "active"
+						device          = netbox_device.test.id
+						local_address   = netbox_ip_address.local.id
+						remote_address  = netbox_ip_address.remote.id
+						local_as        = netbox_asn.test.id
+						remote_as       = netbox_asn.test.id
+						prefix_list_in  = netboxbgp_prefix_list.test.id
+						prefix_list_out = netboxbgp_prefix_list.test.id
+						site            = netbox_site.test.id
+						tags            = ["%[2]s-a", "%[2]s-b"]
 					}
 				`, baseResources(t), tname),
 				ConfigStateChecks: []statecheck.StateCheck{
@@ -132,6 +139,8 @@ func TestAccSessionResource(t *testing.T) {
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("netboxbgp_session.test", "name", "My session changed"),
 					resource.TestCheckResourceAttrPair("netboxbgp_session.test", "site", "netbox_site.test", "id"),
+					resource.TestCheckResourceAttrPair("netboxbgp_session.test", "prefix_list_in", "netboxbgp_prefix_list.test", "id"),
+					resource.TestCheckResourceAttrPair("netboxbgp_session.test", "prefix_list_out", "netboxbgp_prefix_list.test", "id"),
 				),
 			},
 		},

@@ -30,9 +30,9 @@ func (m *SessionModel) ToAPIModel(ctx context.Context, diags diag.Diagnostics) c
 	p.PeerGroup = utils.SetForeignID(p.PeerGroup, m.PeerGroup)
 	p.ImportPolicies = utils.ToIntListPointer(ctx, m.ImportPolicies, path.Root("import_policies"), diags)
 	p.ExportPolicies = utils.ToIntListPointer(ctx, m.ExportPolicies, path.Root("export_policies"), diags)
-	utils.SetForeignID(p.PrefixListIn, m.PrefixListIn)
-	utils.SetForeignID(p.PrefixListOut, m.PrefixListOut)
-	utils.SetForeignID(p.Virtualmachine, m.Virtualmachine)
+	p.PrefixListIn = utils.SetForeignID(p.PrefixListIn, m.PrefixListIn)
+	p.PrefixListOut = utils.SetForeignID(p.PrefixListOut, m.PrefixListOut)
+	p.Virtualmachine = utils.SetForeignID(p.Virtualmachine, m.Virtualmachine)
 
 	p.Tags = utils.TagsForAPIModel(ctx, m.Tags, diags)
 
