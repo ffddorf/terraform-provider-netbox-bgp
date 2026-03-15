@@ -14,10 +14,6 @@ func baseResources(t *testing.T) string {
 	num := testNum(t)
 	shortNum := num % 250
 	return fmt.Sprintf(`
-resource "netbox_tag" "test" {
-  name = "%[1]s"
-}
-
 resource "netbox_site" "test" {
   name = "%[1]s"
   status = "active"
