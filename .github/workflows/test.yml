@@ -75,10 +75,10 @@ jobs:
           - opentofu
         include:
           - flavor: terraform
-            # renovate: datasource=github-releases depName=hashicorp/terraform
+            # renovate: datasource=github-releases depName=hashicorp/terraform extractVersion=^v(?<version>.*)$
             terraform_version: "1.14"
           - flavor: opentofu
-            # renovate: datasource=github-releases depName=opentofu/opentofu
+            # renovate: datasource=github-releases depName=opentofu/opentofu extractVersion=^v(?<version>.*)$
             opentofu_version: "1.10"
     env:
       DOCKER_COMPOSE: docker compose --progress=plain

@@ -6,7 +6,7 @@
       customType: "regex",
       managerFilePatterns: ["/^\\.github/workflows/.+\\.ya?ml$/"],
       matchStrings: [
-        '# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)\\s+\\S+_version:\\s*(-\\s+)?"(?<currentValue>\\S+)"',
+        '# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)(\\s*extractVersion=(?<extractVersion>.*?))?\\s+\\S+_version:\\s*(-\\s+)?"(?<currentValue>\\S+)"',
       ],
     },
     {
