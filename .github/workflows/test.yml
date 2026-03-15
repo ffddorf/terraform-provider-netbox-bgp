@@ -64,7 +64,6 @@ jobs:
       matrix:
         netbox_bgp_version:
           - "0.17.0"
-          - "0.18.0"
         flavor:
           - terraform
           - opentofu
@@ -78,12 +77,10 @@ jobs:
             opentofu_version: "1.10"
 
           # Plugin and netbox version coupling
-          - netbox_version: "4.4.10"
-            netbox_bgp_version: "0.17.0"
           - # renovate: datasource=github-releases depName=netbox-community/netbox
-            netbox_version: "4.5.4"
+            netbox_version: "4.4.10"
             # renovate: datasource=github-releases depName=netbox-community/netbox-bgp
-            netbox_bgp_version: "0.18.0"
+            netbox_bgp_version: "0.17.0"
     env:
       DOCKER_COMPOSE: docker compose --progress=plain
       BUILDKIT_PROGRESS: plain
