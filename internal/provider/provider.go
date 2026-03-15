@@ -261,7 +261,7 @@ func (p *NetboxBGPProvider) DataSources(ctx context.Context) []func() datasource
 		NewSessionDataSource,
 		NewSessionsDataSource,
 		NewPeerGroupDataSource,
-		NewPrefixListDataSource,
+		NewPrefixListsDataSource,
 	}
 }
 
