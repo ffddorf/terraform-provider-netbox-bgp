@@ -23,8 +23,8 @@ func testSessions(t *testing.T) string {
 	}
 
 	resource "netbox_ip_address" "remote2" {
-		ip_address   = "%s/24"
-		status       = "active"
+		ip_address = "%s/24"
+		status     = "active"
 	}
 
 	resource "netboxbgp_session" "test2" {
@@ -70,7 +70,8 @@ func TestAccSessionsDataSource(t *testing.T) {
 						]
 
 						filters = [
-							{ name: "status", value: "active" }
+							{ name = "status", value = "active" },
+							{ name = "device_id", value = netbox_device.test.id },
 						]
 
 						ordering = "name"
@@ -81,6 +82,10 @@ func TestAccSessionsDataSource(t *testing.T) {
 							netboxbgp_session.test1,
 							netboxbgp_session.test2,
 							netboxbgp_session.test3,
+						]
+
+						filters = [
+							{ name = "device_id", value = netbox_device.test.id }
 						]
 
 						limit    = 2

@@ -69,6 +69,7 @@ resource "netbox_asn" "test" {
 }
 
 func TestAccSessionResource(t *testing.T) {
+	tname := testName(t)
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
@@ -98,33 +99,33 @@ func TestAccSessionResource(t *testing.T) {
 				ImportStateVerify: true,
 			},
 			{
-				Config: fmt.Sprintf(`%s
+				Config: fmt.Sprintf(`%[1]s
 					resource "netbox_tag" "test_a" {
-						name = "Integration Test"
+						name = "%[2]s-a"
 					}
 					resource "netbox_tag" "test_b" {
-						name = "temporary"
+						name = "%[2]s-b"
 					}
 
 					resource "netboxbgp_session" "test" {
-						name              = "My session changed"
-						status            = "active"
+						name           = "My session changed"
+						status         = "active"
 						device         = netbox_device.test.id
 						local_address  = netbox_ip_address.local.id
 						remote_address = netbox_ip_address.remote.id
 						local_as       = netbox_asn.test.id
 						remote_as      = netbox_asn.test.id
 						site           = netbox_site.test.id
-						tags              = ["Integration Test", "temporary"]
+						tags           = ["%[2]s-a", "%[2]s-b"]
 					}
-				`, baseResources(t)),
+				`, baseResources(t), tname),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(
 						"netboxbgp_session.test",
 						tfjsonpath.New("tags"),
 						knownvalue.ListExact([]knownvalue.Check{
-							knownvalue.StringExact("Integration Test"),
-							knownvalue.StringExact("temporary"),
+							knownvalue.StringExact(tname + "-a"),
+							knownvalue.StringExact(tname + "-b"),
 						}),
 					),
 				},
