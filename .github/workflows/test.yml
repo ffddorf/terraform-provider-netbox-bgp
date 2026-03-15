@@ -74,7 +74,7 @@ jobs:
             terraform_version: "1.14"
           - flavor: opentofu
             # renovate: datasource=github-releases depName=opentofu/opentofu extractVersion=^v(?<version>.*)$
-            opentofu_version: "1.10"
+            opentofu_version: "1.11.5"
 
           # Plugin and netbox version coupling
           - # renovate: datasource=github-releases depName=netbox-community/netbox
