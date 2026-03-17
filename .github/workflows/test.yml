@@ -78,7 +78,7 @@ jobs:
 
           # Plugin and netbox version coupling
           - # renovate: datasource=github-releases depName=netbox-community/netbox
-            netbox_version: "4.4.10"
+            netbox_version: "4.5.5"
             # renovate: datasource=github-releases depName=netbox-community/netbox-bgp
             netbox_bgp_version: "0.17.0"
     env:
