@@ -97,7 +97,7 @@ jobs:
         with:
           terraform_version: ${{ matrix.terraform_version }}
           terraform_wrapper: false
-      - uses: opentofu/setup-opentofu@v1
+      - uses: opentofu/setup-opentofu@v2
         if: matrix.flavor == 'opentofu'
         with:
           tofu_version: ${{ matrix.opentofu_version }}
