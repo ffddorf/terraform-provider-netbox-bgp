@@ -71,7 +71,7 @@ jobs:
           # Terraform runners incl version
           - flavor: terraform
             # renovate: datasource=github-releases depName=hashicorp/terraform extractVersion=^v(?<version>.*)$
-            terraform_version: "1.14"
+            terraform_version: "1.16.1"
           - flavor: opentofu
             # renovate: datasource=github-releases depName=opentofu/opentofu extractVersion=^v(?<version>.*)$
             opentofu_version: "1.10"
