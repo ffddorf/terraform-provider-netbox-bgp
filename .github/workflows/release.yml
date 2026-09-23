@@ -17,11 +17,11 @@ jobs:
   goreleaser:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6.0.2
+      - uses: actions/checkout@v6.1.0
         with:
           # Allow goreleaser to access older tag information.
           fetch-depth: 0
-      - uses: actions/setup-go@v6.3.0
+      - uses: actions/setup-go@v6.5.0
         with:
           go-version-file: "go.mod"
           cache: true
@@ -32,7 +32,7 @@ jobs:
           gpg_private_key: ${{ secrets.TF_REGISTRY_GPG_PRIVATE_KEY }}
           passphrase: ${{ secrets.TF_REGISTRY_GPG_PASSPHRASE }}
       - name: Run GoReleaser
-        uses: goreleaser/goreleaser-action@v7.0.0
+        uses: goreleaser/goreleaser-action@v7.2.3
         with:
           args: release --clean
         env:
