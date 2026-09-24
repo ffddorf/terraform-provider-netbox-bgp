@@ -14,7 +14,8 @@ require (
 	github.com/hashicorp/terraform-plugin-testing v1.15.0
 	github.com/iancoleman/strcase v0.3.0
 	github.com/oapi-codegen/runtime v1.2.0
-	github.com/sethvargo/go-envconfig v1.3.0
+	github.com/sethvargo/go-envconfig v1.4.3
+	github.com/sethvargo/go-envconfig/v2 v2.0.0
 	github.com/stretchr/testify v1.11.1
 	golang.org/x/tools v0.43.0
 )
